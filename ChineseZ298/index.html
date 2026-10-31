@@ -3,38 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- CHỐNG LƯU CACHE (ANTI-CACHE HEADERS) -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    
     <title>ChineseZ298 - Ôn Tập Tiếng Trung AI</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- FIREBASE COMPAT SDK CHO GITHUB PAGES -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
     <style>
-        :root[data-theme="lavender"]{--bg-body:#f7f5fb;--bg-card:rgba(255,255,255,0.96);--border-card:#e5def2;--text-main:#2d2047;--text-sub:#665487;--input-bg:#ffffff;--btn-main:#7c3aed;--btn-hover:#6d28d9;--btn-text:#ffffff;}
-        :root[data-theme="nordic"]{--bg-body:#f0f6fa;--bg-card:rgba(255,255,255,0.96);--border-card:#d4e5f0;--text-main:#183344;--text-sub:#4b7188;--input-bg:#ffffff;--btn-main:#0284c7;--btn-hover:#0369a1;--btn-text:#ffffff;}
-        :root[data-theme="sage"]{--bg-body:#f2f7f4;--bg-card:rgba(255,255,255,0.96);--border-card:#d5e5db;--text-main:#1e3a2b;--text-sub:#4f735d;--input-bg:#ffffff;--btn-main:#059669;--btn-hover:#047857;--btn-text:#ffffff;}
-        :root[data-theme="warm"]{--bg-body:#faf7f0;--bg-card:rgba(255,255,255,0.96);--border-card:#ece4d2;--text-main:#3d3324;--text-sub:#786950;--input-bg:#ffffff;--btn-main:#d97706;--btn-hover:#b45309;--btn-text:#ffffff;}
-        :root[data-theme="midnight"]{--bg-body:#0d1520;--bg-card:rgba(23,34,51,0.95);--border-card:#2d3f58;--text-main:#f0f4f8;--text-sub:#94a3b8;--input-bg:#141f2e;--btn-main:#f43f5e;--btn-hover:#e11d48;--btn-text:#ffffff;}
+        /* DESIGN SYSTEM: 5 THEME VỚI 3D-GRADIENT, CONTRAST ĐẠT CHUẨN WCAG & GLASSMORPHISM */
+        :root[data-theme="lavender"] {
+            --bg-body: #f8f6fc;
+            --bg-card: rgba(255, 255, 255, 0.95);
+            --border-card: #e6ddf5;
+            --text-main: #2b1f47;
+            --text-sub: #5f4b82;
+            --input-bg: #ffffff;
+            --grad-primary: linear-gradient(135deg, #7c3aed 0%, #c026d3 100%);
+            --grad-primary-hover: linear-gradient(135deg, #6d28d9 0%, #a21caf 100%);
+            --grad-accent: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+            --shadow-btn: 0 4px 14px rgba(124, 58, 237, 0.3);
+            --badge-src: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+            --badge-dest: linear-gradient(135deg, #059669 0%, #047857 100%);
+        }
+        :root[data-theme="nordic"] {
+            --bg-body: #f0f6fa;
+            --bg-card: rgba(255, 255, 255, 0.95);
+            --border-card: #cde1ee;
+            --text-main: #142a38;
+            --text-sub: #3d647c;
+            --input-bg: #ffffff;
+            --grad-primary: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+            --grad-primary-hover: linear-gradient(135deg, #0369a1 0%, #1d4ed8 100%);
+            --grad-accent: linear-gradient(135deg, #06b6d4 0%, #0284c7 100%);
+            --shadow-btn: 0 4px 14px rgba(2, 132, 199, 0.3);
+            --badge-src: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+            --badge-dest: linear-gradient(135deg, #0284c7 0%, #1e40af 100%);
+        }
+        :root[data-theme="sage"] {
+            --bg-body: #f1f7f3;
+            --bg-card: rgba(255, 255, 255, 0.95);
+            --border-card: #cbe0d3;
+            --text-main: #193325;
+            --text-sub: #446953;
+            --input-bg: #ffffff;
+            --grad-primary: linear-gradient(135deg, #059669 0%, #0d9488 100%);
+            --grad-primary-hover: linear-gradient(135deg, #047857 0%, #0f766e 100%);
+            --grad-accent: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --shadow-btn: 0 4px 14px rgba(5, 150, 105, 0.3);
+            --badge-src: linear-gradient(135deg, #e11d48 0%, #9f1239 100%);
+            --badge-dest: linear-gradient(135deg, #059669 0%, #065f46 100%);
+        }
+        :root[data-theme="warm"] {
+            --bg-body: #faf7f0;
+            --bg-card: rgba(255, 255, 255, 0.95);
+            --border-card: #ebe1ce;
+            --text-main: #3b2e1a;
+            --text-sub: #756243;
+            --input-bg: #ffffff;
+            --grad-primary: linear-gradient(135deg, #d97706 0%, #ea580c 100%);
+            --grad-primary-hover: linear-gradient(135deg, #b45309 0%, #c2410c 100%);
+            --grad-accent: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --shadow-btn: 0 4px 14px rgba(217, 119, 6, 0.32);
+            --badge-src: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            --badge-dest: linear-gradient(135deg, #d97706 0%, #92400e 100%);
+        }
+        :root[data-theme="midnight"] {
+            --bg-body: #0a111a;
+            --bg-card: rgba(20, 30, 45, 0.95);
+            --border-card: #28394e;
+            --text-main: #f3f6fa;
+            --text-sub: #9ab0c7;
+            --input-bg: #121c29;
+            --grad-primary: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+            --grad-primary-hover: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+            --grad-accent: linear-gradient(135deg, #fb7185 0%, #f43f5e 100%);
+            --shadow-btn: 0 4px 16px rgba(244, 63, 94, 0.38);
+            --badge-src: linear-gradient(135deg, #f43f5e 0%, #9f1239 100%);
+            --badge-dest: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+        }
 
-        html,body{height:100dvh;height:calc(var(--vh,1vh)*100);max-height:100dvh;overflow:hidden;margin:0;padding:0;background-color:var(--bg-body);color:var(--text-main);user-select:none;-webkit-user-select:none;transition:background-color .25s ease,color .25s ease;}
-        .theme-card{background-color:var(--bg-card);border:1px solid var(--border-card);backdrop-filter:blur(10px);}
-        .custom-input{background-color:var(--input-bg);border:1px solid var(--border-card);color:var(--text-main);}
-        .btn-main{background-color:var(--btn-main);color:var(--btn-text);}
-        .btn-main:hover{background-color:var(--btn-hover);}
-        .title-3d-ruby{font-weight:900;color:#e11d48;text-shadow:0 1px 0 #be123c,0 2px 0 #9f1239,0 3px 0 #881337,0 4px 6px rgba(0,0,0,0.15);letter-spacing:0.05em;}
-        .flip-card-container{perspective:1200px;}
-        .flip-card-inner{position:relative;width:100%;height:100%;transition:transform .5s cubic-bezier(0.4,0,0.2,1);transform-style:preserve-3d;}
-        .flip-card-inner.flipped{transform:rotateY(180deg);}
-        .card-front,.card-back{position:absolute;inset:0;width:100%;height:100%;-webkit-backface-visibility:hidden;backface-visibility:hidden;border-radius:1.25rem;}
-        .card-back{transform:rotateY(180deg);}
+        /* KHÓA CHIỀU CAO VỪA KHÍT 100% VIEWPORT - ZERO SCROLL */
+        html, body {
+            height: 100dvh;
+            height: calc(var(--vh, 1vh) * 100);
+            max-height: 100dvh;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            user-select: none;
+            -webkit-user-select: none;
+            transition: background-color 0.25s ease, color 0.25s ease;
+        }
 
-        @media (max-height:520px){
-            .app-header{height:38px!important;padding-top:2px!important;padding-bottom:2px!important;}
-            .app-title{font-size:1.05rem!important;}
-            .side-bar{height:38px!important;padding:2px!important;}
-            .card-stage{height:180px!important;}
-            .txt-hanzi{font-size:2.3rem!important;}
-            .txt-desc{display:none!important;}
+        .theme-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-card);
+            backdrop-filter: blur(12px);
+        }
+
+        .custom-input {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-card);
+            color: var(--text-main);
+        }
+
+        /* NÚT BẤM 3D GRADIENT CAO CẤP */
+        .btn-3d {
+            background: var(--grad-primary);
+            color: #ffffff !important;
+            box-shadow: var(--shadow-btn);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-3d:hover {
+            transform: translateY(-1.5px);
+            filter: brightness(1.05);
+        }
+        .btn-3d:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .title-3d-ruby {
+            font-weight: 900;
+            color: #e11d48;
+            text-shadow: 0 1px 0 #be123c, 0 2px 0 #9f1239, 0 3px 0 #881337, 0 4px 8px rgba(0,0,0,0.18);
+            letter-spacing: 0.05em;
+        }
+
+        /* 3D FLIP CARD CHUẨN XUÔI CHIỀU (KHÔNG BỊ MIRROR) */
+        .flip-card-container { perspective: 1200px; }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .flip-card-inner.flipped { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1.25rem;
+        }
+        .card-back { transform: rotateY(180deg); }
+
+        /* NÚT CHUYỂN ĐỔI NGÔN NGỮ NỔI 3D TRUNG TÂM */
+        .swap-floating-btn {
+            background: var(--grad-primary);
+            color: #ffffff;
+            box-shadow: var(--shadow-btn);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .swap-floating-btn:hover {
+            transform: scale(1.12) rotate(180deg);
+        }
+
+        @media (max-height: 520px) {
+            .app-header { height: 38px !important; padding-top: 2px !important; padding-bottom: 2px !important; }
+            .app-title { font-size: 1.05rem !important; }
+            .side-bar { height: 38px !important; padding: 2px !important; }
+            .card-stage { height: 180px !important; }
+            .txt-hanzi { font-size: 2.3rem !important; }
+            .txt-desc { display: none !important; }
         }
     </style>
 </head>
@@ -56,18 +199,18 @@
                 <div class="space-y-2.5">
                     <div>
                         <label class="block text-[10px] font-bold uppercase opacity-80 mb-0.5">Tên đăng nhập</label>
-                        <input type="text" id="login-username" class="w-full custom-input rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-rose-500">
+                        <input type="text" id="login-username" class="w-full custom-input rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-rose-500">
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold uppercase opacity-80 mb-0.5">Mật khẩu</label>
                         <div class="relative">
-                            <input type="password" id="login-password" class="w-full custom-input rounded-xl pl-3 pr-9 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-rose-500">
+                            <input type="password" id="login-password" class="w-full custom-input rounded-xl pl-3 pr-9 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-rose-500">
                             <button type="button" onclick="togglePassVisibility()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-xs opacity-60 cursor-pointer">
                                 <i id="pass-icon" class="fa-solid fa-eye"></i>
                             </button>
                         </div>
                     </div>
-                    <button onclick="handleLogin()" class="w-full py-2.5 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 text-white font-bold text-xs rounded-xl shadow-md cursor-pointer mt-1">Đăng Nhập</button>
+                    <button onclick="handleLogin()" class="w-full py-2.5 btn-3d font-bold text-xs rounded-xl cursor-pointer mt-1">Đăng Nhập</button>
                 </div>
             </div>
         </div>
@@ -75,29 +218,39 @@
 
     <!-- 2. DASHBOARD CHÍNH (ZERO-SCROLL) -->
     <div id="main-app-screen" class="hidden h-full w-full flex flex-col">
+        <!-- HEADER SIÊU GỌN VỚI NÚT LÀM MỚI, CHÌA KHÓA API VÀ MENU THEME -->
         <header class="app-header h-12 theme-card border-b px-3 flex justify-between items-center shadow-xs shrink-0 z-30">
             <div class="flex items-center space-x-2">
                 <div class="w-7 h-7 bg-rose-600 rounded-lg flex items-center justify-center font-bold text-white text-xs shadow-xs">中</div>
                 <h2 class="app-title text-base title-3d-ruby leading-none">CHINESEZ298</h2>
             </div>
             <div class="flex items-center space-x-1.5">
+                <!-- NÚT LÀM MỚI BẮT BUỘC CHỐNG CACHE -->
                 <button onclick="forceRefreshApp()" class="theme-card px-2 py-1 rounded-lg text-xs font-bold hover:scale-105 transition cursor-pointer" title="Làm mới chống cache">
                     <i class="fa-solid fa-rotate-right text-rose-500"></i>
                 </button>
+                
+                <!-- NÚT CHÌA KHÓA CÀI ĐẶT GEMINI API KEY -->
+                <button onclick="openApiSetupModal(false)" class="theme-card px-2 py-1 rounded-lg text-xs font-bold hover:scale-105 transition cursor-pointer" title="Cài đặt / Thay đổi Gemini API Key">
+                    <i class="fa-solid fa-key text-amber-500"></i>
+                </button>
+
+                <!-- DROPDOWN 5 THEME ĐẲNG CẤP -->
                 <div class="relative">
                     <button onclick="toggleThemeMenu()" class="theme-card px-2 py-1 rounded-lg text-[11px] font-bold flex items-center space-x-1 cursor-pointer">
                         <i class="fa-solid fa-palette text-rose-500"></i>
                         <span id="theme-lbl" class="hidden sm:inline">Lavender</span>
                         <i class="fa-solid fa-chevron-down text-[8px] opacity-70"></i>
                     </button>
-                    <div id="theme-menu" class="hidden absolute right-0 mt-1 w-44 rounded-xl bg-white border border-slate-200 shadow-xl py-1 z-50 text-slate-800 text-xs">
-                        <button onclick="applyTheme('lavender','Lavender')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🌸 Lavender (Tím)</button>
-                        <button onclick="applyTheme('nordic','Nordic')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🌊 Nordic (Xanh biển)</button>
-                        <button onclick="applyTheme('sage','Sage Tea')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🍃 Sage (Xanh lá)</button>
-                        <button onclick="applyTheme('warm','Warm Milk')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🥛 Warm (Sáng kem)</button>
-                        <button onclick="applyTheme('midnight','Midnight')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🌙 Midnight (Đêm)</button>
+                    <div id="theme-menu" class="hidden absolute right-0 mt-1 w-44 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl py-1 z-50 text-slate-800 dark:text-slate-100 text-xs">
+                        <button onclick="applyTheme('lavender','Lavender')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100 dark:hover:bg-slate-700">🌸 Lavender (Tím)</button>
+                        <button onclick="applyTheme('nordic','Nordic')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100 dark:hover:bg-slate-700">🌊 Nordic (Xanh biển)</button>
+                        <button onclick="applyTheme('sage','Sage Tea')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100 dark:hover:bg-slate-700">🍃 Sage (Xanh lá)</button>
+                        <button onclick="applyTheme('warm','Warm Milk')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100 dark:hover:bg-slate-700">🥛 Warm (Sáng kem)</button>
+                        <button onclick="applyTheme('midnight','Midnight')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100 dark:hover:bg-slate-700">🌙 Midnight (Đêm)</button>
                     </div>
                 </div>
+
                 <span id="user-role-badge" class="text-[10px] px-2 py-0.5 rounded-lg bg-rose-500/10 text-rose-600 font-bold hidden sm:inline"></span>
                 <button onclick="handleLogout()" class="px-2 py-1 rounded-lg border border-slate-500/20 text-[11px] font-bold hover:bg-rose-600 hover:text-white transition cursor-pointer">
                     <i class="fa-solid fa-right-from-bracket"></i>
@@ -106,83 +259,91 @@
         </header>
 
         <div class="flex-1 flex flex-col md:flex-row p-2 gap-2 min-h-0 overflow-hidden">
-            <!-- Sidebar A -->
+            <!-- Sidebar A (Menu Chức Năng 3D Gradient) -->
             <aside class="side-bar shrink-0 theme-card rounded-2xl p-1.5 flex md:flex-col justify-between shadow-xs">
                 <div class="flex md:flex-col gap-1 overflow-x-auto w-full">
-                    <button onclick="setTab('home')" id="tbtn-home" class="shrink-0 md:w-full text-left px-2.5 py-1.5 rounded-xl font-bold text-xs btn-main shadow-xs flex items-center space-x-1.5 cursor-pointer">
-                        <i class="fa-solid fa-house w-3.5 text-center"></i> <span>Trang chủ</span>
+                    <button onclick="setTab('home')" id="tbtn-home" class="shrink-0 md:w-full text-left px-3 py-2 rounded-xl font-bold text-xs btn-3d flex items-center space-x-2 cursor-pointer">
+                        <i class="fa-solid fa-house w-4 text-center"></i> <span>Trang chủ</span>
                     </button>
-                    <button onclick="setTab('create')" id="tbtn-create" class="shrink-0 md:w-full text-left px-2.5 py-1.5 rounded-xl font-bold text-xs opacity-75 hover:opacity-100 flex items-center space-x-1.5 cursor-pointer">
-                        <i class="fa-solid fa-file-circle-plus w-3.5 text-center"></i> <span>Tạo bài</span>
+                    <button onclick="setTab('create')" id="tbtn-create" class="shrink-0 md:w-full text-left px-3 py-2 rounded-xl font-bold text-xs opacity-75 hover:opacity-100 flex items-center space-x-2 cursor-pointer">
+                        <i class="fa-solid fa-file-circle-plus w-4 text-center"></i> <span>Tạo bài</span>
                     </button>
-                    <button onclick="setTab('room')" id="tbtn-room" class="shrink-0 md:w-full text-left px-2.5 py-1.5 rounded-xl font-bold text-xs opacity-75 hover:opacity-100 flex items-center space-x-1.5 cursor-pointer">
-                        <i class="fa-solid fa-graduation-cap w-3.5 text-center"></i> <span>Phòng học</span>
+                    <button onclick="setTab('room')" id="tbtn-room" class="shrink-0 md:w-full text-left px-3 py-2 rounded-xl font-bold text-xs opacity-75 hover:opacity-100 flex items-center space-x-2 cursor-pointer">
+                        <i class="fa-solid fa-graduation-cap w-4 text-center"></i> <span>Phòng học</span>
                     </button>
-                    <button onclick="setTab('chat')" id="tbtn-chat" class="shrink-0 md:w-full text-left px-2.5 py-1.5 rounded-xl font-bold text-xs opacity-75 hover:opacity-100 flex items-center space-x-1.5 cursor-pointer">
-                        <i class="fa-solid fa-comments w-3.5 text-center"></i> <span>Chat Dịch</span>
+                    <button onclick="setTab('chat')" id="tbtn-chat" class="shrink-0 md:w-full text-left px-3 py-2 rounded-xl font-bold text-xs opacity-75 hover:opacity-100 flex items-center space-x-2 cursor-pointer">
+                        <i class="fa-solid fa-comments w-4 text-center"></i> <span>Chat Dịch</span>
                     </button>
                 </div>
                 <div id="admin-box" class="hidden md:block pt-1 border-t border-slate-500/20">
-                    <button onclick="openAdminModal()" class="w-full px-2 py-1.5 rounded-xl font-bold text-xs bg-amber-600 text-white shadow-xs flex items-center space-x-1.5 cursor-pointer">
-                        <i class="fa-solid fa-user-plus w-3.5 text-center"></i> <span>Tạo User</span>
+                    <button onclick="openAdminModal()" class="w-full px-3 py-2 rounded-xl font-bold text-xs bg-amber-600 hover:bg-amber-700 text-white shadow-xs flex items-center space-x-1.5 cursor-pointer">
+                        <i class="fa-solid fa-user-plus w-4 text-center"></i> <span>Tạo User</span>
                     </button>
                 </div>
             </aside>
 
-            <!-- Main Stage B -->
+            <!-- Main Stage B (Co Giãn Linh Động 100% Khung Nhìn) -->
             <main id="main-viewport" class="flex-1 theme-card rounded-2xl p-2.5 sm:p-4 flex flex-col justify-center items-center text-center min-h-0 overflow-hidden shadow-xs relative">
             </main>
         </div>
     </div>
 
-    <!-- 3. POPUP THÔNG MINH: "BẠN MUỐN THẾ NÀO?" SAU KHI TẠO BÀI -->
+    <!-- 3. POPUP CHÀO MỪNG & CÀI ĐẶT GEMINI API KEY LẦN ĐẦU (BYOK) -->
+    <div id="api-setup-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3">
+        <div class="theme-card rounded-3xl p-5 max-w-md w-full space-y-3.5 text-left shadow-2xl border border-rose-500/20">
+            <div class="flex justify-between items-center border-b pb-2">
+                <div class="flex items-center space-x-2">
+                    <span class="w-7 h-7 rounded-full bg-red-100 text-red-600 font-black flex items-center justify-center text-sm shadow-xs">?</span>
+                    <h3 class="font-black text-sm text-rose-600">Cài đặt Gemini API Key cá nhân</h3>
+                </div>
+                <button onclick="closeApiSetupModal()" class="text-xs opacity-60 hover:opacity-100 cursor-pointer"><i class="fa-solid fa-xmark text-base"></i></button>
+            </div>
+            
+            <p class="text-xs opacity-80 leading-relaxed font-semibold">
+                Chào mừng bạn! Nhập API Key riêng giúp dịch thuật không giới hạn và phát âm giọng AI chuẩn nhất:
+            </p>
+
+            <div class="p-3 rounded-2xl bg-slate-500/5 border border-slate-500/10 space-y-1.5 text-xs">
+                <p class="font-bold text-rose-600">📋 4 Bước lấy Key miễn phí 100% (30 giây):</p>
+                <p>1. Bấm nút <b>"Mở Google AI Studio"</b> bên dưới.</p>
+                <p>2. Đăng nhập tài khoản Google (Gmail) của bạn.</p>
+                <p>3. Bấm <b>"Create API key"</b> rồi chọn <b>"Copy"</b>.</p>
+                <p>4. Dán vào ô dưới đây rồi bấm <b>"Lưu Key"</b>.</p>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-bold uppercase opacity-80 mb-1">Dán API Key vào đây</label>
+                <input type="password" id="popup-gemini-key" placeholder="AIzaSy..." class="w-full custom-input rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-rose-500">
+            </div>
+
+            <div class="flex justify-between items-center pt-1 border-t">
+                <a href="https://aistudio.google.com/app/apikey" target="_blank" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> <span>Mở Google AI Studio</span>
+                </a>
+                <div class="space-x-1.5">
+                    <button onclick="skipApiKeySetup()" class="px-3 py-1.5 theme-card border rounded-xl text-xs font-bold opacity-75 hover:opacity-100 cursor-pointer">Dùng Offline</button>
+                    <button onclick="saveApiKeyFromPopup()" class="px-4 py-1.5 btn-3d text-xs font-bold rounded-xl cursor-pointer">Lưu Key</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. POPUP THÔNG MINH "BẠN MUỐN THẾ NÀO?" SAU KHI TẠO BÀI -->
     <div id="create-decision-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
         <div class="theme-card rounded-3xl p-6 max-w-sm w-full space-y-4 text-center shadow-2xl border border-rose-500/30">
-            <div class="w-14 h-14 bg-rose-500/10 text-rose-600 rounded-2xl flex items-center justify-center mx-auto text-2xl font-bold border border-rose-500/20 shadow-xs">
-                ✨
-            </div>
+            <div class="w-14 h-14 bg-rose-500/10 text-rose-600 rounded-2xl flex items-center justify-center mx-auto text-2xl font-bold border border-rose-500/20 shadow-xs">✨</div>
             <div>
                 <h3 class="text-lg font-black text-rose-600">Bạn muốn thế nào ?</h3>
                 <p id="decision-lesson-name" class="text-xs opacity-80 mt-1 font-semibold truncate"></p>
-                <p class="text-[11px] opacity-60 mt-0.5">Bài học đã được tạo thành công vào hệ thống!</p>
+                <p class="text-[11px] opacity-60 mt-0.5">Bài học đã được đồng bộ lên Cloud Firebase!</p>
             </div>
             <div class="grid grid-cols-2 gap-3 pt-2">
                 <button onclick="decisionCreateMore()" class="py-2.5 px-3 theme-card border hover:border-rose-500 text-xs font-bold rounded-2xl shadow-xs transition cursor-pointer">
                     <i class="fa-solid fa-plus mr-1 text-rose-500"></i> Tạo tiếp
                 </button>
-                <button onclick="decisionGoStudy()" class="py-2.5 px-3 btn-main text-xs font-bold rounded-2xl shadow-md transition cursor-pointer">
+                <button onclick="decisionGoStudy()" class="py-2.5 px-3 btn-3d text-xs font-bold rounded-2xl cursor-pointer">
                     <i class="fa-solid fa-graduation-cap mr-1"></i> Vào học
                 </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 4. MODAL GIẢI THÍCH GEMINI API KEY -->
-    <div id="api-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3">
-        <div class="theme-card rounded-3xl p-5 max-w-md w-full space-y-3 text-left shadow-2xl">
-            <div class="flex justify-between items-center border-b pb-2">
-                <div class="flex items-center space-x-2">
-                    <span class="w-6 h-6 rounded-full bg-red-100 text-red-600 font-bold flex items-center justify-center text-xs">?</span>
-                    <h3 class="font-bold text-sm text-red-600">Vì sao cần Gemini API Key riêng?</h3>
-                </div>
-                <button onclick="closeApiModal()" class="text-xs opacity-60 hover:opacity-100 cursor-pointer"><i class="fa-solid fa-xmark text-base"></i></button>
-            </div>
-            <div class="text-xs space-y-2 opacity-90 leading-relaxed max-h-64 overflow-y-auto pr-1">
-                <p>• <b>100% Miễn phí & Riêng tư:</b> Bạn dùng trực tiếp hạn mức miễn phí từ Google, không dùng chung hay lo nghẽn mạng.</p>
-                <p>• <b>Bảo mật tuyệt đối:</b> Key lưu trực tiếp trong trình duyệt máy bạn (LocalStorage), không gửi về máy chủ thứ ba nào.</p>
-                <div class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 space-y-1">
-                    <p class="font-bold text-rose-500">4 Bước lấy key cực nhanh (30 giây):</p>
-                    <p><b>1.</b> Bấm nút xanh bên dưới mở Google AI Studio.</p>
-                    <p><b>2.</b> Đăng nhập tài khoản Google (Gmail) của bạn.</p>
-                    <p><b>3.</b> Bấm <b>"Create API key"</b> rồi chọn <b>"Copy"</b>.</p>
-                    <p><b>4.</b> Dán key vào ô nhập và bấm <b>"Lưu Key"</b>.</p>
-                </div>
-            </div>
-            <div class="flex justify-between items-center pt-2 border-t">
-                <a href="https://aistudio.google.com/app/apikey" target="_blank" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition flex items-center space-x-1">
-                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> <span>Mở Google AI Studio</span>
-                </a>
-                <button onclick="closeApiModal()" class="px-4 py-1.5 btn-main text-xs font-bold rounded-xl">Đã hiểu</button>
             </div>
         </div>
     </div>
@@ -198,7 +359,7 @@
                 <label class="block text-[10px] font-bold opacity-75 uppercase mb-1">Họ và tên</label>
                 <input type="text" id="admin-in-name" class="w-full custom-input rounded-xl px-2.5 py-1.5 text-xs focus:outline-none">
             </div>
-            <button onclick="execCreateUser()" class="w-full py-2 bg-amber-600 text-white font-bold text-xs rounded-xl shadow-xs cursor-pointer">Tạo tự động</button>
+            <button onclick="execCreateUser()" class="w-full py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-xs cursor-pointer">Tạo tự động</button>
             <div id="admin-res-box" class="hidden p-2 bg-black/10 rounded-xl text-left text-[11px] font-mono space-y-1">
                 <p id="admin-res-text"></p>
                 <button onclick="copyUserString()" class="text-amber-600 font-bold underline cursor-pointer">Sao chép</button>
@@ -207,7 +368,31 @@
     </div>
 
     <script>
-        // A. BẢO VỆ MÃ NGUỒN & CHỐNG DEVTOOLS
+        // ==========================================
+        // A. CẤU HÌNH FIREBASE CLOUD FIRESTORE
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAMj0Jf-GCdRCS9jawLmnqSqlGFubpe-Ps",
+            authDomain: "chinesez298.firebaseapp.com",
+            projectId: "chinesez298",
+            storageBucket: "chinesez298.firebasestorage.app",
+            messagingSenderId: "983534326817",
+            appId: "1:983534326817:web:61d9f80a71e7bea8a93f60",
+            measurementId: "G-PJEFS1G2DG"
+        };
+
+        let db = null;
+        try {
+            if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+            db = firebase.firestore();
+            console.log("Firebase Firestore initialized successfully.");
+        } catch(e) {
+            console.warn("Chạy ở chế độ Local Storage fallback:", e);
+        }
+
+        // ==========================================
+        // B. BẢO VỆ MÃ NGUỒN & ANTI-CACHE
+        // ==========================================
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {
             if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S'))) {
@@ -215,20 +400,20 @@
             }
         });
 
-        // B. ZERO-SCROLL THEO 100DVH CHO SAFARI & CHROME
         function setAppHeight() { document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`); }
         window.addEventListener('resize', setAppHeight);
         window.addEventListener('orientationchange', setAppHeight);
         setAppHeight();
 
-        // C. CHỐNG CACHE RELOAD
         function forceRefreshApp() {
             const url = new URL(window.location.href);
             url.searchParams.set('v', Date.now());
             window.location.href = url.toString();
         }
 
-        // D. WEB SPEECH & AUDIO API
+        // ==========================================
+        // C. ÂM ĐỌC & THEME CONTROLLER
+        // ==========================================
         function speakZh(text) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
@@ -237,6 +422,7 @@
                 window.speechSynthesis.speak(u);
             }
         }
+
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSfx(isWin) {
             if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -258,7 +444,6 @@
             }
         }
 
-        // E. THEME CONTROLLER
         function toggleThemeMenu() { document.getElementById('theme-menu').classList.toggle('hidden'); }
         function applyTheme(key, lbl) {
             document.documentElement.setAttribute('data-theme', key);
@@ -271,7 +456,9 @@
             if (m && !e.target.closest('.relative')) m.classList.add('hidden');
         });
 
-        // F. DATA STORE (20 BÀI MẪU + BÀI CỦA BẠN RIÊNG BIỆT)
+        // ==========================================
+        // D. DATA: 20 BÀI MẪU + ĐỒNG BỘ FIRESTORE
+        // ==========================================
         let currentAuth = null;
         let usersDB = JSON.parse(localStorage.getItem('chinesez_users')) || [
             { username: 'admin298', pass: 'ADMjn298', role: 'admin', fullname: 'Quản Trị Viên' }
@@ -368,17 +555,32 @@
         let activeLesson = lessonsDB[0];
         let lastCreatedId = null;
 
-        // Trạng thái Phòng học: 2 danh mục & phân trang kiểu trang không cuộn
-        let currentRoomCategory = 'sample'; // 'sample' hoặc 'user'
-        let currentRoomPage = 1;
-        const LESSONS_PER_PAGE = 4; // 4 bài mỗi trang để fit 100dvh
+        // Tải dữ liệu Realtime từ Firebase Firestore nếu có
+        if (db) {
+            db.collection("lessons").onSnapshot((snapshot) => {
+                if (!snapshot.empty) {
+                    const cloudList = [];
+                    snapshot.forEach(doc => cloudList.push(doc.data()));
+                    // Hợp nhất dữ liệu cloud và local
+                    lessonsDB = cloudList;
+                    localStorage.setItem('chinesez_lessons', JSON.stringify(lessonsDB));
+                }
+            }, (err) => console.log("Firebase sync note:", err));
+        }
 
-        // G. ĐĂNG NHẬP / ĐĂNG XUẤT
+        let currentRoomCategory = 'sample';
+        let currentRoomPage = 1;
+        const LESSONS_PER_PAGE = 4;
+
+        // ==========================================
+        // E. QUẢN LÝ ĐĂNG NHẬP & POPUP API KEY LẦN ĐẦU
+        // ==========================================
         function togglePassVisibility() {
             const p = document.getElementById('login-password'), i = document.getElementById('pass-icon');
             if (p.type === 'password') { p.type = 'text'; i.className = 'fa-solid fa-eye-slash'; }
             else { p.type = 'password'; i.className = 'fa-solid fa-eye'; }
         }
+
         function handleLogin() {
             const u = document.getElementById('login-username').value.trim();
             const p = document.getElementById('login-password').value.trim();
@@ -388,9 +590,16 @@
                 document.getElementById('auth-screen').classList.add('hidden');
                 document.getElementById('main-app-screen').classList.remove('hidden');
                 document.getElementById('user-role-badge').innerText = `${f.fullname} (${f.role})`;
+                
+                // Kiểm tra nếu chưa từng lưu API Key thì mở Popup chào mừng
+                const existingKey = localStorage.getItem('user_gemini_api_key');
+                if (!existingKey) {
+                    openApiSetupModal(true);
+                }
                 setTab('home');
             } else { alert("Tên đăng nhập hoặc mật khẩu không chính xác."); }
         }
+
         function handleLogout() {
             currentAuth = null;
             document.getElementById('login-username').value = '';
@@ -399,7 +608,23 @@
             document.getElementById('auth-screen').classList.remove('hidden');
         }
 
-        // H. GIAO DIỆN CHÍNH & TABS
+        function openApiSetupModal(isFirstTime) {
+            const curKey = localStorage.getItem('user_gemini_api_key') || "";
+            document.getElementById('popup-gemini-key').value = curKey;
+            document.getElementById('api-setup-modal').classList.remove('hidden');
+        }
+        function closeApiSetupModal() { document.getElementById('api-setup-modal').classList.add('hidden'); }
+        function skipApiKeySetup() { closeApiSetupModal(); }
+        function saveApiKeyFromPopup() {
+            const k = document.getElementById('popup-gemini-key').value.trim();
+            localStorage.setItem('user_gemini_api_key', k);
+            closeApiSetupModal();
+            alert(k ? "✅ Đã lưu Gemini API Key cá nhân thành công!" : "Đã xóa Key. Ứng dụng sẽ dùng chế độ offline.");
+        }
+
+        // ==========================================
+        // F. GIAO DIỆN CHÍNH & TABS
+        // ==========================================
         function getGreeting() {
             const h = new Date().getHours();
             if (h >= 5 && h < 11) return { text: "Chúc bạn một buổi sáng tràn đầy năng lượng và một buổi học thật hiệu quả! Bạn hãy chọn các thẻ chức năng để bắt đầu nhé!", icon: "☀️" };
@@ -411,8 +636,8 @@
             ['home', 'create', 'room', 'chat'].forEach(t => {
                 const b = document.getElementById(`tbtn-${t}`);
                 if (b) {
-                    if (t === tab) b.className = "shrink-0 md:w-full text-left px-2.5 py-1.5 rounded-xl font-bold text-xs btn-main shadow-xs flex items-center space-x-1.5 cursor-pointer";
-                    else b.className = "shrink-0 md:w-full text-left px-2.5 py-1.5 rounded-xl font-bold text-xs opacity-75 hover:opacity-100 flex items-center space-x-1.5 cursor-pointer";
+                    if (t === tab) b.className = "shrink-0 md:w-full text-left px-3 py-2 rounded-xl font-bold text-xs btn-3d flex items-center space-x-2 cursor-pointer";
+                    else b.className = "shrink-0 md:w-full text-left px-3 py-2 rounded-xl font-bold text-xs opacity-75 hover:opacity-100 flex items-center space-x-2 cursor-pointer";
                 }
             });
 
@@ -428,12 +653,10 @@
                                 <span class="text-xl">${g.icon}</span>
                                 <span class="text-xs font-bold uppercase tracking-wider text-rose-500">Lời chúc dành cho bạn</span>
                             </div>
-                            <p class="text-sm sm:text-base font-semibold opacity-90 leading-relaxed italic">
-                                "${g.text}"
-                            </p>
+                            <p class="text-sm sm:text-base font-semibold opacity-90 leading-relaxed italic">"${g.text}"</p>
                         </div>
                         <div class="pt-1">
-                            <button onclick="setTab('room')" class="px-7 py-3 btn-main font-bold text-sm rounded-2xl shadow-md hover:scale-105 transition cursor-pointer">
+                            <button onclick="setTab('room')" class="px-7 py-3 btn-3d font-bold text-sm rounded-2xl cursor-pointer">
                                 <i class="fa-solid fa-graduation-cap mr-2"></i> Bắt đầu ôn tập ngay
                             </button>
                         </div>
@@ -443,9 +666,9 @@
                 vp.innerHTML = `
                     <div class="w-full max-w-md space-y-2.5 text-left my-auto">
                         <div>
-                            <h3 class="text-sm sm:text-base font-bold">Tạo bài học mới từ tài liệu</h3>
+                            <h3 class="text-sm sm:text-base font-bold">Tạo bài học mới & Đồng bộ Cloud</h3>
                             <p class="txt-desc text-[11px] opacity-75 mt-0.5 leading-tight">
-                                Hệ thống hỗ trợ tự ôn tập tiếng Trung thông minh với AI. Bạn có thể tải tài liệu (Ảnh, PDF, Word) qua link để AI trích xuất thẻ học, hoặc sử dụng Khung Chat AI Dịch Thuật.
+                                Nhập tài liệu để tạo bài học. Dữ liệu sẽ được lưu tự động lên Cloud Firebase để đồng bộ trên mọi thiết bị.
                             </p>
                         </div>
                         <div>
@@ -457,10 +680,10 @@
                             <input type="text" id="in-lesson-link" placeholder="Dán link Drive chia sẻ hoặc URL tệp..." class="w-full custom-input rounded-xl px-3 py-1.5 text-xs focus:outline-none">
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-0.5">
-                            <button onclick="saveLesson(false)" class="py-2 px-2.5 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl shadow-xs cursor-pointer flex items-center justify-center space-x-1">
+                            <button onclick="saveLesson(false)" class="py-2.5 px-2.5 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl shadow-xs cursor-pointer flex items-center justify-center space-x-1">
                                 <i class="fa-solid fa-cloud-arrow-up text-xs"></i> <span>Tạo từ Link tài liệu</span>
                             </button>
-                            <button onclick="saveLesson(true)" class="py-2 px-2.5 btn-main font-bold text-xs rounded-xl shadow-xs cursor-pointer flex items-center justify-center space-x-1">
+                            <button onclick="saveLesson(true)" class="py-2.5 px-2.5 btn-3d font-bold text-xs rounded-xl cursor-pointer flex items-center justify-center space-x-1">
                                 <i class="fa-solid fa-wand-magic-sparkles text-xs"></i> <span>Tôi nhập tên, AI tạo thẻ</span>
                             </button>
                         </div>
@@ -473,7 +696,9 @@
             }
         }
 
-        // I. PHÒNG HỌC 2 DANH MỤC & PHÂN TRANG (ZERO-SCROLL)
+        // ==========================================
+        // G. PHÒNG HỌC 2 DANH MỤC & PHÂN TRANG ZERO-SCROLL
+        // ==========================================
         function switchRoomCategory(cat) {
             currentRoomCategory = cat;
             currentRoomPage = 1;
@@ -502,53 +727,50 @@
                     <div class="p-6 text-center space-y-2 my-auto opacity-70">
                         <i class="fa-regular fa-folder-open text-2xl text-rose-500"></i>
                         <p class="text-xs font-semibold">Chưa có bài học nào trong danh mục này.</p>
-                        <button onclick="setTab('create')" class="px-3.5 py-1.5 btn-main text-xs font-bold rounded-xl cursor-pointer">+ Tạo bài học ngay</button>
+                        <button onclick="setTab('create')" class="px-4 py-2 btn-3d text-xs font-bold rounded-xl cursor-pointer">+ Tạo bài học ngay</button>
                     </div>
                 `;
             } else {
                 listHtml = pageItems.map(it => `
-                    <div class="p-2.5 theme-card rounded-xl flex justify-between items-center text-left">
+                    <div class="p-2.5 theme-card rounded-2xl flex justify-between items-center text-left border border-slate-500/10 hover:border-rose-500/30 transition shadow-xs">
                         <div class="truncate mr-2">
                             <p class="text-xs sm:text-sm font-bold truncate">${it.title}</p>
                             <p class="text-[9px] opacity-60">Ngày: ${it.date} | <a href="${it.link || '#'}" target="_blank" class="text-rose-500 underline">Tài liệu</a></p>
                         </div>
-                        <button onclick="openLessonStudy('${it.id}')" class="px-3.5 py-1.5 btn-main text-xs font-bold rounded-lg shadow-xs cursor-pointer shrink-0">Vào học</button>
+                        <button onclick="openLessonStudy('${it.id}')" class="px-3.5 py-1.5 btn-3d text-xs font-bold rounded-xl shrink-0 cursor-pointer">Vào học</button>
                     </div>
                 `).join('');
             }
 
             vp.innerHTML = `
                 <div class="w-full max-w-md space-y-2 text-left my-auto h-full flex flex-col justify-between py-1">
-                    <!-- 2 Nút chuyển đổi danh mục bài học -->
                     <div class="shrink-0 space-y-2">
                         <div class="flex justify-between items-center">
-                            <h3 class="text-sm sm:text-base font-bold">Phòng học</h3>
+                            <h3 class="text-sm sm:text-base font-bold">Phòng học thông minh</h3>
                             <button onclick="setTab('create')" class="text-xs text-rose-500 font-bold underline cursor-pointer">+ Thêm bài</button>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
-                            <button onclick="switchRoomCategory('sample')" class="py-2 px-2 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 cursor-pointer ${isSample ? 'btn-main shadow-xs' : 'theme-card border opacity-70 hover:opacity-100'}">
+                            <button onclick="switchRoomCategory('sample')" class="py-2 px-2 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 cursor-pointer ${isSample ? 'btn-3d' : 'theme-card border opacity-70 hover:opacity-100'}">
                                 <i class="fa-solid fa-book-bookmark text-xs"></i>
                                 <span>Bài học mẫu (${lessonsDB.filter(x => x.isSystem).length})</span>
                             </button>
-                            <button onclick="switchRoomCategory('user')" class="py-2 px-2 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 cursor-pointer ${!isSample ? 'btn-main shadow-xs' : 'theme-card border opacity-70 hover:opacity-100'}">
+                            <button onclick="switchRoomCategory('user')" class="py-2 px-2 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 cursor-pointer ${!isSample ? 'btn-3d' : 'theme-card border opacity-70 hover:opacity-100'}">
                                 <i class="fa-solid fa-user-pen text-xs"></i>
                                 <span>Bài học của bạn (${lessonsDB.filter(x => !x.isSystem).length})</span>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Khung hiển thị danh sách 4 bài fit màn hình -->
                     <div class="space-y-1.5 flex-1 min-h-0 flex flex-col justify-start">
                         ${listHtml}
                     </div>
 
-                    <!-- Thanh điều hướng Phân trang (Kiểu trang - Không cuộn) -->
                     <div class="shrink-0 flex justify-between items-center pt-1 border-t border-slate-500/10 text-xs font-bold">
-                        <button onclick="changeRoomPage(-1)" ${currentRoomPage <= 1 ? 'disabled class="px-3 py-1 rounded-lg theme-card opacity-40 cursor-not-allowed"' : 'class="px-3 py-1 rounded-lg theme-card border hover:border-rose-500 cursor-pointer"'}>
+                        <button onclick="changeRoomPage(-1)" ${currentRoomPage <= 1 ? 'disabled class="px-3 py-1 rounded-xl theme-card opacity-40 cursor-not-allowed"' : 'class="px-3 py-1 rounded-xl theme-card border hover:border-rose-500 cursor-pointer"'}>
                             <i class="fa-solid fa-chevron-left mr-1"></i> Trang trước
                         </button>
                         <span class="opacity-75">Trang <b class="text-rose-600">${currentRoomPage}</b> / ${totalPages}</span>
-                        <button onclick="changeRoomPage(1)" ${currentRoomPage >= totalPages ? 'disabled class="px-3 py-1 rounded-lg theme-card opacity-40 cursor-not-allowed"' : 'class="px-3 py-1 rounded-lg theme-card border hover:border-rose-500 cursor-pointer"'}>
+                        <button onclick="changeRoomPage(1)" ${currentRoomPage >= totalPages ? 'disabled class="px-3 py-1 rounded-xl theme-card opacity-40 cursor-not-allowed"' : 'class="px-3 py-1 rounded-xl theme-card border hover:border-rose-500 cursor-pointer"'}>
                             Trang sau <i class="fa-solid fa-chevron-right ml-1"></i>
                         </button>
                     </div>
@@ -556,7 +778,9 @@
             `;
         }
 
-        // J. TẠO BÀI & POPUP QUYẾT ĐỊNH
+        // ==========================================
+        // H. TẠO BÀI & POPUP QUYẾT ĐỊNH
+        // ==========================================
         function saveLesson(isAIGen) {
             const title = document.getElementById('in-lesson-title').value.trim();
             const link = document.getElementById('in-lesson-link').value.trim();
@@ -568,7 +792,7 @@
 
             const newLesson = {
                 id: newId,
-                isSystem: false, // Đánh dấu là bài học của bạn
+                isSystem: false,
                 title: title,
                 link: link || 'https://drive.google.com/ai-gen',
                 date: new Date().toISOString().split('T')[0],
@@ -592,7 +816,13 @@
             lessonsDB.unshift(newLesson);
             localStorage.setItem('chinesez_lessons', JSON.stringify(lessonsDB));
 
-            // Hiển thị Popup quyết định: Bạn muốn thế nào?
+            // Đẩy lên Firestore nếu đã kết nối database
+            if (db) {
+                db.collection("lessons").doc(String(newId)).set(newLesson).then(() => {
+                    console.log("Đã đồng bộ bài học mới lên Cloud Firestore.");
+                }).catch(e => console.error("Lỗi Firestore:", e));
+            }
+
             document.getElementById('decision-lesson-name').innerText = title;
             document.getElementById('create-decision-modal').classList.remove('hidden');
         }
@@ -616,63 +846,64 @@
             }
         }
 
-        // K. KHUNG CHAT AI BYOK (GEMINI KEY)
-        let translateDirection = "VI_ZH";
-        function openApiModal() { document.getElementById('api-modal').classList.remove('hidden'); }
-        function closeApiModal() { document.getElementById('api-modal').classList.add('hidden'); }
-        function saveGeminiKey() {
-            const k = document.getElementById('gemini-key-input').value.trim();
-            localStorage.setItem('user_gemini_api_key', k);
-            alert(k ? "✅ Đã lưu Gemini API Key cá nhân thành công!" : "Đã xóa Key. Ứng dụng dùng chế độ mô phỏng offline.");
-        }
+        // ==========================================
+        // I. KHUNG CHAT DỊCH: NÚT HOÁN ĐỔI TRUNG TÂM (3D PILL BADGE)
+        // ==========================================
+        let translateDirection = "VI_ZH"; // VI_ZH hoặc ZH_VI
+
         function toggleTranslateDirection() {
             translateDirection = (translateDirection === "VI_ZH") ? "ZH_VI" : "VI_ZH";
             renderChatInterface(document.getElementById('main-viewport'));
         }
 
         function renderChatInterface(vp) {
-            const savedKey = localStorage.getItem('user_gemini_api_key') || "";
             const isViZh = (translateDirection === "VI_ZH");
-            const srcLabel = isViZh ? "Tiếng Việt" : "Tiếng Trung (Hán tự)";
-            const destLabel = isViZh ? "Tiếng Trung & Pinyin" : "Tiếng Việt & Pinyin";
+            
+            // Badge gradient cao cấp thay cho màu đỏ/xanh đơn điệu
+            const srcBadge = isViZh 
+                ? `<span style="background: var(--badge-src)" class="text-white text-[10px] font-black px-2.5 py-1 rounded-full shadow-xs flex items-center space-x-1"><span>🇻🇳</span> <span>TIẾNG VIỆT</span></span>`
+                : `<span style="background: var(--badge-dest)" class="text-white text-[10px] font-black px-2.5 py-1 rounded-full shadow-xs flex items-center space-x-1"><span>🇨🇳</span> <span>TIẾNG TRUNG</span></span>`;
+            
+            const destBadge = isViZh 
+                ? `<span style="background: var(--badge-dest)" class="text-white text-[10px] font-black px-2.5 py-1 rounded-full shadow-xs flex items-center space-x-1"><span>🇨🇳</span> <span>TIẾNG TRUNG & PINYIN</span></span>`
+                : `<span style="background: var(--badge-src)" class="text-white text-[10px] font-black px-2.5 py-1 rounded-full shadow-xs flex items-center space-x-1"><span>🇻🇳</span> <span>TIẾNG VIỆT</span></span>`;
 
             vp.innerHTML = `
-                <div class="w-full max-w-3xl h-full flex flex-col justify-between py-1 text-left space-y-2">
-                    <div class="flex items-center justify-between gap-2 shrink-0">
-                        <div class="flex-1 relative">
-                            <input type="password" id="gemini-key-input" value="${savedKey}" placeholder="Bạn chưa rõ tại sao cần API Key thì nhấn ? để được giải đáp" class="w-full custom-input rounded-xl pl-3 pr-14 py-1.5 text-xs focus:outline-none">
-                            <button onclick="saveGeminiKey()" class="absolute right-1 top-1 px-2.5 py-0.5 btn-main text-[10px] font-bold rounded-lg cursor-pointer">Lưu Key</button>
-                        </div>
-                        <button onclick="openApiModal()" class="w-7 h-7 rounded-full bg-red-100 text-red-600 font-black text-sm flex items-center justify-center hover:scale-110 shadow-xs cursor-pointer shrink-0" title="Nhấn xem giải đáp API Key">?</button>
-                        <button onclick="toggleTranslateDirection()" class="px-3 py-1.5 theme-card border rounded-xl text-xs font-bold flex items-center space-x-1.5 cursor-pointer shrink-0 hover:border-rose-500">
-                            <i class="fa-solid fa-right-left text-rose-500 text-[10px]"></i>
-                            <span>${isViZh ? '🇻🇳 Việt ➔ 🇨🇳 Trung' : '🇨🇳 Trung ➔ 🇻🇳 Việt'}</span>
-                        </button>
-                    </div>
-
-                    <div class="flex-1 flex flex-col md:flex-row gap-2 min-h-0">
-                        <div class="flex-1 theme-card rounded-2xl p-3 flex flex-col justify-between shadow-xs">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="text-xs font-bold text-rose-500 uppercase tracking-wider">${srcLabel}</span>
+                <div class="w-full max-w-4xl h-full flex flex-col justify-between py-1 text-left relative">
+                    <!-- KHUNG 2 Ô DỊCH TO ĐỀU NHAU (50% - 50%) -->
+                    <div class="flex-1 flex flex-col md:flex-row gap-3 min-h-0 relative items-center">
+                        
+                        <!-- Ô 1: Nhập liệu -->
+                        <div class="w-full md:w-1/2 h-1/2 md:h-full theme-card rounded-2xl p-3.5 flex flex-col justify-between shadow-xs">
+                            <div class="flex justify-between items-center mb-1.5">
+                                ${srcBadge}
                                 <span id="src-audio-box"></span>
                             </div>
-                            <textarea id="translate-input-box" placeholder="${isViZh ? 'Nhập câu tiếng Việt cần dịch...' : 'Nhập chữ Hán cần dịch...'}" class="flex-1 w-full bg-transparent resize-none text-sm sm:text-base font-semibold focus:outline-none"></textarea>
+                            <textarea id="translate-input-box" placeholder="${isViZh ? 'Nhập câu tiếng Việt cần dịch...' : 'Nhập chữ Hán cần dịch...'}" class="flex-1 w-full bg-transparent resize-none text-base sm:text-lg font-semibold focus:outline-none"></textarea>
                             <div class="flex justify-end pt-1 border-t border-slate-500/10">
-                                <button onclick="executeTranslateAction()" class="px-5 py-1.5 btn-main text-xs font-bold rounded-xl shadow-xs cursor-pointer">
-                                    <i class="fa-solid fa-language mr-1"></i> Dịch ngay
+                                <button onclick="executeTranslateAction()" class="px-5 py-2 btn-3d text-xs font-bold rounded-xl cursor-pointer">
+                                    <i class="fa-solid fa-language mr-1.5"></i> Dịch ngay
                                 </button>
                             </div>
                         </div>
 
-                        <div class="flex-1 theme-card rounded-2xl p-3 flex flex-col justify-between shadow-xs bg-rose-500/5">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">${destLabel}</span>
+                        <!-- NÚT HOÁN ĐỔI TRUNG TÂM (FLOATING 3D SWAP BUTTON) -->
+                        <div class="absolute z-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                            <button onclick="toggleTranslateDirection()" class="swap-floating-btn w-10 h-10 rounded-full flex items-center justify-center cursor-pointer shadow-xl border-2 border-white/50" title="Hoán đổi chiều dịch">
+                                <i class="fa-solid fa-arrow-right-arrow-left text-sm"></i>
+                            </button>
+                        </div>
+
+                        <!-- Ô 2: Kết quả dịch to rõ + Pinyin + Loa -->
+                        <div class="w-full md:w-1/2 h-1/2 md:h-full theme-card rounded-2xl p-3.5 flex flex-col justify-between shadow-xs bg-slate-500/5">
+                            <div class="flex justify-between items-center mb-1.5">
+                                ${destBadge}
                                 <div id="dest-audio-btn"></div>
                             </div>
                             <div id="translate-result-box" class="flex-1 overflow-y-auto space-y-1 text-left flex flex-col justify-center">
                                 <p class="text-xs opacity-50 italic">Bản dịch sẽ hiển thị tại đây...</p>
                             </div>
-                            <div class="text-[10px] opacity-50 text-right pt-1 border-t border-slate-500/10">Có phát âm chuẩn Web Speech API</div>
+                            <div class="text-[10px] opacity-60 text-right pt-1 border-t border-slate-500/10 font-medium">Phát âm AI chuẩn xác</div>
                         </div>
                     </div>
                 </div>
@@ -689,10 +920,10 @@
 
             const isViZh = (translateDirection === "VI_ZH");
             if (!isViZh) {
-                srcAudioBox.innerHTML = `<button onclick="speakZh('${text}')" class="text-rose-500 text-xs hover:scale-110 cursor-pointer" title="Phát âm Hán tự"><i class="fa-solid fa-volume-high"></i></button>`;
+                srcAudioBox.innerHTML = `<button onclick="speakZh('${text}')" class="text-rose-500 hover:scale-110 cursor-pointer" title="Phát âm Hán tự"><i class="fa-solid fa-volume-high text-xs"></i></button>`;
             }
 
-            resBox.innerHTML = `<p class="text-xs opacity-70 animate-pulse">🤖 Đang phân tích dịch thuật...</p>`;
+            resBox.innerHTML = `<p class="text-xs opacity-70 animate-pulse font-bold">🤖 Đang phân tích dịch thuật với AI...</p>`;
             const userKey = localStorage.getItem('user_gemini_api_key');
 
             if (userKey) {
@@ -713,17 +944,18 @@
                     renderTranslateResult(clean.zh, clean.pinyin, clean.vi);
                     return;
                 } catch(e) {
-                    console.log("Dùng fallback offline do lỗi mạng hoặc key.");
+                    console.log("Fallback offline do mạng hoặc key:", e);
                 }
             }
 
+            // Fallback Offline Thông minh
             setTimeout(() => {
                 if (isViZh) {
                     let zh = "我想去银行换钱。", pinyin = "Wǒ xiǎng qù yínháng huàn qián.";
                     if (text.toLowerCase().includes("chào")) { zh = "你好！很高兴认识你。"; pinyin = "Nǐ hǎo! Hěn gāoxìng rènshí nǐ."; }
                     renderTranslateResult(zh, pinyin, text);
                 } else {
-                    renderTranslateResult(text, "Nǐ hǎo! Hěn gāoxìng rènshí nǐ.", "Xin chào! Rất vui được quen biết bạn.");
+                    renderTranslateResult(text, "Nǐ hǎo! Hěn gāoxìng rènshí nǐ.", "Xin chào! Rất vui được làm quen với bạn.");
                 }
             }, 300);
         }
@@ -733,15 +965,17 @@
             const audioBtnBox = document.getElementById('dest-audio-btn');
             audioBtnBox.innerHTML = `<button onclick="speakZh('${zh}')" class="text-rose-500 hover:scale-110 cursor-pointer" title="Nghe phát âm tiếng Trung"><i class="fa-solid fa-volume-high text-sm"></i></button>`;
             resBox.innerHTML = `
-                <div class="space-y-1">
-                    <p class="text-xl sm:text-2xl font-black text-rose-600">${zh}</p>
+                <div class="space-y-1.5">
+                    <p class="text-2xl sm:text-3xl font-black text-rose-600">${zh}</p>
                     <p class="text-sm sm:text-base font-bold text-rose-500 opacity-90">🔊 ${pinyin}</p>
                     <p class="text-xs sm:text-sm font-semibold opacity-85">🇻🇳 ${vi}</p>
                 </div>
             `;
         }
 
-        // L. PHÒNG HỌC 5 DẠNG THẺ (TỪ VỰNG, ĐIỀN TỪ, NGỮ PHÁP, HỘI THOẠI, NHỚ TỪ)
+        // ==========================================
+        // J. PHÒNG HỌC 5 DẠNG THẺ (TỪ VỰNG, ĐIỀN TỪ, NGỮ PHÁP, HỘI THOẠI, NHỚ TỪ)
+        // ==========================================
         let curCardMode = 'vocab';
         let curIdx = 0;
         let selectedChoice = null;
@@ -761,15 +995,15 @@
             const vp = document.getElementById('main-viewport');
             vp.innerHTML = `
                 <div class="w-full max-w-lg h-full flex flex-col justify-between py-1">
-                    <div class="flex justify-between items-center theme-card p-1 rounded-xl shrink-0 overflow-x-auto">
+                    <div class="flex justify-between items-center theme-card p-1 rounded-2xl shrink-0 overflow-x-auto shadow-xs">
                         <div class="flex space-x-1 text-[11px] font-bold">
-                            <button onclick="switchModeBtn('vocab')" class="px-2 py-1 rounded-lg cursor-pointer ${curCardMode === 'vocab' ? 'btn-main' : 'opacity-70'}">1. Từ vựng</button>
-                            <button onclick="switchModeBtn('cloze')" class="px-2 py-1 rounded-lg cursor-pointer ${curCardMode === 'cloze' ? 'btn-main' : 'opacity-70'}">2. Điền từ</button>
-                            <button onclick="switchModeBtn('grammar')" class="px-2 py-1 rounded-lg cursor-pointer ${curCardMode === 'grammar' ? 'btn-main' : 'opacity-70'}">3. Ngữ pháp</button>
-                            <button onclick="switchModeBtn('dialogue')" class="px-2 py-1 rounded-lg cursor-pointer ${curCardMode === 'dialogue' ? 'btn-main' : 'opacity-70'}">4. Hội thoại</button>
-                            <button onclick="switchModeBtn('memory')" class="px-2 py-1 rounded-lg cursor-pointer ${curCardMode === 'memory' ? 'btn-main' : 'opacity-70'}">5. Nhớ từ</button>
+                            <button onclick="switchModeBtn('vocab')" class="px-2.5 py-1.5 rounded-xl cursor-pointer ${curCardMode === 'vocab' ? 'btn-3d' : 'opacity-70'}">1. Từ vựng</button>
+                            <button onclick="switchModeBtn('cloze')" class="px-2.5 py-1.5 rounded-xl cursor-pointer ${curCardMode === 'cloze' ? 'btn-3d' : 'opacity-70'}">2. Điền từ</button>
+                            <button onclick="switchModeBtn('grammar')" class="px-2.5 py-1.5 rounded-xl cursor-pointer ${curCardMode === 'grammar' ? 'btn-3d' : 'opacity-70'}">3. Ngữ pháp</button>
+                            <button onclick="switchModeBtn('dialogue')" class="px-2.5 py-1.5 rounded-xl cursor-pointer ${curCardMode === 'dialogue' ? 'btn-3d' : 'opacity-70'}">4. Hội thoại</button>
+                            <button onclick="switchModeBtn('memory')" class="px-2.5 py-1.5 rounded-xl cursor-pointer ${curCardMode === 'memory' ? 'btn-3d' : 'opacity-70'}">5. Nhớ từ</button>
                         </div>
-                        <button onclick="setTab('room')" class="text-[11px] opacity-70 hover:opacity-100 font-bold px-1.5 cursor-pointer">Thoát</button>
+                        <button onclick="setTab('room')" class="text-[11px] opacity-70 hover:opacity-100 font-bold px-2 cursor-pointer">Thoát</button>
                     </div>
 
                     <div id="study-stage-box" class="flex-1 flex flex-col justify-center min-h-0 py-1"></div>
@@ -793,7 +1027,7 @@
                     <div class="flex-1 flex flex-col justify-between min-h-0 space-y-1.5">
                         <div class="flip-card-container card-stage w-full flex-1 min-h-[170px] max-h-[260px] cursor-pointer" onclick="flipCardBox(this)">
                             <div class="flip-card-inner">
-                                <div class="card-front theme-card p-4 sm:p-5 flex flex-col justify-between shadow-xs">
+                                <div class="card-front theme-card p-4 sm:p-5 flex flex-col justify-between shadow-xs border border-slate-500/10">
                                     <div class="flex justify-between items-center">
                                         <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-600">Từ #${curIdx + 1}/${vocabs.length}</span>
                                         <button onclick="event.stopPropagation(); speakZh('${item.hanzi}')" class="w-8 h-8 rounded-full bg-rose-500/10 text-rose-600 flex items-center justify-center hover:scale-110 cursor-pointer">
@@ -807,7 +1041,7 @@
                                     <div class="text-xs opacity-60"><i class="fa-solid fa-rotate mr-1"></i> Chạm lật xem nghĩa</div>
                                 </div>
 
-                                <div class="card-back theme-card p-4 sm:p-5 flex flex-col justify-between shadow-xs">
+                                <div class="card-back theme-card p-4 sm:p-5 flex flex-col justify-between shadow-xs border border-slate-500/10">
                                     <div class="flex justify-between items-center">
                                         <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600">Nghĩa tiếng Việt</span>
                                         <button onclick="event.stopPropagation(); speakZh('${item.hanzi}')" class="w-8 h-8 rounded-full bg-rose-500/10 text-rose-600 flex items-center justify-center hover:scale-110 cursor-pointer">
@@ -829,19 +1063,21 @@
                         <div class="flex justify-between items-center shrink-0 pt-0.5">
                             <button onclick="prevVocab()" class="px-4 py-1.5 theme-card rounded-xl text-xs font-bold cursor-pointer">Trước</button>
                             <span class="text-xs font-bold opacity-60">Thẻ <span class="text-rose-600 font-bold">${curIdx + 1}</span> / ${vocabs.length}</span>
-                            <button onclick="nextVocab()" class="px-4 py-1.5 btn-main text-xs font-bold rounded-xl shadow-xs cursor-pointer">Tiếp</button>
+                            <button onclick="nextVocab()" class="px-4 py-1.5 btn-3d text-xs font-bold rounded-xl cursor-pointer">Tiếp</button>
                         </div>
                     </div>
                 `;
             } else if (curCardMode === 'cloze') {
+                // THẺ ĐIỀN TỪ: CHỮ TO NGANG CÂU HỎI, BỎ DẤU X, HOÁN ĐỔI TỪ THÔNG MINH
                 const item = (activeLesson.cloze && activeLesson.cloze[0]) || { sentenceBefore: "请问你叫什么 ", sentenceAfter: " ？", correctAnswer: "名字", choices: ["你好", "名字", "谢谢", "再见"], pinyin: "Qǐngwèn nǐ jiào shénme míngzi?", meaning: "Xin hỏi bạn tên là gì?" };
+                
                 let choicesHtml = item.choices.map(w => {
                     if (w === selectedChoice) return '';
-                    return `<button onclick="pickClozeChoice('${w}')" class="px-3 py-1.5 theme-card border hover:border-rose-500 font-bold text-sm sm:text-base rounded-xl shadow-xs transition cursor-pointer">${w}</button>`;
+                    return `<button onclick="pickClozeWord('${w}')" class="px-4 py-2 theme-card border hover:border-rose-500 font-black text-xl sm:text-2xl rounded-2xl shadow-xs transition cursor-pointer">${w}</button>`;
                 }).join('');
 
                 let slot = selectedChoice 
-                    ? `<span onclick="unpickClozeChoice()" class="text-rose-600 font-black border-b-2 border-rose-500 px-2 cursor-pointer bg-rose-500/10 rounded">${selectedChoice} ✕</span>`
+                    ? `<span onclick="unpickClozeWord()" class="text-rose-600 font-black border-b-2 border-rose-500 px-3 cursor-pointer bg-rose-500/10 rounded-xl transition hover:scale-105">${selectedChoice}</span>`
                     : `<span class="inline-block w-16 border-b-2 border-dashed opacity-50 mx-1 text-center font-normal">( ? )</span>`;
 
                 let resHtml = '';
@@ -865,16 +1101,17 @@
                         <div class="space-y-3">
                             <div class="flex justify-between items-center">
                                 <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-600">Câu điền từ</span>
-                                <span class="text-xs opacity-70">Chọn từ phù hợp</span>
+                                <span class="text-xs opacity-70">Chọn từ phù hợp thế vào ô</span>
                             </div>
                             <div class="py-4 px-2 theme-card rounded-2xl text-center">
-                                <p class="text-xl sm:text-2xl font-black">${item.sentenceBefore} ${slot} ${item.sentenceAfter}</p>
+                                <p class="text-2xl sm:text-3xl font-black">${item.sentenceBefore} ${slot} ${item.sentenceAfter}</p>
                             </div>
-                            <div class="flex flex-wrap justify-center gap-2">${choicesHtml || '<span class="text-xs opacity-60 italic">Đã chọn từ. Bấm vào ô trống để đổi.</span>'}</div>
+                            <!-- CÁC TỪ CHỌN CỠ LỚN TO NGANG CÂU HỎI -->
+                            <div class="flex flex-wrap justify-center gap-2.5">${choicesHtml || '<span class="text-xs opacity-60 italic">Đã chọn từ. Bấm vào từ trong câu để đổi từ khác.</span>'}</div>
                             ${resHtml}
                         </div>
                         <div class="flex justify-center pt-1 border-t border-slate-500/20 shrink-0">
-                            <button onclick="checkClozeAnswerNow()" class="px-6 py-2 btn-main text-xs font-bold rounded-xl shadow-xs cursor-pointer">Kiểm tra đáp án</button>
+                            <button onclick="checkClozeAnswerNow()" class="px-7 py-2.5 btn-3d text-xs font-bold rounded-xl cursor-pointer">Kiểm tra đáp án</button>
                         </div>
                     </div>
                 `;
@@ -889,7 +1126,7 @@
                             <p><b>Công thức:</b> ${item.formula}</p>
                             <p><b>Ví dụ:</b> ${item.pinyin} (${item.meaning})</p>
                         </div>
-                        <button onclick="speakZh('${item.pinyin}')" class="px-5 py-2 btn-main text-xs font-bold rounded-xl shadow-xs cursor-pointer">
+                        <button onclick="speakZh('${item.pinyin}')" class="px-5 py-2 btn-3d text-xs font-bold rounded-xl cursor-pointer">
                             <i class="fa-solid fa-volume-high mr-1.5"></i> Nghe câu mẫu
                         </button>
                     </div>
@@ -901,13 +1138,29 @@
             }
         }
 
+        // Logic hoán đổi từ mượt mà của thẻ điền từ
+        function pickClozeWord(w) {
+            selectedChoice = w; // Thế từ mới vào
+            isAnswerChecked = false;
+            renderSelectedCard();
+        }
+        function unpickClozeWord() {
+            selectedChoice = null; // Bỏ chọn trả lại bên dưới
+            isAnswerChecked = false;
+            renderSelectedCard();
+        }
+        function checkClozeAnswerNow() {
+            if (!selectedChoice) { alert("Vui lòng chọn 1 từ!"); return; }
+            isAnswerChecked = true; renderSelectedCard();
+        }
+
         function togglePinyin() { showPinyinDialogue = !showPinyinDialogue; renderSelectedCard(); }
         function toggleVi() { showViDialogue = !showViDialogue; renderSelectedCard(); }
 
         function renderDialogueView(stage) {
             const lines = activeLesson.dialogues || initialLessonsData[0].dialogues;
             let dialogueListHtml = lines.map(line => `
-                <div class="p-2.5 rounded-xl theme-card border flex justify-between items-start space-x-2">
+                <div class="p-2.5 rounded-2xl theme-card border flex justify-between items-start space-x-2">
                     <div class="space-y-0.5 text-left">
                         <div class="flex items-center space-x-2">
                             <span class="w-5 h-5 rounded-full ${line.speaker === 'A' ? 'bg-rose-500 text-white' : 'bg-blue-600 text-white'} text-[10px] font-bold flex items-center justify-center">${line.speaker}</span>
@@ -927,10 +1180,10 @@
                     <div class="flex justify-between items-center shrink-0">
                         <span class="text-xs font-bold text-rose-500 uppercase">Hội thoại (${activeLesson.title.split(':')[0]})</span>
                         <div class="flex space-x-1.5">
-                            <button onclick="togglePinyin()" class="px-2 py-0.5 rounded-lg border text-[10px] font-bold cursor-pointer ${showPinyinDialogue ? 'bg-rose-500/10 text-rose-600 border-rose-500/30' : 'opacity-60'}">
+                            <button onclick="togglePinyin()" class="px-2.5 py-1 rounded-xl border text-[10px] font-bold cursor-pointer ${showPinyinDialogue ? 'bg-rose-500/10 text-rose-600 border-rose-500/30' : 'opacity-60'}">
                                 ${showPinyinDialogue ? 'Ẩn Pinyin' : 'Hiện Pinyin'}
                             </button>
-                            <button onclick="toggleVi()" class="px-2 py-0.5 rounded-lg border text-[10px] font-bold cursor-pointer ${showViDialogue ? 'bg-rose-500/10 text-rose-600 border-rose-500/30' : 'opacity-60'}">
+                            <button onclick="toggleVi()" class="px-2.5 py-1 rounded-xl border text-[10px] font-bold cursor-pointer ${showViDialogue ? 'bg-rose-500/10 text-rose-600 border-rose-500/30' : 'opacity-60'}">
                                 ${showViDialogue ? 'Ẩn Nghĩa' : 'Hiện Nghĩa'}
                             </button>
                         </div>
@@ -940,6 +1193,9 @@
             `;
         }
 
+        // ==========================================
+        // K. THẺ KIỂM TRA NHỚ TỪ (CỠ TO, BÁO ĐÚNG/SAI)
+        // ==========================================
         let memoryQuizData = [];
         let memoryQuizScore = 0;
         let qHanzi = "", qPinyin = "", qMeaning = "";
@@ -957,7 +1213,7 @@
                         <div class="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center mx-auto text-xl">🎉</div>
                         <h3 class="text-lg font-black text-emerald-600">XUẤT SẮC! BẠN ĐÃ THUỘC TOÀN BỘ TỪ VỰNG BÀI NÀY!</h3>
                         <p class="text-xs opacity-75">Bạn đã ghép đúng tất cả các bộ ba Từ Hán - Pinyin - Nghĩa.</p>
-                        <button onclick="initMemoryStore(); renderSelectedCard()" class="px-5 py-2 btn-main text-xs font-bold rounded-xl shadow-xs cursor-pointer">Luyện lại</button>
+                        <button onclick="initMemoryStore(); renderSelectedCard()" class="px-5 py-2 btn-3d text-xs font-bold rounded-xl cursor-pointer">Luyện lại</button>
                     </div>
                 `;
                 return;
@@ -978,9 +1234,8 @@
                             <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-600">Kiểm tra nhớ từ mới</span>
                             <span class="text-xs font-bold text-emerald-600">Đã nhớ: ${memoryQuizScore}/${activeLesson.vocabs ? activeLesson.vocabs.length : 5}</span>
                         </div>
-                        <p class="text-xs font-bold opacity-80 text-left">
-                            👉 Bạn chọn từ tiếng Trung, pinyin và nghĩa tiếng Việt phù hợp:
-                        </p>
+                        <p class="text-xs font-bold opacity-80 text-left">👉 Chọn từ tiếng Trung, pinyin và nghĩa tiếng Việt phù hợp:</p>
+                        
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
                             <div>
                                 <label class="block text-[10px] font-bold opacity-75 uppercase text-left mb-0.5">Từ tiếng Trung</label>
@@ -1007,7 +1262,7 @@
                         <div id="memory-msg-box" class="text-xs font-bold min-h-[16px]"></div>
                     </div>
                     <div class="flex justify-center pt-1 shrink-0">
-                        <button onclick="checkMemoryAnswerNow()" class="w-full sm:w-auto px-8 py-2 btn-main text-xs font-bold rounded-xl shadow-xs cursor-pointer">
+                        <button onclick="checkMemoryAnswerNow()" class="w-full sm:w-auto px-8 py-2.5 btn-3d text-xs font-bold rounded-xl cursor-pointer">
                             <i class="fa-solid fa-circle-check mr-1.5"></i> Kiểm tra đáp án
                         </button>
                     </div>
@@ -1028,7 +1283,7 @@
                 memoryQuizScore++;
                 memoryQuizData = memoryQuizData.filter(it => it.hanzi !== h);
                 qHanzi = ""; qPinyin = ""; qMeaning = "";
-                box.innerHTML = `<span class="text-emerald-600 text-sm animate-pulse">🎉 Chính xác! Bạn chọn từ tiếp theo nhé!</span>`;
+                box.innerHTML = `<span class="text-emerald-600 text-sm animate-pulse font-bold">🎉 Chính xác! Bạn chọn từ tiếp theo nhé!</span>`;
                 setTimeout(() => renderSelectedCard(), 1100);
             } else {
                 playSfx(false);
@@ -1042,14 +1297,9 @@
         function nextVocab() { const v = activeLesson.vocabs || []; curIdx = (curIdx + 1) % v.length; renderSelectedCard(); }
         function prevVocab() { const v = activeLesson.vocabs || []; curIdx = (curIdx - 1 + v.length) % v.length; renderSelectedCard(); }
 
-        function pickClozeChoice(w) { selectedChoice = w; isAnswerChecked = false; renderSelectedCard(); }
-        function unpickClozeChoice() { selectedChoice = null; isAnswerChecked = false; renderSelectedCard(); }
-        function checkClozeAnswerNow() {
-            if (!selectedChoice) { alert("Vui lòng chọn 1 từ!"); return; }
-            isAnswerChecked = true; renderSelectedCard();
-        }
-
-        // M. ADMIN TẠO TÀI KHOẢN
+        // ==========================================
+        // L. ADMIN TẠO TÀI KHOẢN THÀNH VIÊN
+        // ==========================================
         function openAdminModal() { document.getElementById('admin-modal').classList.remove('hidden'); }
         function closeAdminModal() { document.getElementById('admin-modal').classList.add('hidden'); }
         let lastUserStr = '';
