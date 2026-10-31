@@ -2,11 +2,30 @@
 <html lang="vi" data-theme="lavender">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- CHỐNG LƯU CACHE (ANTI-CACHE HEADERS) -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <title>ChineseZ298 - Ôn Tập Tiếng Trung AI</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
+        /* CSS Biến màu hỗ trợ 5 Theme dịu mắt theo nghiên cứu thị giác */
+        :root[data-theme="lavender"] {
+            --bg-body: #f7f5fb;
+            --bg-card: rgba(255, 255, 255, 0.96);
+            --border-card: #e5def2;
+            --text-main: #2d2047;
+            --text-sub: #665487;
+            --input-bg: #ffffff;
+            --btn-main: #7c3aed;
+            --btn-hover: #6d28d9;
+            --btn-text: #ffffff;
+        }
         :root[data-theme="nordic"] {
             --bg-body: #f0f6fa;
             --bg-card: rgba(255, 255, 255, 0.96);
@@ -14,10 +33,9 @@
             --text-main: #183344;
             --text-sub: #4b7188;
             --input-bg: #ffffff;
-            --theme-btn-bg: #0284c7;
-            --theme-btn-hover: #0369a1;
-            --theme-btn-text: #ffffff;
-            --accent: #0284c7;
+            --btn-main: #0284c7;
+            --btn-hover: #0369a1;
+            --btn-text: #ffffff;
         }
         :root[data-theme="sage"] {
             --bg-body: #f2f7f4;
@@ -26,22 +44,9 @@
             --text-main: #1e3a2b;
             --text-sub: #4f735d;
             --input-bg: #ffffff;
-            --theme-btn-bg: #059669;
-            --theme-btn-hover: #047857;
-            --theme-btn-text: #ffffff;
-            --accent: #059669;
-        }
-        :root[data-theme="lavender"] {
-            --bg-body: #f7f5fb;
-            --bg-card: rgba(255, 255, 255, 0.96);
-            --border-card: #e5def2;
-            --text-main: #2d2047;
-            --text-sub: #665487;
-            --input-bg: #ffffff;
-            --theme-btn-bg: #7c3aed;
-            --theme-btn-hover: #6d28d9;
-            --theme-btn-text: #ffffff;
-            --accent: #7c3aed;
+            --btn-main: #059669;
+            --btn-hover: #047857;
+            --btn-text: #ffffff;
         }
         :root[data-theme="warm"] {
             --bg-body: #faf7f0;
@@ -50,10 +55,9 @@
             --text-main: #3d3324;
             --text-sub: #786950;
             --input-bg: #ffffff;
-            --theme-btn-bg: #d97706;
-            --theme-btn-hover: #b45309;
-            --theme-btn-text: #ffffff;
-            --accent: #d97706;
+            --btn-main: #d97706;
+            --btn-hover: #b45309;
+            --btn-text: #ffffff;
         }
         :root[data-theme="midnight"] {
             --bg-body: #0d1520;
@@ -62,22 +66,30 @@
             --text-main: #f0f4f8;
             --text-sub: #94a3b8;
             --input-bg: #141f2e;
-            --theme-btn-bg: #f43f5e;
-            --theme-btn-hover: #e11d48;
-            --theme-btn-text: #ffffff;
-            --accent: #f43f5e;
+            --btn-main: #f43f5e;
+            --btn-hover: #e11d48;
+            --btn-text: #ffffff;
         }
 
-        body {
+        /* KHÓA CHIỀU CAO VỪA KHÍT 100% VIEWPORT - ZERO-SCROLL */
+        html, body {
+            height: 100dvh;
+            height: calc(var(--vh, 1vh) * 100);
+            max-height: 100dvh;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
             background-color: var(--bg-body);
             color: var(--text-main);
+            user-select: none;
+            -webkit-user-select: none;
             transition: background-color 0.25s ease, color 0.25s ease;
         }
 
         .theme-card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-card);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(10px);
         }
 
         .custom-input {
@@ -86,40 +98,31 @@
             color: var(--text-main);
         }
 
-        .btn-theme-main {
-            background-color: var(--theme-btn-bg);
-            color: var(--theme-btn-text);
+        .btn-main {
+            background-color: var(--btn-main);
+            color: var(--btn-text);
         }
-        .btn-theme-main:hover {
-            background-color: var(--theme-btn-hover);
+        .btn-main:hover {
+            background-color: var(--btn-hover);
         }
 
-        /* Tên Ứng dụng 3D sắc nét */
         .title-3d-ruby {
             font-weight: 900;
             color: #e11d48;
-            text-shadow: 
-                0 1px 0 #be123c,
-                0 2px 0 #9f1239,
-                0 3px 0 #881337,
-                0 4px 6px rgba(0,0,0,0.15);
+            text-shadow: 0 1px 0 #be123c, 0 2px 0 #9f1239, 0 3px 0 #881337, 0 4px 6px rgba(0,0,0,0.15);
             letter-spacing: 0.05em;
         }
 
-        /* Xử lý 3D Flip Card chuẩn tuyệt đối, chống lỗi mirror */
-        .flip-card-container {
-            perspective: 1200px;
-        }
+        /* 3D FLIP CARD CHUẨN XUÔI CHIỀU (KHÔNG BỊ MIRROR) */
+        .flip-card-container { perspective: 1200px; }
         .flip-card-inner {
             position: relative;
             width: 100%;
             height: 100%;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             transform-style: preserve-3d;
         }
-        .flip-card-inner.flipped {
-            transform: rotateY(180deg);
-        }
+        .flip-card-inner.flipped { transform: rotateY(180deg); }
         .card-front, .card-back {
             position: absolute;
             inset: 0;
@@ -127,60 +130,53 @@
             height: 100%;
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
-            border-radius: 1.5rem;
+            border-radius: 1.25rem;
         }
-        .card-back {
-            transform: rotateY(180deg);
-        }
+        .card-back { transform: rotateY(180deg); }
 
-        /* Tối ưu màn hình ngang điện thoại: tự động co giãn, không cuộn */
-        @media (max-height: 520px) and (orientation: landscape) {
-            .landscape-compact-header { padding-top: 0.25rem !important; padding-bottom: 0.25rem !important; }
-            .landscape-compact-title { font-size: 1.1rem !important; }
-            .landscape-card-box { height: 210px !important; }
-            .landscape-hide { display: none !important; }
-            .landscape-text-sm { font-size: 0.75rem !important; }
-            .landscape-h1 { font-size: 2.2rem !important; }
+        /* TỰ ĐỘNG THU PHÓNG SIÊU GỌN KHI XOAY NGANG DI ĐỘNG HOẶC MÀN HÌNH THẤP */
+        @media (max-height: 520px) {
+            .app-header { height: 38px !important; padding-top: 2px !important; padding-bottom: 2px !important; }
+            .app-title { font-size: 1rem !important; }
+            .side-bar { height: 38px !important; padding: 2px !important; }
+            .card-stage { height: 180px !important; }
+            .txt-hanzi { font-size: 2.2rem !important; }
+            .txt-desc { display: none !important; }
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col font-sans select-none overflow-x-hidden">
+<body class="flex flex-col">
 
-    <!-- MÀN HÌNH ĐĂNG NHẬP -->
-    <div id="auth-screen" class="min-h-screen w-full flex flex-col justify-center items-center px-4 py-6 overflow-y-auto">
-        <div class="w-full max-w-sm flex flex-col items-center space-y-4 my-auto">
-            
-            <div class="w-14 h-14 bg-gradient-to-tr from-rose-600 via-red-600 to-rose-700 rounded-2xl flex items-center justify-center font-black text-2xl text-white shadow-lg border border-rose-400/40">
+    <!-- 1. MÀN HÌNH ĐĂNG NHẬP (FIT TOÀN MÀN HÌNH) -->
+    <div id="auth-screen" class="h-full w-full flex flex-col justify-center items-center p-4 z-40">
+        <div class="w-full max-w-xs flex flex-col items-center space-y-3">
+            <div class="w-12 h-12 bg-gradient-to-tr from-rose-600 to-red-700 rounded-2xl flex items-center justify-center font-black text-2xl text-white shadow-md">
                 中
             </div>
             <div class="text-center">
-                <h1 class="text-3xl sm:text-4xl title-3d-ruby uppercase">CHINESEZ298</h1>
-                <p class="text-[11px] tracking-widest font-semibold mt-1 opacity-75">TRỢ LÝ AI HỌC TIẾNG TRUNG CHUYÊN NGHIỆP</p>
+                <h1 class="text-3xl title-3d-ruby uppercase">CHINESEZ298</h1>
+                <p class="text-[10px] tracking-widest font-semibold opacity-70">TRỢ LÝ AI HỌC TIẾNG TRUNG</p>
             </div>
-
-            <div class="w-full theme-card rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
+            <div class="w-full theme-card rounded-3xl p-5 shadow-lg space-y-3">
                 <div class="text-left">
-                    <h2 class="text-lg font-bold">Đăng nhập</h2>
-                    <p class="text-xs opacity-75 mt-0.5">Vui lòng nhập tài khoản để vào không gian học tập</p>
+                    <h2 class="text-base font-bold">Đăng nhập</h2>
+                    <p class="text-[11px] opacity-70">Nhập tài khoản để vào phòng học</p>
                 </div>
-
-                <div class="space-y-3.5">
+                <div class="space-y-2.5">
                     <div>
-                        <label class="block text-[11px] font-bold uppercase tracking-wider mb-1 opacity-80">Tên đăng nhập</label>
-                        <input type="text" id="login-username" class="w-full custom-input rounded-2xl px-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-rose-500">
+                        <label class="block text-[10px] font-bold uppercase opacity-80 mb-0.5">Tên đăng nhập</label>
+                        <input type="text" id="login-username" class="w-full custom-input rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-rose-500">
                     </div>
-
                     <div>
-                        <label class="block text-[11px] font-bold uppercase tracking-wider mb-1 opacity-80">Mật khẩu</label>
+                        <label class="block text-[10px] font-bold uppercase opacity-80 mb-0.5">Mật khẩu</label>
                         <div class="relative">
-                            <input type="password" id="login-password" class="w-full custom-input rounded-2xl pl-4 pr-11 py-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-rose-500">
-                            <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-xs opacity-60 hover:opacity-100 cursor-pointer">
-                                <i id="password-toggle-icon" class="fa-solid fa-eye"></i>
+                            <input type="password" id="login-password" class="w-full custom-input rounded-xl pl-3 pr-9 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-rose-500">
+                            <button type="button" onclick="togglePassVisibility()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-xs opacity-60 cursor-pointer">
+                                <i id="pass-icon" class="fa-solid fa-eye"></i>
                             </button>
                         </div>
                     </div>
-
-                    <button onclick="handleLoginSubmit()" class="w-full py-3 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 text-white font-extrabold text-xs sm:text-sm rounded-2xl shadow-lg shadow-rose-500/25 transform active:scale-95 transition cursor-pointer mt-1">
+                    <button onclick="handleLogin()" class="w-full py-2.5 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 text-white font-bold text-xs rounded-xl shadow-md cursor-pointer mt-1">
                         Đăng Nhập
                     </button>
                 </div>
@@ -188,196 +184,176 @@
         </div>
     </div>
 
-    <!-- MÀN HÌNH CHÍNH DASHBOARD -->
-    <div id="main-app-screen" class="hidden min-h-screen flex flex-col">
-        <!-- HEADER CỐ ĐỊNH NÚT THEME TRONG THANH TIÊU ĐỀ (KHÔNG CHE NÚT KHÁC) -->
-        <header class="theme-card border-b py-2.5 px-4 sm:px-6 flex justify-between items-center shadow-sm landscape-compact-header z-30">
-            <div class="flex items-center space-x-2.5">
-                <div class="w-9 h-9 bg-rose-600 rounded-xl flex items-center justify-center font-bold text-white shadow">中</div>
-                <div>
-                    <h2 class="text-lg sm:text-xl title-3d-ruby landscape-compact-title leading-tight">CHINESEZ298</h2>
-                    <p class="text-[9px] opacity-70 hidden sm:block">Không gian ôn tập cá nhân</p>
-                </div>
+    <!-- 2. MÀN HÌNH CHÍNH DASHBOARD (KHÔNG CUỘN TRANG) -->
+    <div id="main-app-screen" class="hidden h-full w-full flex flex-col">
+        <!-- HEADER SIÊU GỌN VỚI NÚT LÀM MỚI CHỐNG CACHE VÀ MENU THEME -->
+        <header class="app-header h-12 theme-card border-b px-3 flex justify-between items-center shadow-xs shrink-0 z-30">
+            <div class="flex items-center space-x-2">
+                <div class="w-7 h-7 bg-rose-600 rounded-lg flex items-center justify-center font-bold text-white text-xs shadow-xs">中</div>
+                <h2 class="app-title text-base title-3d-ruby leading-none">CHINESEZ298</h2>
             </div>
             
-            <!-- Cụm bên phải: Theme dropdown + Role + Nút Đăng xuất -->
-            <div class="flex items-center space-x-2">
-                <!-- Dropdown Theme gọn gàng -->
+            <div class="flex items-center space-x-1.5">
+                <!-- NÚT LÀM MỚI BẮT BUỘC (CLEAR CACHE) -->
+                <button onclick="forceRefreshApp()" class="theme-card px-2 py-1 rounded-lg text-xs font-bold hover:scale-105 transition cursor-pointer" title="Làm mới cập nhật code mới nhất">
+                    <i class="fa-solid fa-rotate-right text-rose-500"></i>
+                </button>
+
+                <!-- DROPDOWN THEME CỐ ĐỊNH TRÊN HEADER -->
                 <div class="relative">
-                    <button onclick="toggleThemeMenu()" class="theme-card px-2.5 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 cursor-pointer shadow-sm">
-                        <i class="fa-solid fa-palette text-rose-500 text-xs"></i>
-                        <span id="current-theme-label" class="hidden sm:inline">Lavender</span>
-                        <i class="fa-solid fa-chevron-down text-[9px] opacity-70"></i>
+                    <button onclick="toggleThemeMenu()" class="theme-card px-2 py-1 rounded-lg text-[11px] font-bold flex items-center space-x-1 cursor-pointer">
+                        <i class="fa-solid fa-palette text-rose-500"></i>
+                        <span id="theme-lbl" class="hidden sm:inline">Lavender</span>
+                        <i class="fa-solid fa-chevron-down text-[8px] opacity-70"></i>
                     </button>
-                    <div id="theme-dropdown-menu" class="hidden absolute right-0 mt-1.5 w-48 rounded-2xl bg-white border border-slate-200 shadow-2xl py-1.5 z-50 text-slate-800 text-xs">
-                        <button onclick="applyTheme('lavender', 'Lavender')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100 flex items-center space-x-2">
-                            <span>🌸</span> <span>Lavender Mist (Tím êm)</span>
-                        </button>
-                        <button onclick="applyTheme('nordic', 'Nordic')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100 flex items-center space-x-2">
-                            <span>🌊</span> <span>Nordic Sky (Xanh biển)</span>
-                        </button>
-                        <button onclick="applyTheme('sage', 'Sage Tea')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100 flex items-center space-x-2">
-                            <span>🍃</span> <span>Sage Tea (Xanh lá xô)</span>
-                        </button>
-                        <button onclick="applyTheme('warm', 'Warm Milk')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100 flex items-center space-x-2">
-                            <span>🥛</span> <span>Warm Milk (Sáng kem)</span>
-                        </button>
-                        <button onclick="applyTheme('midnight', 'Midnight')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100 flex items-center space-x-2">
-                            <span>🌙</span> <span>Midnight Slate (Đêm)</span>
-                        </button>
+                    <div id="theme-menu" class="hidden absolute right-0 mt-1 w-44 rounded-xl bg-white border border-slate-200 shadow-xl py-1 z-50 text-slate-800 text-xs">
+                        <button onclick="applyTheme('lavender', 'Lavender')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🌸 Lavender (Tím)</button>
+                        <button onclick="applyTheme('nordic', 'Nordic')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🌊 Nordic (Xanh biển)</button>
+                        <button onclick="applyTheme('sage', 'Sage Tea')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🍃 Sage (Xanh lá)</button>
+                        <button onclick="applyTheme('warm', 'Warm Milk')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🥛 Warm (Sáng kem)</button>
+                        <button onclick="applyTheme('midnight', 'Midnight')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🌙 Midnight (Đêm)</button>
                     </div>
                 </div>
 
-                <span id="display-user-role" class="text-[11px] px-2.5 py-1 rounded-xl bg-rose-500/10 text-rose-600 font-bold border border-rose-500/20 hidden sm:inline"></span>
-                <button onclick="handleLogout()" class="px-2.5 py-1.5 rounded-xl border border-slate-500/25 text-xs font-bold hover:bg-rose-600 hover:text-white transition cursor-pointer">
-                    <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden sm:inline ml-1">Đăng xuất</span>
+                <span id="user-role-badge" class="text-[10px] px-2 py-0.5 rounded-lg bg-rose-500/10 text-rose-600 font-bold hidden sm:inline"></span>
+                <button onclick="handleLogout()" class="px-2 py-1 rounded-lg border border-slate-500/20 text-[11px] font-bold hover:bg-rose-600 hover:text-white transition cursor-pointer">
+                    <i class="fa-solid fa-right-from-bracket"></i>
                 </button>
             </div>
         </header>
 
-        <!-- KHUNG THÂN TRANG -->
-        <div class="flex-grow flex flex-col md:flex-row max-w-7xl w-full mx-auto p-2 sm:p-4 gap-3 sm:gap-4 overflow-hidden">
-            
-            <!-- PHẦN A (SIDEBAR): Thu nhỏ tỷ lệ còn 15-20% chiều cao trên màn hình dọc di động -->
-            <aside class="w-full md:w-1/5 theme-card rounded-2xl md:rounded-3xl p-2 sm:p-4 flex flex-col justify-between shadow-sm shrink-0">
-                <div class="w-full">
-                    <div class="text-[10px] font-black opacity-50 uppercase tracking-widest px-1 mb-1 hidden md:block">Chức năng</div>
-                    
-                    <!-- Dạng cuộn ngang gọn trên di động dọc (chiếm < 1/5 chiều cao), dạng dọc trên desktop -->
-                    <div class="flex md:flex-col gap-1.5 overflow-x-auto pb-1 md:pb-0">
-                        <button onclick="setDashboardTab('home')" id="tab-btn-home" class="shrink-0 md:w-full text-left px-3 py-2 md:py-2.5 rounded-xl md:rounded-2xl font-bold text-xs btn-theme-main shadow flex items-center space-x-2 transition cursor-pointer">
-                            <i class="fa-solid fa-house w-3.5"></i> <span>Trang chủ</span>
-                        </button>
-                        <button onclick="setDashboardTab('create')" id="tab-btn-create" class="shrink-0 md:w-full text-left px-3 py-2 md:py-2.5 rounded-xl md:rounded-2xl font-bold text-xs opacity-75 hover:opacity-100 flex items-center space-x-2 transition cursor-pointer">
-                            <i class="fa-solid fa-file-circle-plus w-3.5"></i> <span>Tạo bài học</span>
-                        </button>
-                        <button onclick="setDashboardTab('room')" id="tab-btn-room" class="shrink-0 md:w-full text-left px-3 py-2 md:py-2.5 rounded-xl md:rounded-2xl font-bold text-xs opacity-75 hover:opacity-100 flex items-center space-x-2 transition cursor-pointer">
-                            <i class="fa-solid fa-graduation-cap w-3.5"></i> <span>Phòng học</span>
-                        </button>
-                        <button onclick="setDashboardTab('chat')" id="tab-btn-chat" class="shrink-0 md:w-full text-left px-3 py-2 md:py-2.5 rounded-xl md:rounded-2xl font-bold text-xs opacity-75 hover:opacity-100 flex items-center space-x-2 transition cursor-pointer">
-                            <i class="fa-solid fa-comments w-3.5"></i> <span>Chat AI Dịch</span>
-                        </button>
-                    </div>
+        <!-- KHUNG THÂN: CHIA TỶ LỆ CO GIÃN TỰ ĐỘNG -->
+        <div class="flex-1 flex flex-col md:flex-row p-2 gap-2 min-h-0 overflow-hidden">
+            <!-- PHẦN A (SIDEBAR): DẠNG HÀNG NGANG CUỘN TRÊN ĐIỆN THOẠI, DỌC TRÊN PC -->
+            <aside class="side-bar shrink-0 theme-card rounded-2xl p-1.5 flex md:flex-col justify-between shadow-xs">
+                <div class="flex md:flex-col gap-1 overflow-x-auto w-full">
+                    <button onclick="setTab('home')" id="tbtn-home" class="shrink-0 md:w-full text-left px-2.5 py-1.5 rounded-xl font-bold text-xs btn-main shadow-xs flex items-center space-x-1.5 cursor-pointer">
+                        <i class="fa-solid fa-house w-3.5 text-center"></i> <span>Trang chủ</span>
+                    </button>
+                    <button onclick="setTab('create')" id="tbtn-create" class="shrink-0 md:w-full text-left px-2.5 py-1.5 rounded-xl font-bold text-xs opacity-75 hover:opacity-100 flex items-center space-x-1.5 cursor-pointer">
+                        <i class="fa-solid fa-file-circle-plus w-3.5 text-center"></i> <span>Tạo bài</span>
+                    </button>
+                    <button onclick="setTab('room')" id="tbtn-room" class="shrink-0 md:w-full text-left px-2.5 py-1.5 rounded-xl font-bold text-xs opacity-75 hover:opacity-100 flex items-center space-x-1.5 cursor-pointer">
+                        <i class="fa-solid fa-graduation-cap w-3.5 text-center"></i> <span>Phòng học</span>
+                    </button>
+                    <button onclick="setTab('chat')" id="tbtn-chat" class="shrink-0 md:w-full text-left px-2.5 py-1.5 rounded-xl font-bold text-xs opacity-75 hover:opacity-100 flex items-center space-x-1.5 cursor-pointer">
+                        <i class="fa-solid fa-comments w-3.5 text-center"></i> <span>Chat Dịch</span>
+                    </button>
                 </div>
-
-                <div id="admin-panel-btn-box" class="hidden pt-2 border-t border-slate-500/20 mt-1 md:mt-4">
-                    <button onclick="openAdminCreateModal()" class="w-full px-3 py-2 rounded-xl md:rounded-2xl font-bold text-xs bg-amber-600 text-white shadow hover:bg-amber-700 transition flex items-center justify-center md:justify-start space-x-2 cursor-pointer">
-                        <i class="fa-solid fa-user-plus w-3.5"></i> <span>Tạo tài khoản</span>
+                <div id="admin-box" class="hidden md:block pt-1 border-t border-slate-500/20">
+                    <button onclick="openAdminModal()" class="w-full px-2 py-1.5 rounded-xl font-bold text-xs bg-amber-600 text-white shadow-xs flex items-center space-x-1.5 cursor-pointer">
+                        <i class="fa-solid fa-user-plus w-3.5 text-center"></i> <span>Tạo User</span>
                     </button>
                 </div>
             </aside>
 
-            <!-- PHẦN B: Chiếm trọn 80-85% chiều cao còn lại -->
-            <main id="dashboard-content" class="w-full md:w-4/5 theme-card rounded-2xl md:rounded-3xl p-3 sm:p-6 shadow-sm flex flex-col justify-center items-center text-center flex-grow overflow-y-auto">
+            <!-- PHẦN B (STAGE NỘI DUNG): VỪA KHÍT 100% DIỆN TÍCH CÒN LẠI -->
+            <main id="main-viewport" class="flex-1 theme-card rounded-2xl p-2.5 sm:p-4 flex flex-col justify-center items-center text-center min-h-0 overflow-hidden shadow-xs relative">
             </main>
         </div>
     </div>
 
     <!-- MODAL TẠO TÀI KHOẢN ADMIN -->
-    <div id="admin-user-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="theme-card rounded-3xl p-6 max-w-sm w-full space-y-4">
+    <div id="admin-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+        <div class="theme-card rounded-2xl p-4 max-w-xs w-full space-y-3">
             <div class="flex justify-between items-center">
-                <h3 class="font-bold text-sm">Tạo tài khoản thành viên</h3>
-                <button onclick="closeAdminCreateModal()" class="text-sm opacity-60 hover:opacity-100 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+                <h3 class="font-bold text-xs">Tạo thành viên mới</h3>
+                <button onclick="closeAdminModal()" class="text-xs opacity-60 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div>
-                <label class="block text-xs font-bold mb-1 opacity-75 uppercase">Họ và tên</label>
-                <input type="text" id="admin-input-fullname" class="w-full custom-input rounded-xl px-3 py-2 text-xs focus:outline-none">
+                <label class="block text-[10px] font-bold opacity-75 uppercase mb-1">Họ và tên</label>
+                <input type="text" id="admin-in-name" class="w-full custom-input rounded-xl px-2.5 py-1.5 text-xs focus:outline-none">
             </div>
-            <button onclick="executeCreateAccount()" class="w-full py-2.5 bg-amber-600 text-white font-bold text-xs rounded-xl shadow cursor-pointer">Tạo tự động</button>
-            <div id="admin-created-box" class="hidden p-3 bg-black/10 rounded-xl text-left text-xs font-mono space-y-2">
-                <p id="admin-account-info-text"></p>
-                <button onclick="copyGeneratedUser()" class="text-[11px] text-amber-600 font-bold underline cursor-pointer">Sao chép</button>
+            <button onclick="execCreateUser()" class="w-full py-2 bg-amber-600 text-white font-bold text-xs rounded-xl shadow-xs cursor-pointer">Tạo tự động</button>
+            <div id="admin-res-box" class="hidden p-2 bg-black/10 rounded-xl text-left text-[11px] font-mono space-y-1">
+                <p id="admin-res-text"></p>
+                <button onclick="copyUserString()" class="text-amber-600 font-bold underline cursor-pointer">Sao chép</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- 1. THEME VÀ PHÁT ÂM TIẾNG TRUNG ---
-        function toggleThemeMenu() {
-            document.getElementById('theme-dropdown-menu').classList.toggle('hidden');
-        }
-
-        function applyTheme(themeKey, label) {
-            document.documentElement.setAttribute('data-theme', themeKey);
-            localStorage.setItem('chinesez_theme_pref', themeKey);
-            document.getElementById('current-theme-label').innerText = label;
-            document.getElementById('theme-dropdown-menu').classList.add('hidden');
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const saved = localStorage.getItem('chinesez_theme_pref') || 'lavender';
-            const labelMap = { lavender: 'Lavender', nordic: 'Nordic', sage: 'Sage Tea', warm: 'Warm Milk', midnight: 'Midnight' };
-            applyTheme(saved, labelMap[saved] || 'Lavender');
-        });
-
-        window.addEventListener('click', (e) => {
-            const dropdown = document.getElementById('theme-dropdown-menu');
-            if (dropdown && !e.target.closest('.relative')) {
-                dropdown.classList.add('hidden');
+        // --- A. BẢO VỆ MÃ NGUỒN (CHỐNG XEM SOURCE, CHẶN DEVTOOLS) ---
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F12' || 
+               (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || 
+               (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S'))) {
+                e.preventDefault();
+                return false;
             }
         });
 
-        // Hàm phát âm tiếng Trung chuẩn Web Speech API
-        function speakChinese(text) {
+        // --- B. ĐO CHIỀU CAO CHO SAFARI & CHROME DI ĐỘNG (ZERO-SCROLL) ---
+        function setAppViewportHeight() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        window.addEventListener('resize', setAppViewportHeight);
+        window.addEventListener('orientationchange', setAppViewportHeight);
+        setAppViewportHeight();
+
+        // --- C. CHỐNG CACHE: LÀM MỚI BẮT BUỘC ---
+        function forceRefreshApp() {
+            const now = Date.now();
+            const url = new URL(window.location.href);
+            url.searchParams.set('v', now);
+            window.location.href = url.toString();
+        }
+
+        // --- D. WEB SPEECH API & WEB AUDIO API ---
+        function speakZh(text) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'zh-CN';
-                utterance.rate = 0.85;
-                window.speechSynthesis.speak(utterance);
-            } else {
-                alert("Trình duyệt của bạn không hỗ trợ tính năng phát âm.");
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'zh-CN';
+                u.rate = 0.85;
+                window.speechSynthesis.speak(u);
             }
         }
 
-        // Web Audio API: Sinh âm thanh chúc mừng / báo sai
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playTone(type) {
+        function playSfx(isWin) {
             if (audioCtx.state === 'suspended') audioCtx.resume();
             const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-
-            if (type === 'success') {
-                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-                osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.15); // E5
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.35);
+            const g = audioCtx.createGain();
+            osc.connect(g); g.connect(audioCtx.destination);
+            if (isWin) {
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.15);
+                g.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
             } else {
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
-                osc.frequency.exponentialRampToValueAtTime(140, audioCtx.currentTime + 0.25);
-                gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.3);
+                osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(140, audioCtx.currentTime + 0.2);
+                g.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.25);
             }
         }
 
-        // --- 2. ẨN / HIỆN MẬT KHẨU ---
-        function togglePasswordVisibility() {
-            const passInput = document.getElementById('login-password');
-            const icon = document.getElementById('password-toggle-icon');
-            if (passInput.type === 'password') {
-                passInput.type = 'text';
-                icon.className = 'fa-solid fa-eye-slash';
-            } else {
-                passInput.type = 'password';
-                icon.className = 'fa-solid fa-eye';
-            }
+        // --- E. THEME CONTROLLER ---
+        function toggleThemeMenu() { document.getElementById('theme-menu').classList.toggle('hidden'); }
+        function applyTheme(key, lbl) {
+            document.documentElement.setAttribute('data-theme', key);
+            localStorage.setItem('chinesez_theme', key);
+            document.getElementById('theme-lbl').innerText = lbl;
+            document.getElementById('theme-menu').classList.add('hidden');
         }
+        window.addEventListener('click', e => {
+            const m = document.getElementById('theme-menu');
+            if (m && !e.target.closest('.relative')) m.classList.add('hidden');
+        });
 
-        // --- 3. DỮ LIỆU TÀI KHOẢN & 20 BÀI HỌC CÓ SẴN (ĐỦ CHỮ HÁN, PINYIN, NGHĨA) ---
-        let currentAuthUser = null;
-        let registeredUsers = JSON.parse(localStorage.getItem('chinesez_users')) || [
+        // --- F. DATA: 20 BÀI HỌC VÀ TỪ VỰNG CHUẨN XÁC ---
+        let currentAuth = null;
+        let usersDB = JSON.parse(localStorage.getItem('chinesez_users')) || [
             { username: 'admin298', pass: 'ADMjn298', role: 'admin', fullname: 'Quản Trị Viên' }
         ];
 
-        const initial20Lessons = [
+        const initialLessons = [
             { id: 1, title: 'Bài 1: Chào hỏi & Làm quen cơ bản', link: 'https://drive.google.com/sample', date: '2026-10-31' },
             { id: 2, title: 'Bài 2: Mua sắm & Mặc cả giá tiền', link: 'https://drive.google.com/sample', date: '2026-10-31' },
             { id: 3, title: 'Bài 3: Gọi món ăn & Thưởng thức ẩm thực', link: 'https://drive.google.com/sample', date: '2026-10-31' },
@@ -395,15 +371,14 @@
             { id: 15, title: 'Bài 15: Đi cắt tóc & Chăm sóc bản thân', link: 'https://drive.google.com/sample', date: '2026-10-31' },
             { id: 16, title: 'Bài 16: Phỏng vấn xin việc & Giới thiệu kinh nghiệm', link: 'https://drive.google.com/sample', date: '2026-10-31' },
             { id: 17, title: 'Bài 17: Mua sắm trực tuyến & Nhận bưu kiện', link: 'https://drive.google.com/sample', date: '2026-10-31' },
-            { id: 18, title: 'Bài 18: Tham quan viện bảo tàng & Danh lam thắng cảnh', link: 'https://drive.google.com/sample', date: '2026-10-31' },
+            { id: 18, title: 'Bài 18: Tham quan viện bảo tàng & Thắng cảnh', link: 'https://drive.google.com/sample', date: '2026-10-31' },
             { id: 19, title: 'Bài 19: Mừng sinh nhật & Tặng quà bạn bè', link: 'https://drive.google.com/sample', date: '2026-10-31' },
             { id: 20, title: 'Bài 20: Kế hoạch du lịch & Đặt vé tàu cao tốc', link: 'https://drive.google.com/sample', date: '2026-10-31' }
         ];
 
-        let lessonsList = JSON.parse(localStorage.getItem('chinesez_lessons')) || initial20Lessons;
+        let lessonsDB = JSON.parse(localStorage.getItem('chinesez_lessons')) || initialLessons;
 
-        // Bộ 20 từ vựng mẫu chuẩn xác
-        const default20Vocabs = [
+        const defaultVocabs = [
             { hanzi: "旅游", pinyin: "lǚ yóu", meaning: "Du lịch / Đi tham quan", example: "我想去中国旅游。(Tôi muốn đi du lịch Trung Quốc.)" },
             { hanzi: "咖啡", pinyin: "kā fēi", meaning: "Cà phê", example: "你想喝杯咖啡吗？(Bạn muốn uống tách cà phê không?)" },
             { hanzi: "航班", pinyin: "háng bān", meaning: "Chuyến bay", example: "飞机航班延误了。(Chuyến bay bị hoãn rồi.)" },
@@ -426,8 +401,8 @@
             { hanzi: "帮助", pinyin: "bāng zhù", meaning: "Giúp đỡ", example: "谢谢你的帮助。(Cảm ơn sự giúp đỡ của bạn.)" }
         ];
 
-        let studyData = {
-            vocab: default20Vocabs,
+        let studyStore = {
+            vocab: defaultVocabs,
             cloze: [
                 { sentenceBefore: "我明天要去 ", sentenceAfter: " 。", correctAnswer: "旅游", choices: ["咖啡", "旅游", "机场", "手机"], pinyin: "Wǒ míngtiān yào qù lǚyóu.", meaning: "Ngày mai tôi chuẩn bị đi du lịch." },
                 { sentenceBefore: "桌子上有一杯 ", sentenceAfter: " 。", correctAnswer: "咖啡", choices: ["报纸", "咖啡", "房间", "牛奶"], pinyin: "Zhuōzi shàng yǒu yì bēi kāfēi.", meaning: "Trên bàn có một cốc cà phê." },
@@ -438,424 +413,406 @@
             ]
         };
 
-        function getTimeGreeting() {
+        function getGreeting() {
             const h = new Date().getHours();
             if (h >= 5 && h < 11) return "Chúc bạn một buổi sáng tràn đầy năng lượng và một buổi học thật hiệu quả! Bạn hãy chọn các thẻ chức năng để bắt đầu nhé!";
             if (h >= 11 && h < 18) return "Chúc bạn một buổi chiều thật thư thái và một buổi học thật hiệu quả! Bạn hãy chọn các thẻ chức năng để bắt đầu nhé!";
             return "Chúc bạn một buổi tối an lành và một buổi học thật hiệu quả! Bạn hãy chọn các thẻ chức năng để bắt đầu nhé!";
         }
 
-        // --- 4. ĐĂNG NHẬP / ĐĂNG XUẤT ---
-        function handleLoginSubmit() {
+        // --- G. ĐĂNG NHẬP / ĐĂNG XUẤT ---
+        function togglePassVisibility() {
+            const p = document.getElementById('login-password');
+            const i = document.getElementById('pass-icon');
+            if (p.type === 'password') { p.type = 'text'; i.className = 'fa-solid fa-eye-slash'; }
+            else { p.type = 'password'; i.className = 'fa-solid fa-eye'; }
+        }
+
+        function handleLogin() {
             const u = document.getElementById('login-username').value.trim();
             const p = document.getElementById('login-password').value.trim();
-
-            const found = registeredUsers.find(acc => acc.username === u && acc.pass === p);
-            if (found) {
-                currentAuthUser = found;
+            const f = usersDB.find(x => x.username === u && x.pass === p);
+            if (f) {
+                currentAuth = f;
                 document.getElementById('auth-screen').classList.add('hidden');
                 document.getElementById('main-app-screen').classList.remove('hidden');
-                document.getElementById('display-user-role').innerText = `${found.fullname} (${found.role})`;
-                
-                if (found.role === 'admin') {
-                    document.getElementById('admin-panel-btn-box').classList.remove('hidden');
-                } else {
-                    document.getElementById('admin-panel-btn-box').classList.add('hidden');
-                }
-                setDashboardTab('home');
+                document.getElementById('user-role-badge').innerText = `${f.fullname} (${f.role})`;
+                setTab('home');
             } else {
                 alert("Tên đăng nhập hoặc mật khẩu không chính xác.");
             }
         }
 
         function handleLogout() {
-            currentAuthUser = null;
+            currentAuth = null;
             document.getElementById('login-username').value = '';
             document.getElementById('login-password').value = '';
             document.getElementById('main-app-screen').classList.add('hidden');
             document.getElementById('auth-screen').classList.remove('hidden');
         }
 
-        // --- 5. TABS ĐIỀU HƯỚNG ---
-        function setDashboardTab(tabName) {
+        // --- H. ĐIỀU HƯỚNG TABS & BỐ CỤC ZERO-SCROLL ---
+        function setTab(tab) {
             ['home', 'create', 'room', 'chat'].forEach(t => {
-                const btn = document.getElementById(`tab-btn-${t}`);
-                if (btn) {
-                    if (t === tabName) {
-                        btn.className = "shrink-0 md:w-full text-left px-3 py-2 md:py-2.5 rounded-xl md:rounded-2xl font-bold text-xs btn-theme-main shadow flex items-center space-x-2 transition cursor-pointer";
-                    } else {
-                        btn.className = "shrink-0 md:w-full text-left px-3 py-2 md:py-2.5 rounded-xl md:rounded-2xl font-bold text-xs opacity-75 hover:opacity-100 flex items-center space-x-2 transition cursor-pointer";
-                    }
+                const b = document.getElementById(`tbtn-${t}`);
+                if (b) {
+                    if (t === tab) b.className = "shrink-0 md:w-full text-left px-2.5 py-1.5 rounded-xl font-bold text-xs btn-main shadow-xs flex items-center space-x-1.5 cursor-pointer";
+                    else b.className = "shrink-0 md:w-full text-left px-2.5 py-1.5 rounded-xl font-bold text-xs opacity-75 hover:opacity-100 flex items-center space-x-1.5 cursor-pointer";
                 }
             });
 
-            const content = document.getElementById('dashboard-content');
-            if (tabName === 'home') {
-                content.innerHTML = `
-                    <div class="space-y-3 max-w-md my-auto">
-                        <div class="w-14 h-14 bg-rose-500/10 text-rose-600 rounded-3xl flex items-center justify-center mx-auto text-2xl font-bold border border-rose-500/20 shadow-sm">中</div>
-                        <h3 class="text-2xl sm:text-3xl title-3d-ruby">CHÀO MỪNG BẠN</h3>
-                        <p class="text-xs sm:text-sm font-medium opacity-80 leading-relaxed italic">
-                            "${getTimeGreeting()}"
-                        </p>
+            const vp = document.getElementById('main-viewport');
+            if (tab === 'home') {
+                vp.innerHTML = `
+                    <div class="space-y-2.5 max-w-sm my-auto">
+                        <div class="w-12 h-12 bg-rose-500/10 text-rose-600 rounded-2xl flex items-center justify-center mx-auto text-xl font-bold border border-rose-500/20 shadow-xs">中</div>
+                        <h3 class="text-2xl title-3d-ruby">CHÀO MỪNG BẠN</h3>
+                        <p class="text-[11px] sm:text-xs font-medium opacity-80 leading-relaxed italic">"${getGreeting()}"</p>
                         <div class="pt-1">
-                            <button onclick="setDashboardTab('room')" class="px-5 py-2.5 btn-theme-main font-bold text-xs rounded-xl shadow cursor-pointer">
+                            <button onclick="setTab('room')" class="px-5 py-2 btn-main font-bold text-xs rounded-xl shadow-xs cursor-pointer">
                                 <i class="fa-solid fa-graduation-cap mr-1"></i> Bắt đầu ôn tập ngay
                             </button>
                         </div>
                     </div>
                 `;
-            } else if (tabName === 'create') {
-                content.innerHTML = `
-                    <div class="w-full max-w-lg space-y-3.5 text-left my-auto">
+            } else if (tab === 'create') {
+                vp.innerHTML = `
+                    <div class="w-full max-w-md space-y-2.5 text-left my-auto">
                         <div>
-                            <h3 class="text-base sm:text-lg font-bold">Tạo bài học mới từ tài liệu</h3>
-                            <p class="text-xs opacity-75 mt-0.5 leading-relaxed">
+                            <h3 class="text-sm sm:text-base font-bold">Tạo bài học mới từ tài liệu</h3>
+                            <p class="txt-desc text-[11px] opacity-75 mt-0.5 leading-tight">
                                 Hệ thống hỗ trợ tự ôn tập tiếng Trung thông minh với AI. Bạn có thể tải tài liệu (Ảnh, PDF, Word) qua link để AI trích xuất thẻ học, hoặc sử dụng Khung Chat AI Dịch Thuật.
                             </p>
                         </div>
-
                         <div>
-                            <label class="block text-xs font-bold mb-1 opacity-80 uppercase">Tên bài học</label>
-                            <input type="text" id="new-lesson-title" placeholder="Ví dụ: Bài 21: Giao tiếp đặt xe & Khách sạn" class="w-full custom-input rounded-2xl px-3.5 py-2 text-xs focus:outline-none">
+                            <label class="block text-[10px] font-bold opacity-80 uppercase mb-0.5">Tên bài học</label>
+                            <input type="text" id="in-lesson-title" placeholder="Ví dụ: Bài 21: Giao tiếp đặt xe & Khách sạn" class="w-full custom-input rounded-xl px-3 py-1.5 text-xs focus:outline-none">
                         </div>
-
                         <div>
-                            <label class="block text-xs font-bold mb-1 opacity-80 uppercase">Link tài liệu (Ảnh, PDF, Word Drive)</label>
-                            <input type="text" id="new-lesson-link" placeholder="Dán link Drive chia sẻ hoặc URL tệp..." class="w-full custom-input rounded-2xl px-3.5 py-2 text-xs focus:outline-none">
+                            <label class="block text-[10px] font-bold opacity-80 uppercase mb-0.5">Link tài liệu (Ảnh, PDF, Word Drive)</label>
+                            <input type="text" id="in-lesson-link" placeholder="Dán link Drive chia sẻ hoặc URL tệp..." class="w-full custom-input rounded-xl px-3 py-1.5 text-xs focus:outline-none">
                         </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                            <button onclick="saveLesson(false)" class="py-2.5 px-3 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl shadow transition cursor-pointer flex items-center justify-center space-x-1">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-0.5">
+                            <button onclick="saveNewLesson(false)" class="py-2 px-2.5 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl shadow-xs cursor-pointer flex items-center justify-center space-x-1">
                                 <i class="fa-solid fa-cloud-arrow-up text-xs"></i> <span>Tạo từ Link tài liệu</span>
                             </button>
-                            <button onclick="saveLesson(true)" class="py-2.5 px-3 btn-theme-main font-bold text-xs rounded-xl shadow transition cursor-pointer flex items-center justify-center space-x-1">
+                            <button onclick="saveNewLesson(true)" class="py-2 px-2.5 btn-main font-bold text-xs rounded-xl shadow-xs cursor-pointer flex items-center justify-center space-x-1">
                                 <i class="fa-solid fa-wand-magic-sparkles text-xs"></i> <span>Tôi nhập tên, AI tạo thẻ</span>
                             </button>
                         </div>
                     </div>
                 `;
-            } else if (tabName === 'room') {
-                let items = lessonsList.map(item => `
-                    <div class="p-3 theme-card rounded-2xl flex justify-between items-center text-left">
-                        <div>
-                            <p class="text-xs font-bold">${item.title}</p>
-                            <p class="text-[10px] opacity-60">Ngày: ${item.date} | <a href="${item.link}" target="_blank" class="text-rose-500 underline">Tài liệu gốc</a></p>
+            } else if (tab === 'room') {
+                let items = lessonsDB.map(it => `
+                    <div class="p-2.5 theme-card rounded-xl flex justify-between items-center text-left">
+                        <div class="truncate mr-2">
+                            <p class="text-xs font-bold truncate">${it.title}</p>
+                            <p class="text-[9px] opacity-60">Ngày: ${it.date} | <a href="${it.link}" target="_blank" class="text-rose-500 underline">Tài liệu</a></p>
                         </div>
-                        <button onclick="enterStudyRoom('${item.id}')" class="px-3.5 py-1.5 btn-theme-main text-xs font-bold rounded-xl shadow cursor-pointer">Vào học</button>
+                        <button onclick="enterStudyRoom('${it.id}')" class="px-3 py-1 btn-main text-xs font-bold rounded-lg shadow-xs cursor-pointer shrink-0">Vào học</button>
                     </div>
                 `).join('');
 
-                content.innerHTML = `
-                    <div class="w-full max-w-lg space-y-3 text-left my-auto">
-                        <div class="flex justify-between items-center">
+                vp.innerHTML = `
+                    <div class="w-full max-w-md space-y-2 text-left my-auto h-full flex flex-col justify-between py-1">
+                        <div class="flex justify-between items-center shrink-0">
                             <div>
-                                <h3 class="text-base sm:text-lg font-bold">Phòng học (20 bài thông dụng)</h3>
-                                <p class="text-[11px] opacity-70">Chọn bài học để bắt đầu luyện phản xạ</p>
+                                <h3 class="text-sm sm:text-base font-bold">Phòng học (20 bài thông dụng)</h3>
+                                <p class="text-[10px] opacity-70">Chọn bài học để bắt đầu luyện phản xạ</p>
                             </div>
-                            <button onclick="setDashboardTab('create')" class="text-xs text-rose-500 font-bold underline cursor-pointer">+ Thêm bài</button>
+                            <button onclick="setTab('create')" class="text-xs text-rose-500 font-bold underline cursor-pointer">+ Thêm bài</button>
                         </div>
-                        <div class="space-y-2 max-h-72 sm:max-h-80 overflow-y-auto pr-1">${items}</div>
+                        <div class="space-y-1.5 flex-1 min-h-0 overflow-y-auto pr-1">${items}</div>
                     </div>
                 `;
-            } else if (tabName === 'chat') {
-                content.innerHTML = `
-                    <div class="w-full max-w-lg space-y-3 text-left my-auto">
-                        <h3 class="text-base sm:text-lg font-bold">Khung Chat AI Dịch Thuật</h3>
-                        <div id="chat-stream-box" class="theme-card rounded-2xl p-3 h-56 sm:h-64 overflow-y-auto space-y-2 text-xs">
-                            <div class="p-2.5 bg-rose-500/10 rounded-xl border border-rose-500/20">
+            } else if (tab === 'chat') {
+                vp.innerHTML = `
+                    <div class="w-full max-w-md space-y-2 text-left my-auto h-full flex flex-col justify-between py-1">
+                        <h3 class="text-sm sm:text-base font-bold shrink-0">Khung Chat AI Dịch Thuật</h3>
+                        <div id="chat-box" class="flex-1 theme-card rounded-xl p-2.5 min-h-0 overflow-y-auto space-y-2 text-xs">
+                            <div class="p-2 bg-rose-500/10 rounded-xl border border-rose-500/20">
                                 <b>🤖 AI:</b> Gõ câu tiếng Việt, tôi sẽ dịch sang tiếng Trung kèm Pinyin và giọng đọc mẫu.
                             </div>
                         </div>
-                        <div class="flex gap-2">
-                            <input type="text" id="chat-msg-input" placeholder="Ví dụ: Tôi muốn đi ngân hàng đổi tiền..." class="flex-grow custom-input rounded-xl px-3 py-2 text-xs focus:outline-none">
-                            <button onclick="triggerAIChat()" class="px-4 py-2 btn-theme-main text-xs font-bold rounded-xl shadow cursor-pointer">Gửi</button>
+                        <div class="flex gap-1.5 shrink-0">
+                            <input type="text" id="chat-in" placeholder="Ví dụ: Tôi muốn đi ngân hàng đổi tiền..." class="flex-grow custom-input rounded-xl px-3 py-1.5 text-xs focus:outline-none">
+                            <button onclick="sendChat()" class="px-3.5 py-1.5 btn-main text-xs font-bold rounded-xl shadow-xs cursor-pointer">Gửi</button>
                         </div>
                     </div>
                 `;
             }
         }
 
-        function saveLesson(isAIGen) {
-            const title = document.getElementById('new-lesson-title').value.trim();
-            const link = document.getElementById('new-lesson-link').value.trim();
+        function saveNewLesson(isAIGen) {
+            const title = document.getElementById('in-lesson-title').value.trim();
+            const link = document.getElementById('in-lesson-link').value.trim();
             if (!title) { alert("Vui lòng nhập tên bài học."); return; }
             if (!isAIGen && !link) { alert("Vui lòng dán link tài liệu."); return; }
 
-            lessonsList.unshift({ id: Date.now(), title, link: link || 'https://drive.google.com/ai-gen', date: new Date().toISOString().split('T')[0] });
-            localStorage.setItem('chinesez_lessons', JSON.stringify(lessonsList));
+            lessonsDB.unshift({ id: Date.now(), title, link: link || 'https://drive.google.com/ai-gen', date: new Date().toISOString().split('T')[0] });
+            localStorage.setItem('chinesez_lessons', JSON.stringify(lessonsDB));
 
-            alert(isAIGen ? `✨ AI đã tạo trọn bộ 20 từ vựng và câu hỏi cho bài: ${title}` : "✨ Đã tạo bài học thành công!");
-            setDashboardTab('room');
+            alert(isAIGen ? `✨ AI đã tạo trọn bộ 20 từ vựng cho bài: ${title}` : "✨ Đã tạo bài học thành công!");
+            setTab('room');
         }
 
-        function triggerAIChat() {
-            const inp = document.getElementById('chat-msg-input');
-            const box = document.getElementById('chat-stream-box');
+        function sendChat() {
+            const inp = document.getElementById('chat-in');
+            const box = document.getElementById('chat-box');
             const val = inp.value.trim();
             if (!val) return;
 
-            box.innerHTML += `<div class="p-2 theme-card rounded-xl text-right"><b>Bạn:</b> ${val}</div>`;
+            box.innerHTML += `<div class="p-1.5 theme-card rounded-xl text-right"><b>Bạn:</b> ${val}</div>`;
             inp.value = '';
 
             setTimeout(() => {
                 let zh = "我想去银行换钱。", pinyin = "Wǒ xiǎng qù yínháng huàn qián.";
                 if (val.toLowerCase().includes("chào")) { zh = "你好！很高兴认识你。"; pinyin = "Nǐ hǎo! Hěn gāoxìng rènshí nǐ."; }
                 box.innerHTML += `
-                    <div class="p-2.5 bg-rose-500/10 rounded-xl border border-rose-500/20 space-y-1">
+                    <div class="p-2 bg-rose-500/10 rounded-xl border border-rose-500/20 space-y-1">
                         <div class="flex justify-between items-center">
-                            <p class="font-bold text-sm">🇨🇳 ${zh}</p>
-                            <button onclick="speakChinese('${zh}')" class="text-rose-500 hover:scale-110 cursor-pointer"><i class="fa-solid fa-volume-high"></i></button>
+                            <p class="font-bold text-xs">🇨🇳 ${zh}</p>
+                            <button onclick="speakZh('${zh}')" class="text-rose-500 hover:scale-110 cursor-pointer"><i class="fa-solid fa-volume-high"></i></button>
                         </div>
-                        <p class="text-xs text-rose-600 font-semibold">🔊 ${pinyin}</p>
-                        <p class="text-xs opacity-75">🇻🇳 ${val}</p>
+                        <p class="text-[11px] text-rose-600 font-semibold">🔊 ${pinyin}</p>
+                        <p class="text-[10px] opacity-75">🇻🇳 ${val}</p>
                     </div>
                 `;
                 box.scrollTop = box.scrollHeight;
             }, 300);
         }
 
-        // --- 6. PHÒNG HỌC VÀ THẺ KIỂM TRA NHỚ TỪ MỚI ---
-        let currentCardMode = 'vocab';
-        let currentCardIndex = 0;
-        let selectedClozeWord = null;
-        let isClozeChecked = false;
+        // --- I. PHÒNG HỌC VÀ 4 LOẠI THẺ TƯƠNG TÁC FIT MÀN HÌNH ---
+        let currentMode = 'vocab';
+        let currentIdx = 0;
+        let selectedWord = null;
+        let isChecked = false;
 
-        // Trạng thái cho Thẻ "Kiểm tra nhớ từ mới"
-        let memoryQuizBank = [];
-        let memoryCorrectCount = 0;
-        let selectedHanzi = "";
-        let selectedPinyin = "";
-        let selectedMeaning = "";
+        let memoryBank = [];
+        let memoryScore = 0;
+        let selHanzi = "", selPinyin = "", selMeaning = "";
 
         function enterStudyRoom(lessonId) {
-            currentCardMode = 'vocab';
-            currentCardIndex = 0;
+            currentMode = 'vocab';
+            currentIdx = 0;
             initMemoryQuiz();
-            renderStudyRoomUI();
+            renderStudyRoomStage();
         }
 
-        function renderStudyRoomUI() {
-            const content = document.getElementById('dashboard-content');
-            content.innerHTML = `
-                <div class="w-full max-w-lg space-y-3 text-left my-auto">
-                    <!-- Menu 4 dạng thẻ -->
-                    <div class="flex justify-between items-center theme-card p-1.5 rounded-2xl overflow-x-auto">
-                        <div class="flex space-x-1 text-xs font-bold">
-                            <button onclick="switchMode('vocab')" id="btn-m-vocab" class="px-2.5 py-1.5 rounded-xl cursor-pointer ${currentCardMode === 'vocab' ? 'btn-theme-main' : 'opacity-70'}">1. Từ vựng</button>
-                            <button onclick="switchMode('cloze')" id="btn-m-cloze" class="px-2.5 py-1.5 rounded-xl cursor-pointer ${currentCardMode === 'cloze' ? 'btn-theme-main' : 'opacity-70'}">2. Điền ô trống</button>
-                            <button onclick="switchMode('grammar')" id="btn-m-grammar" class="px-2.5 py-1.5 rounded-xl cursor-pointer ${currentCardMode === 'grammar' ? 'btn-theme-main' : 'opacity-70'}">3. Ngữ pháp</button>
-                            <button onclick="switchMode('memory')" id="btn-m-memory" class="px-2.5 py-1.5 rounded-xl cursor-pointer ${currentCardMode === 'memory' ? 'btn-theme-main' : 'opacity-70'}">4. Kiểm tra nhớ từ</button>
+        function renderStudyRoomStage() {
+            const vp = document.getElementById('main-viewport');
+            vp.innerHTML = `
+                <div class="w-full max-w-md h-full flex flex-col justify-between py-1">
+                    <div class="flex justify-between items-center theme-card p-1 rounded-xl shrink-0 overflow-x-auto">
+                        <div class="flex space-x-1 text-[11px] font-bold">
+                            <button onclick="switchStudyMode('vocab')" class="px-2 py-1 rounded-lg cursor-pointer ${currentMode === 'vocab' ? 'btn-main' : 'opacity-70'}">1. Từ vựng</button>
+                            <button onclick="switchStudyMode('cloze')" class="px-2 py-1 rounded-lg cursor-pointer ${currentMode === 'cloze' ? 'btn-main' : 'opacity-70'}">2. Điền từ</button>
+                            <button onclick="switchStudyMode('grammar')" class="px-2 py-1 rounded-lg cursor-pointer ${currentMode === 'grammar' ? 'btn-main' : 'opacity-70'}">3. Ngữ pháp</button>
+                            <button onclick="switchStudyMode('memory')" class="px-2 py-1 rounded-lg cursor-pointer ${currentMode === 'memory' ? 'btn-main' : 'opacity-70'}">4. Kiểm tra nhớ</button>
                         </div>
-                        <button onclick="setDashboardTab('room')" class="text-xs opacity-70 hover:opacity-100 font-bold px-2 cursor-pointer">Thoát</button>
+                        <button onclick="setTab('room')" class="text-[11px] opacity-70 hover:opacity-100 font-bold px-1.5 cursor-pointer">Thoát</button>
                     </div>
 
-                    <div id="study-interactive-viewport"></div>
+                    <div id="study-stage-box" class="flex-1 flex flex-col justify-center min-h-0 py-1"></div>
                 </div>
             `;
-            renderCurrentInteractiveCard();
+            renderCardInStage();
         }
 
-        function switchMode(m) {
-            currentCardMode = m;
-            currentCardIndex = 0;
-            selectedClozeWord = null;
-            isClozeChecked = false;
-            renderStudyRoomUI();
+        function switchStudyMode(m) {
+            currentMode = m;
+            currentIdx = 0;
+            selectedWord = null;
+            isChecked = false;
+            renderStudyRoomStage();
         }
 
-        function renderCurrentInteractiveCard() {
-            const vp = document.getElementById('study-interactive-viewport');
+        function renderCardInStage() {
+            const stage = document.getElementById('study-stage-box');
 
-            if (currentCardMode === 'vocab') {
-                const item = studyData.vocab[currentCardIndex];
-                vp.innerHTML = `
-                    <div class="space-y-3">
-                        <div class="flip-card-container w-full h-[250px] sm:h-[280px] landscape-card-box cursor-pointer" onclick="flipCardAction(this)">
+            if (currentMode === 'vocab') {
+                const item = studyStore.vocab[currentIdx];
+                stage.innerHTML = `
+                    <div class="flex-1 flex flex-col justify-between min-h-0 space-y-1.5">
+                        <div class="flip-card-container card-stage w-full flex-1 min-h-[170px] max-h-[260px] cursor-pointer" onclick="flipCardInner(this)">
                             <div class="flip-card-inner">
-                                <!-- MẶT TRƯỚC: Chữ Hán + Pinyin + Loa phát âm (KHÔNG BỊ MIRROR) -->
-                                <div class="card-front theme-card p-6 flex flex-col justify-between shadow-md">
+                                <!-- MẶT TRƯỚC: CHỮ HÁN + PINYIN + LOA (KHÔNG BỊ MIRROR) -->
+                                <div class="card-front theme-card p-3 sm:p-5 flex flex-col justify-between shadow-xs">
                                     <div class="flex justify-between items-center">
-                                        <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-600">Từ #${currentCardIndex + 1}/20</span>
-                                        <button onclick="event.stopPropagation(); speakChinese('${item.hanzi}')" class="w-8 h-8 rounded-full bg-rose-500/10 text-rose-600 flex items-center justify-center hover:scale-110 cursor-pointer" title="Nghe phát âm">
-                                            <i class="fa-solid fa-volume-high"></i>
+                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600">Từ #${currentIdx + 1}/20</span>
+                                        <button onclick="event.stopPropagation(); speakZh('${item.hanzi}')" class="w-7 h-7 rounded-full bg-rose-500/10 text-rose-600 flex items-center justify-center hover:scale-110 cursor-pointer">
+                                            <i class="fa-solid fa-volume-high text-xs"></i>
                                         </button>
                                     </div>
                                     <div class="text-center my-auto">
-                                        <h2 class="text-4xl sm:text-5xl font-black text-rose-600 mb-2">${item.hanzi}</h2>
-                                        <p class="text-lg font-bold opacity-80">${item.pinyin}</p>
+                                        <h2 class="txt-hanzi text-4xl sm:text-5xl font-black text-rose-600 mb-1 leading-tight">${item.hanzi}</h2>
+                                        <p class="text-base sm:text-lg font-bold opacity-80">${item.pinyin}</p>
                                     </div>
-                                    <div class="text-center text-[11px] opacity-60">
-                                        <i class="fa-solid fa-rotate mr-1"></i> Chạm để xem nghĩa tiếng Việt
+                                    <div class="text-[10px] opacity-60">
+                                        <i class="fa-solid fa-rotate mr-1"></i> Chạm lật xem nghĩa
                                     </div>
                                 </div>
 
-                                <!-- MẶT SAU: Nghĩa tiếng Việt + Ví dụ (XUÔI CHIỀU CHUẨN XÁC) -->
-                                <div class="card-back theme-card p-6 flex flex-col justify-between shadow-md">
+                                <!-- MẶT SAU: NGHĨA TIẾNG VIỆT + VÍ DỤ (XUÔI CHIỀU 100%) -->
+                                <div class="card-back theme-card p-3 sm:p-5 flex flex-col justify-between shadow-xs">
                                     <div class="flex justify-between items-center">
-                                        <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600">Nghĩa tiếng Việt</span>
-                                        <button onclick="event.stopPropagation(); speakChinese('${item.hanzi}')" class="w-8 h-8 rounded-full bg-rose-500/10 text-rose-600 flex items-center justify-center hover:scale-110 cursor-pointer">
-                                            <i class="fa-solid fa-volume-high"></i>
+                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600">Nghĩa tiếng Việt</span>
+                                        <button onclick="event.stopPropagation(); speakZh('${item.hanzi}')" class="w-7 h-7 rounded-full bg-rose-500/10 text-rose-600 flex items-center justify-center hover:scale-110 cursor-pointer">
+                                            <i class="fa-solid fa-volume-high text-xs"></i>
                                         </button>
                                     </div>
-                                    <div class="text-center my-auto space-y-2">
-                                        <h3 class="text-xl sm:text-2xl font-bold">${item.meaning}</h3>
-                                        <div class="text-xs p-2.5 rounded-xl theme-card border text-left opacity-85">
-                                            <p class="font-bold text-[11px] opacity-60">Ví dụ:</p>
-                                            <p>${item.example}</p>
+                                    <div class="text-center my-auto space-y-1">
+                                        <h3 class="text-lg sm:text-xl font-bold">${item.meaning}</h3>
+                                        <div class="text-[11px] p-2 rounded-xl theme-card border text-left opacity-85">
+                                            <p class="font-bold text-[10px] opacity-60">Ví dụ:</p>
+                                            <p class="truncate">${item.example}</p>
                                         </div>
                                     </div>
-                                    <div class="text-center text-[10px] opacity-60">Chạm để lật lại mặt chữ Hán</div>
+                                    <div class="text-[10px] opacity-60">Chạm để lật lại mặt chữ Hán</div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="flex justify-between items-center pt-1">
-                            <button onclick="prevCard()" class="px-4 py-2 theme-card rounded-xl text-xs font-bold cursor-pointer">Trước</button>
-                            <span class="text-xs font-bold opacity-60">Thẻ <span class="text-rose-600 font-bold">${currentCardIndex + 1}</span> / 20</span>
-                            <button onclick="nextCard()" class="px-4 py-2 btn-theme-main text-xs font-bold rounded-xl shadow cursor-pointer">Tiếp</button>
+                        <div class="flex justify-between items-center shrink-0 pt-0.5">
+                            <button onclick="prevItem()" class="px-3.5 py-1 theme-card rounded-lg text-xs font-bold cursor-pointer">Trước</button>
+                            <span class="text-xs font-bold opacity-60">Thẻ <span class="text-rose-600 font-bold">${currentIdx + 1}</span> / 20</span>
+                            <button onclick="nextItem()" class="px-3.5 py-1 btn-main text-xs font-bold rounded-lg shadow-xs cursor-pointer">Tiếp</button>
                         </div>
                     </div>
                 `;
-            } else if (currentCardMode === 'cloze') {
-                const item = studyData.cloze[currentCardIndex];
-                let choicesHtml = item.choices.map(word => {
-                    if (word === selectedClozeWord) return '';
-                    return `<button onclick="pickCloze('${word}')" class="px-3 py-1.5 theme-card border hover:border-rose-500 font-bold text-xs rounded-xl shadow-sm transition cursor-pointer">${word}</button>`;
+            } else if (currentMode === 'cloze') {
+                const item = studyStore.cloze[currentIdx];
+                let choicesHtml = item.choices.map(w => {
+                    if (w === selectedWord) return '';
+                    return `<button onclick="pickChoice('${w}')" class="px-2.5 py-1 theme-card border hover:border-rose-500 font-bold text-xs rounded-lg shadow-xs transition cursor-pointer">${w}</button>`;
                 }).join('');
 
-                let slot = selectedClozeWord 
-                    ? `<span onclick="unpickCloze()" class="text-rose-600 font-bold border-b-2 border-rose-500 px-2 cursor-pointer bg-rose-500/10 rounded">${selectedClozeWord} ✕</span>`
-                    : `<span class="inline-block w-14 border-b-2 border-dashed opacity-50 mx-1 text-center">( ? )</span>`;
+                let slot = selectedWord 
+                    ? `<span onclick="unpickChoice()" class="text-rose-600 font-bold border-b border-rose-500 px-1.5 cursor-pointer bg-rose-500/10 rounded">${selectedWord} ✕</span>`
+                    : `<span class="inline-block w-12 border-b border-dashed opacity-50 mx-1 text-center">( ? )</span>`;
 
                 let resHtml = '';
-                if (isClozeChecked) {
-                    let isRight = (selectedClozeWord === item.correctAnswer);
+                if (isChecked) {
+                    let isRight = (selectedWord === item.correctAnswer);
                     resHtml = `
-                        <div class="mt-2.5 p-3 rounded-xl border ${isRight ? 'border-emerald-500/40 bg-emerald-500/10' : 'border-rose-500/40 bg-rose-500/10'} space-y-1 text-left">
+                        <div class="p-2 rounded-lg border ${isRight ? 'border-emerald-500/40 bg-emerald-500/10' : 'border-rose-500/40 bg-rose-500/10'} space-y-0.5 text-left text-xs">
                             <div class="flex justify-between items-center">
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded ${isRight ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'}">${isRight ? '✓ Chính xác' : '✗ Chưa đúng'}</span>
-                                <button onclick="speakChinese('${item.sentenceBefore}${item.correctAnswer}${item.sentenceAfter}')" class="text-rose-500 text-xs"><i class="fa-solid fa-volume-high"></i></button>
+                                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${isRight ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'}">${isRight ? '✓ Đúng' : '✗ Sai'}</span>
+                                <button onclick="speakZh('${item.sentenceBefore}${item.correctAnswer}${item.sentenceAfter}')" class="text-rose-500 text-xs"><i class="fa-solid fa-volume-high"></i></button>
                             </div>
-                            <p class="text-xs font-bold pt-0.5">🇨🇳 ${item.sentenceBefore}<span class="text-rose-600 underline">${item.correctAnswer}</span>${item.sentenceAfter}</p>
-                            <p class="text-[11px] text-rose-600 font-semibold">🔊 ${item.pinyin}</p>
-                            <p class="text-[11px] opacity-75">🇻🇳 ${item.meaning}</p>
+                            <p class="font-bold pt-0.5 truncate">🇨🇳 ${item.sentenceBefore}<span class="text-rose-600 underline">${item.correctAnswer}</span>${item.sentenceAfter}</p>
+                            <p class="text-[10px] text-rose-600 font-semibold truncate">🔊 ${item.pinyin}</p>
+                            <p class="text-[10px] opacity-75 truncate">🇻🇳 ${item.meaning}</p>
                         </div>
                     `;
                 }
 
-                vp.innerHTML = `
-                    <div class="theme-card rounded-3xl p-5 flex flex-col justify-between min-h-[260px] space-y-3">
-                        <div class="space-y-3">
+                stage.innerHTML = `
+                    <div class="theme-card rounded-2xl p-3 flex flex-col justify-between h-full space-y-2">
+                        <div class="space-y-2">
                             <div class="flex justify-between items-center">
-                                <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-600">Câu điền từ #${currentCardIndex + 1}</span>
-                                <span class="text-[11px] opacity-70">Chọn từ phù hợp</span>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600">Câu điền từ #${currentIdx + 1}</span>
+                                <span class="text-[10px] opacity-70">Chọn từ phù hợp</span>
                             </div>
-                            <div class="text-center py-4 px-2 theme-card rounded-2xl">
-                                <p class="text-lg sm:text-xl font-black">${item.sentenceBefore} ${slot} ${item.sentenceAfter}</p>
+                            <div class="py-2.5 px-1 theme-card rounded-xl text-center">
+                                <p class="text-base sm:text-lg font-black">${item.sentenceBefore} ${slot} ${item.sentenceAfter}</p>
                             </div>
-                            <div class="flex flex-wrap justify-center gap-2">${choicesHtml || '<span class="text-xs opacity-60 italic">Đã chọn từ. Bấm vào ô để bỏ chọn.</span>'}</div>
+                            <div class="flex flex-wrap justify-center gap-1.5">${choicesHtml || '<span class="text-[10px] opacity-60 italic">Đã chọn từ. Bấm vào ô để đổi.</span>'}</div>
                             ${resHtml}
                         </div>
-                        <div class="flex justify-between items-center pt-2 border-t border-slate-500/20">
-                            <button onclick="prevCloze()" class="px-3 py-1.5 theme-card rounded-xl text-xs font-bold cursor-pointer">Trước</button>
-                            <button onclick="checkCloze()" class="px-5 py-2 btn-theme-main text-xs font-bold rounded-xl shadow cursor-pointer">Kiểm tra</button>
-                            <button onclick="nextCloze()" class="px-3 py-1.5 btn-theme-main text-xs font-bold rounded-xl shadow cursor-pointer">Tiếp</button>
+                        <div class="flex justify-between items-center pt-1 border-t border-slate-500/20 shrink-0">
+                            <button onclick="prevCloze()" class="px-2.5 py-1 theme-card rounded-lg text-xs font-bold cursor-pointer">Trước</button>
+                            <button onclick="checkClozeAnswer()" class="px-4 py-1 btn-main text-xs font-bold rounded-lg shadow-xs cursor-pointer">Kiểm tra</button>
+                            <button onclick="nextCloze()" class="px-2.5 py-1 btn-main text-xs font-bold rounded-lg shadow-xs cursor-pointer">Tiếp</button>
                         </div>
                     </div>
                 `;
-            } else if (currentCardMode === 'grammar') {
-                const item = studyData.grammar[0];
-                vp.innerHTML = `
-                    <div class="theme-card rounded-3xl p-5 space-y-4 text-center">
-                        <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-600">Mẫu câu & Ngữ pháp</span>
-                        <h3 class="text-lg font-bold text-rose-600">${item.pattern}</h3>
+            } else if (currentMode === 'grammar') {
+                const item = studyStore.grammar[0];
+                stage.innerHTML = `
+                    <div class="theme-card rounded-2xl p-4 space-y-2.5 text-center my-auto">
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600">Mẫu câu & Ngữ pháp</span>
+                        <h3 class="text-base sm:text-lg font-bold text-rose-600">${item.pattern}</h3>
                         <p class="text-xs font-semibold opacity-80">${item.challenge}</p>
-                        <div class="p-3 theme-card rounded-2xl border text-left text-xs space-y-1">
+                        <div class="p-2.5 theme-card rounded-xl border text-left text-xs space-y-1">
                             <p><b>Công thức:</b> ${item.formula}</p>
                             <p><b>Ví dụ:</b> 他比我高。(Tā bǐ wǒ gāo. - Anh ấy cao hơn tôi.)</p>
                         </div>
-                        <button onclick="speakChinese('他比我高')" class="px-4 py-2 btn-theme-main text-xs font-bold rounded-xl shadow cursor-pointer">
+                        <button onclick="speakZh('他比我高')" class="px-4 py-1.5 btn-main text-xs font-bold rounded-xl shadow-xs cursor-pointer">
                             <i class="fa-solid fa-volume-high mr-1"></i> Nghe câu mẫu
                         </button>
                     </div>
                 `;
-            } else if (currentCardMode === 'memory') {
-                renderMemoryQuizCard(vp);
+            } else if (currentMode === 'memory') {
+                renderMemoryInteractiveView(stage);
             }
         }
 
-        // --- 7. LOGIC THẺ KIỂM TRA NHỚ TỪ MỚI ---
+        // --- J. THẺ KIỂM TRA NHỚ TỪ MỚI (ÂM THANH + ẨN TỪ KHI ĐÚNG) ---
         function initMemoryQuiz() {
-            memoryQuizBank = [...default20Vocabs];
-            memoryCorrectCount = 0;
-            selectedHanzi = "";
-            selectedPinyin = "";
-            selectedMeaning = "";
+            memoryBank = [...defaultVocabs];
+            memoryScore = 0;
+            selHanzi = ""; selPinyin = ""; selMeaning = "";
         }
 
-        function renderMemoryQuizCard(vp) {
-            if (memoryQuizBank.length === 0) {
-                vp.innerHTML = `
-                    <div class="theme-card rounded-3xl p-6 text-center space-y-3">
-                        <div class="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center mx-auto text-xl">🎉</div>
-                        <h3 class="text-xl font-black text-emerald-600">XUẤT SẮC! BẠN ĐÃ THUỘC TOÀN BỘ 20 TỪ!</h3>
-                        <p class="text-xs opacity-75">Bạn đã ghép đúng tất cả các cặp Từ tiếng Trung - Pinyin - Nghĩa tiếng Việt.</p>
-                        <button onclick="initMemoryQuiz(); renderStudyRoomUI()" class="px-5 py-2.5 btn-theme-main text-xs font-bold rounded-xl shadow cursor-pointer">Luyện lại từ đầu</button>
+        function renderMemoryInteractiveView(stage) {
+            if (memoryBank.length === 0) {
+                stage.innerHTML = `
+                    <div class="theme-card rounded-2xl p-4 text-center space-y-2 my-auto">
+                        <div class="w-10 h-10 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center mx-auto text-lg">🎉</div>
+                        <h3 class="text-base font-black text-emerald-600">XUẤT SẮC! THUỘC TOÀN BỘ 20 TỪ!</h3>
+                        <p class="text-xs opacity-75">Bạn đã ghép đúng tất cả các cặp Từ - Pinyin - Nghĩa.</p>
+                        <button onclick="initMemoryQuiz(); renderStudyRoomStage()" class="px-4 py-1.5 btn-main text-xs font-bold rounded-xl shadow-xs cursor-pointer">Luyện lại</button>
                     </div>
                 `;
                 return;
             }
 
-            // Tạo danh sách trộn ngẫu nhiên cho từng ô chọn
-            const hanzis = [...memoryQuizBank].sort(() => Math.random() - 0.5);
-            const pinyins = [...memoryQuizBank].sort(() => Math.random() - 0.5);
-            const meanings = [...memoryQuizBank].sort(() => Math.random() - 0.5);
+            const hanzis = [...memoryBank].sort(() => Math.random() - 0.5);
+            const pinyins = [...memoryBank].sort(() => Math.random() - 0.5);
+            const meanings = [...memoryBank].sort(() => Math.random() - 0.5);
 
-            let hanziOptions = hanzis.map(i => `<option value="${i.hanzi}" ${selectedHanzi === i.hanzi ? 'selected' : ''}>${i.hanzi}</option>`).join('');
-            let pinyinOptions = pinyins.map(i => `<option value="${i.pinyin}" ${selectedPinyin === i.pinyin ? 'selected' : ''}>${i.pinyin}</option>`).join('');
-            let meaningOptions = meanings.map(i => `<option value="${i.meaning}" ${selectedMeaning === i.meaning ? 'selected' : ''}>${i.meaning}</option>`).join('');
+            let hanziOpts = hanzis.map(i => `<option value="${i.hanzi}" ${selHanzi === i.hanzi ? 'selected' : ''}>${i.hanzi}</option>`).join('');
+            let pinyinOpts = pinyins.map(i => `<option value="${i.pinyin}" ${selPinyin === i.pinyin ? 'selected' : ''}>${i.pinyin}</option>`).join('');
+            let meaningOpts = meanings.map(i => `<option value="${i.meaning}" ${selMeaning === i.meaning ? 'selected' : ''}>${i.meaning}</option>`).join('');
 
-            vp.innerHTML = `
-                <div class="theme-card rounded-3xl p-4 sm:p-5 space-y-3.5">
-                    <div class="flex justify-between items-center">
-                        <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-600">Kiểm tra nhớ từ mới</span>
-                        <span class="text-xs font-bold text-emerald-600">Đã thuộc: ${memoryCorrectCount}/20</span>
+            stage.innerHTML = `
+                <div class="theme-card rounded-2xl p-3 sm:p-4 space-y-2 h-full flex flex-col justify-between">
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600">Kiểm tra nhớ từ mới</span>
+                            <span class="text-xs font-bold text-emerald-600">Đã thuộc: ${memoryScore}/20</span>
+                        </div>
+                        <p class="text-[11px] font-semibold opacity-80 text-left">
+                            👉 Bạn chọn từ tiếng Trung, pinyin và nghĩa tiếng Việt phù hợp:
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-1.5">
+                            <div>
+                                <label class="block text-[9px] font-bold opacity-70 uppercase text-left">Từ tiếng Trung</label>
+                                <select id="sel-hanzi" onchange="selHanzi = this.value" class="w-full custom-input rounded-lg px-2 py-1 text-xs font-bold focus:outline-none">
+                                    <option value="">-- Chọn Hán tự --</option>
+                                    ${hanziOpts}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-bold opacity-70 uppercase text-left">Pinyin</label>
+                                <select id="sel-pinyin" onchange="selPinyin = this.value" class="w-full custom-input rounded-lg px-2 py-1 text-xs font-bold focus:outline-none">
+                                    <option value="">-- Chọn Pinyin --</option>
+                                    ${pinyinOpts}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-bold opacity-70 uppercase text-left">Nghĩa tiếng Việt</label>
+                                <select id="sel-meaning" onchange="selMeaning = this.value" class="w-full custom-input rounded-lg px-2 py-1 text-xs font-bold focus:outline-none">
+                                    <option value="">-- Chọn Nghĩa --</option>
+                                    ${meaningOpts}
+                                </select>
+                            </div>
+                        </div>
+                        <div id="memory-msg" class="text-xs font-bold min-h-[16px]"></div>
                     </div>
-
-                    <p class="text-xs font-semibold opacity-80 text-left">
-                        👉 Bạn chọn từ tiếng Trung, pinyin và nghĩa tiếng Việt phù hợp:
-                    </p>
-
-                    <!-- 3 Ô Menu chọn xếp theo cột trên di động, hàng ngang trên desktop -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                        <div>
-                            <label class="block text-[10px] font-bold opacity-70 mb-1 uppercase text-left">Từ tiếng Trung</label>
-                            <select id="quiz-select-hanzi" onchange="selectedHanzi = this.value" class="w-full custom-input rounded-xl px-2.5 py-2 text-xs font-bold focus:outline-none">
-                                <option value="">-- Chọn chữ Hán --</option>
-                                ${hanziOptions}
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold opacity-70 mb-1 uppercase text-left">Pinyin</label>
-                            <select id="quiz-select-pinyin" onchange="selectedPinyin = this.value" class="w-full custom-input rounded-xl px-2.5 py-2 text-xs font-bold focus:outline-none">
-                                <option value="">-- Chọn Pinyin --</option>
-                                ${pinyinOptions}
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold opacity-70 mb-1 uppercase text-left">Nghĩa tiếng Việt</label>
-                            <select id="quiz-select-meaning" onchange="selectedMeaning = this.value" class="w-full custom-input rounded-xl px-2.5 py-2 text-xs font-bold focus:outline-none">
-                                <option value="">-- Chọn Nghĩa --</option>
-                                ${meaningOptions}
-                            </select>
-                        </div>
-                    </div>
-
-                    <div id="memory-feedback-msg" class="text-xs font-bold min-h-[20px]"></div>
-
-                    <div class="flex justify-center pt-1">
-                        <button onclick="checkMemoryAnswer()" class="w-full sm:w-auto px-8 py-2.5 btn-theme-main text-xs font-bold rounded-xl shadow cursor-pointer">
+                    <div class="flex justify-center pt-0.5 shrink-0">
+                        <button onclick="checkMemory()" class="w-full sm:w-auto px-6 py-1.5 btn-main text-xs font-bold rounded-xl shadow-xs cursor-pointer">
                             <i class="fa-solid fa-circle-check mr-1"></i> Kiểm tra đáp án
                         </button>
                     </div>
@@ -863,70 +820,51 @@
             `;
         }
 
-        function checkMemoryAnswer() {
-            const h = document.getElementById('quiz-select-hanzi').value;
-            const p = document.getElementById('quiz-select-pinyin').value;
-            const m = document.getElementById('quiz-select-meaning').value;
-            const msgBox = document.getElementById('memory-feedback-msg');
+        function checkMemory() {
+            const h = document.getElementById('sel-hanzi').value;
+            const p = document.getElementById('sel-pinyin').value;
+            const m = document.getElementById('sel-meaning').value;
+            const box = document.getElementById('memory-msg');
 
-            if (!h || !p || !m) {
-                alert("Vui lòng chọn đầy đủ cả 3 ô để kiểm tra!");
-                return;
-            }
+            if (!h || !p || !m) { alert("Vui lòng chọn đủ cả 3 ô!"); return; }
 
-            // Tìm đối tượng chuẩn
-            const matched = memoryQuizBank.find(item => item.hanzi === h && item.pinyin === p && item.meaning === m);
-
-            if (matched) {
-                playTone('success');
-                speakChinese(h);
-                memoryCorrectCount++;
-                // Xóa từ đã đúng khỏi danh sách
-                memoryQuizBank = memoryQuizBank.filter(item => item.hanzi !== h);
-                selectedHanzi = ""; selectedPinyin = ""; selectedMeaning = "";
-
-                msgBox.innerHTML = `<span class="text-emerald-600 animate-pulse">🎉 Chính xác! Bạn chọn từ tiếp theo nhé!</span>`;
-                setTimeout(() => {
-                    renderStudyRoomUI();
-                }, 1200);
+            const match = memoryBank.find(it => it.hanzi === h && it.pinyin === p && it.meaning === m);
+            if (match) {
+                playSfx(true);
+                speakZh(h);
+                memoryScore++;
+                memoryBank = memoryBank.filter(it => it.hanzi !== h);
+                selHanzi = ""; selPinyin = ""; selMeaning = "";
+                box.innerHTML = `<span class="text-emerald-600 animate-pulse">🎉 Chính xác! Bạn chọn từ tiếp theo nhé!</span>`;
+                setTimeout(() => renderStudyRoomStage(), 1100);
             } else {
-                playTone('error');
-                // Tìm đáp án đúng của chữ Hán đang chọn để hiện gợi ý
-                const actual = default20Vocabs.find(item => item.hanzi === h);
-                let hint = actual ? `Chữ <b>${h}</b> phải đi với Pinyin: <b class="text-rose-600">${actual.pinyin}</b> và Nghĩa: <b class="text-rose-600">${actual.meaning}</b>` : "Bộ ba chưa khớp nhau, bạn hãy thử lại!";
-                msgBox.innerHTML = `
-                    <div class="p-2.5 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-600 text-left space-y-0.5">
-                        <p class="font-bold">❌ Chưa chính xác!</p>
-                        <p class="text-[11px]">${hint}</p>
-                    </div>
-                `;
+                playSfx(false);
+                const act = defaultVocabs.find(it => it.hanzi === h);
+                let hint = act ? `Chữ <b>${h}</b> đi với Pinyin: <b class="text-rose-600">${act.pinyin}</b> và Nghĩa: <b class="text-rose-600">${act.meaning}</b>` : "Chưa khớp, bạn hãy thử lại!";
+                box.innerHTML = `<div class="p-1.5 rounded-lg bg-rose-500/10 text-rose-600 text-[10px] text-left"><b>❌ Chưa đúng:</b> ${hint}</div>`;
             }
         }
 
-        function flipCardAction(el) {
-            el.querySelector('.flip-card-inner').classList.toggle('flipped');
+        function flipCardInner(el) { el.querySelector('.flip-card-inner').classList.toggle('flipped'); }
+        function nextItem() { currentIdx = (currentIdx + 1) % studyStore.vocab.length; renderCardInStage(); }
+        function prevItem() { currentIdx = (currentIdx - 1 + studyStore.vocab.length) % studyStore.vocab.length; renderCardInStage(); }
+
+        function pickChoice(w) { selectedWord = w; isChecked = false; renderCardInStage(); }
+        function unpickChoice() { selectedWord = null; isChecked = false; renderCardInStage(); }
+        function checkClozeAnswer() {
+            if (!selectedWord) { alert("Vui lòng chọn 1 từ!"); return; }
+            isChecked = true; renderCardInStage();
         }
+        function nextCloze() { currentIdx = (currentIdx + 1) % studyStore.cloze.length; selectedWord = null; isChecked = false; renderCardInStage(); }
+        function prevCloze() { currentIdx = (currentIdx - 1 + studyStore.cloze.length) % studyStore.cloze.length; selectedWord = null; isChecked = false; renderCardInStage(); }
 
-        function nextCard() { currentCardIndex = (currentCardIndex + 1) % studyData.vocab.length; renderCurrentInteractiveCard(); }
-        function prevCard() { currentCardIndex = (currentCardIndex - 1 + studyData.vocab.length) % studyData.vocab.length; renderCurrentInteractiveCard(); }
+        // --- K. ADMIN TẠO USER ---
+        function openAdminModal() { document.getElementById('admin-modal').classList.remove('hidden'); }
+        function closeAdminModal() { document.getElementById('admin-modal').classList.add('hidden'); }
 
-        function pickCloze(w) { selectedClozeWord = w; isClozeChecked = false; renderCurrentInteractiveCard(); }
-        function unpickCloze() { selectedClozeWord = null; isClozeChecked = false; renderCurrentInteractiveCard(); }
-        function checkCloze() {
-            if (!selectedClozeWord) { alert("Vui lòng chọn 1 từ điền vào ô trống!"); return; }
-            isClozeChecked = true;
-            renderCurrentInteractiveCard();
-        }
-        function nextCloze() { currentCardIndex = (currentCardIndex + 1) % studyData.cloze.length; selectedClozeWord = null; isClozeChecked = false; renderCurrentInteractiveCard(); }
-        function prevCloze() { currentCardIndex = (currentCardIndex - 1 + studyData.cloze.length) % studyData.cloze.length; selectedClozeWord = null; isClozeChecked = false; renderCurrentInteractiveCard(); }
-
-        // --- 8. ADMIN TẠO USER ---
-        function openAdminCreateModal() { document.getElementById('admin-user-modal').classList.remove('hidden'); }
-        function closeAdminCreateModal() { document.getElementById('admin-user-modal').classList.add('hidden'); }
-
-        let lastGeneratedUserString = '';
-        function executeCreateAccount() {
-            const name = document.getElementById('admin-input-fullname').value.trim();
+        let lastUserStr = '';
+        function execCreateUser() {
+            const name = document.getElementById('admin-in-name').value.trim();
             if (!name) return;
 
             const words = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/\s+/);
@@ -936,16 +874,16 @@
             let username = initials + lastName + Math.floor(100 + Math.random() * 900);
             let pass = "mrz" + Math.floor(1000 + Math.random() * 9000);
 
-            registeredUsers.push({ username, pass, role: 'member', fullname: name });
-            localStorage.setItem('chinesez_users', JSON.stringify(registeredUsers));
+            usersDB.push({ username, pass, role: 'member', fullname: name });
+            localStorage.setItem('chinesez_users', JSON.stringify(usersDB));
 
-            lastGeneratedUserString = `User: ${username} | Pass: ${pass}`;
-            document.getElementById('admin-account-info-text').innerText = lastGeneratedUserString;
-            document.getElementById('admin-created-box').classList.remove('hidden');
+            lastUserStr = `User: ${username} | Pass: ${pass}`;
+            document.getElementById('admin-res-text').innerText = lastUserStr;
+            document.getElementById('admin-res-box').classList.remove('hidden');
         }
 
-        function copyGeneratedUser() {
-            navigator.clipboard.writeText(lastGeneratedUserString);
+        function copyUserString() {
+            navigator.clipboard.writeText(lastUserStr);
             alert("Đã sao chép tài khoản thành viên!");
         }
     </script>
