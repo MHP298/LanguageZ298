@@ -337,24 +337,18 @@
         window.addEventListener('click', e => { const m = document.getElementById('theme-menu'); if (m && !e.target.closest('.relative')) m.classList.add('hidden'); });
 
         // ========================================================
-        // BỘ ĐIỀU PHỐI GỌI GEMINI API 
-        // XỬ LÝ KHÓA AQ... QUA URL VÀ QUÉT TOÀN DIỆN CÁC MODEL MỚI NHẤT
+        // BỘ ĐIỀU PHỐI GỌI GEMINI API - TÍCH HỢP ĐẦY ĐỦ CÁC MODEL
         // ========================================================
         async function callGeminiAPI(promptParts) {
             const userKey = (localStorage.getItem('user_gemini_api_key') || "").trim();
             if (!userKey) throw new Error("Chưa cài đặt Gemini API Key cá nhân. Vui lòng bấm biểu tượng chìa khóa 🔑 để lưu key!");
 
-            // Danh sách quét dự phòng toàn diện để tạo lưới lọc an toàn
-            // Từ các bản mới nhất (3.8, 3.5, 2.5) lùi dần về các bản tiêu chuẩn hiện có (2.0, 1.5)
-            const candidateModels = [
-                'gemini-3.8-flash',
-                'gemini-3.5-flash',
-                'gemini-2.5-flash',
-                'gemini-2.0-flash',
-                'gemini-2.0-flash-exp',
-                'gemini-1.5-flash-latest',
-                'gemini-1.5-flash-002',
-                'gemini-1.5-flash'
+            // Danh sách ưu tiên bao gồm toàn bộ các model được cung cấp
+           const candidateModels = [
+                'gemini-2.5-flash',     // Phiên bản Flash mới, tốc độ rất nhanh
+                'gemini-2.0-flash',     // Phiên bản Flash phổ biến, cực kỳ ổn định
+                'gemini-1.5-flash',     // Fallback dự phòng đáng tin cậy
+                'gemini-1.5-flash-8b'   // Model siêu nhẹ, phản hồi tức thì
             ];
             
             let lastError = null;
@@ -362,13 +356,16 @@
 
             for (const model of candidateModels) {
                 try {
-                    // Truyền khóa an toàn qua URL, giải quyết hoàn toàn xung đột chuẩn AQ mới và AIzaSy cũ
                     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(userKey)}`;
                     
                     const resp = await fetch(url, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ contents: [{ parts: promptParts }] })
+                        body: JSON.stringify({ 
+                            contents: [{ parts: promptParts }],
+                            // Ép trả về JSON gốc chuẩn theo yêu cầu để tăng tốc độ phân tích
+                            generationConfig: { responseMimeType: "application/json" }
+                        })
                     });
 
                     if (resp.ok) {
@@ -385,7 +382,7 @@
                     lastErrorMessage = e.message;
                 }
             }
-            throw new Error(`Tài khoản của bạn chưa hỗ trợ, đã hết hạn mức hoặc API Key không hợp lệ. (Chi tiết lỗi gốc: ${lastErrorMessage})`);
+            throw new Error(`Tài khoản chưa hỗ trợ phiên bản API hiện tại hoặc API Key không hợp lệ. (Chi tiết: ${lastErrorMessage})`);
         }
 
         function extractJSON(rawText) {
@@ -973,7 +970,7 @@
         }
 
         // ==========================================
-        // KỊCH BẢN AI GEMINI FLASH PHÂN TÍCH TÀI LIỆU
+        // KỊCH BẢN AI GEMINI PHÂN TÍCH TÀI LIỆU
         // ==========================================
         function fileToBase64(file) {
             return new Promise((resolve, reject) => {
@@ -1045,33 +1042,24 @@ Bạn là chuyên gia giáo dục tiếng Trung AI xuất sắc. Hãy phân tíc
 - Link tài liệu tham khảo: "${combinedLink}"
 
 YÊU CẦU:
-1. Hãy bóc tách và tạo bài học chuẩn tiếng Trung. Nếu nội dung tài liệu dài hoặc có nhiều phần/chủ đề (trên 8 từ vựng), hãy tự động chia thành mảng gồm nhiều bài học liên tiếp: "${title} - Phần 1", "${title} - Phần 2"... Mỗi phần tối đa 5-7 từ vựng. Nếu tài liệu ngắn hoặc chỉ nhập tiêu đề, trả về mảng 1 bài học chuẩn chỉnh.
-2. Với mỗi bài học, hãy cấu trúc đầy đủ và chính xác:
-   - "title": tên bài học
-   - "vocabs": mảng 4-6 từ vựng, mỗi từ có: {"hanzi": "...", "pinyin": "...", "meaning": "...", "example_cn": "...", "example_py": "...", "example_vi": "..."}
-   - "cloze": mảng 1 câu điền từ: [{"sentenceBefore": "...", "sentenceAfter": "...", "correctAnswer": "...", "choices": ["...","...","...","..."], "pinyin": "...", "meaning": "..."}]
-   - "grammar": mảng 1 điểm ngữ pháp: [{"pattern": "...", "challenge": "Sắp xếp: ...", "pinyin": "...", "meaning": "...", "formula": "..."}]
-   - "dialogues": mảng hội thoại giao tiếp 2-4 câu: [{"speaker": "A", "zh": "...", "pinyin": "...", "vi": "..."}, {"speaker": "B", "zh": "...", "pinyin": "...", "vi": "..."}]
-
-CHÚ Ý QUAN TRỌNG:
-Chỉ trả về JSON thuần túy (không dùng markdown \`\`\`json), định dạng mảng các bài học:
+1. Hãy bóc tách và tạo bài học chuẩn tiếng Trung. Nếu nội dung dài, chia thành mảng gồm nhiều bài học liên tiếp: "${title} - Phần 1"...
+2. Với mỗi bài học, hãy cấu trúc định dạng mảng JSON:
 [
   {
     "title": "...",
-    "vocabs": [...],
-    "cloze": [...],
-    "grammar": [...],
-    "dialogues": [...]
+    "vocabs": [{"hanzi": "...", "pinyin": "...", "meaning": "...", "example_cn": "...", "example_py": "...", "example_vi": "..."}],
+    "cloze": [{"sentenceBefore": "...", "sentenceAfter": "...", "correctAnswer": "...", "choices": ["...","...","...","..."], "pinyin": "...", "meaning": "..."}],
+    "grammar": [{"pattern": "...", "challenge": "Sắp xếp: ...", "pinyin": "...", "meaning": "...", "formula": "..."}],
+    "dialogues": [{"speaker": "A", "zh": "...", "pinyin": "...", "vi": "..."}, {"speaker": "B", "zh": "...", "pinyin": "...", "vi": "..."}]
   }
 ]
-`;
+Không thêm bất kỳ văn bản giải thích nào ngoài mảng JSON này.`;
                     promptParts.push({ text: promptText });
 
                     const rawResponse = await callGeminiAPI(promptParts);
                     let clean = extractJSON(rawResponse);
                     if (!Array.isArray(clean)) clean = [clean];
 
-                    // Lưu các bài học do AI sinh ra vào cơ sở dữ liệu
                     let firstCreatedId = null;
                     const collName = isSystem ? "system_lessons" : "user_lessons";
                     const ownerName = currentAuth ? currentAuth.username : 'guest';
@@ -1113,7 +1101,6 @@ Chỉ trả về JSON thuần túy (không dùng markdown \`\`\`json), định d
                 }
             }
 
-            // Fallback khi không có API Key hoặc offline
             const newId = Date.now(); lastCreatedId = newId;
             const newLesson = { 
                 id: newId, 
@@ -1190,11 +1177,11 @@ Chỉ trả về JSON thuần túy (không dùng markdown \`\`\`json), định d
                 return;
             }
 
-            outEl.innerHTML = `<p class="text-xs opacity-70 animate-pulse font-bold text-center">🤖 Đang dịch thuật và phân tích cùng Gemini AI...</p>`;
+            outEl.innerHTML = `<p class="text-xs opacity-70 animate-pulse font-bold text-center">🤖 Đang dịch thuật và phân tích cùng AI...</p>`;
 
             const prompt = isViZh 
-                ? `Bạn là chuyên gia dịch thuật Việt - Trung. Hãy dịch câu tiếng Việt sau sang tiếng Trung chuẩn xác, tự nhiên: "${txt}". Trả về JSON duy nhất: {"hanzi": "chữ Hán", "pinyin": "pinyin có dấu", "meaning": "nghĩa tiếng Việt", "note": "giải thích thêm nếu cần"}. Không thêm markdown.`
-                : `Bạn là chuyên gia dịch thuật Trung - Việt. Hãy dịch câu tiếng Trung sau sang tiếng Việt chuẩn xác: "${txt}". Trả về JSON duy nhất: {"hanzi": "chữ Hán gốc", "pinyin": "pinyin có dấu", "meaning": "nghĩa tiếng Việt", "note": "giải thích thêm nếu cần"}. Không thêm markdown.`;
+                ? `Bạn là chuyên gia dịch thuật Việt - Trung. Hãy dịch câu sau sang tiếng Trung: "${txt}". Trả về JSON duy nhất: {"hanzi": "chữ Hán", "pinyin": "pinyin có dấu", "meaning": "nghĩa tiếng Việt", "note": "giải thích thêm nếu cần"}.`
+                : `Bạn là chuyên gia dịch thuật Trung - Việt. Hãy dịch câu sau sang tiếng Việt: "${txt}". Trả về JSON duy nhất: {"hanzi": "chữ Hán gốc", "pinyin": "pinyin có dấu", "meaning": "nghĩa tiếng Việt", "note": "giải thích thêm nếu cần"}.`;
 
             try {
                 const raw = await callGeminiAPI([{ text: prompt }]);
@@ -1383,7 +1370,7 @@ Chỉ trả về JSON thuần túy (không dùng markdown \`\`\`json), định d
             }
             try {
                 const vocabList = (activeLesson.vocabs || []).map(v => `${v.hanzi} (${v.meaning})`).join(', ');
-                const prompt = `Dựa vào chủ đề bài học "${activeLesson.title}" và các từ vựng sau: [${vocabList}], hãy tạo một đoạn hội thoại giao tiếp A-B gồm 2 đến 4 câu hoàn toàn mới mẻ, tự nhiên. Trả về đúng định dạng JSON: [{"speaker":"A","zh":"...","pinyin":"...","vi":"..."},{"speaker":"B","zh":"...","pinyin":"...","vi":"..."}]. Chỉ trả về JSON thuần, không bọc markdown.`;
+                const prompt = `Dựa vào chủ đề bài học "${activeLesson.title}" và các từ vựng sau: [${vocabList}], hãy tạo một đoạn hội thoại giao tiếp A-B gồm 2 đến 4 câu hoàn toàn mới mẻ, tự nhiên. Trả về đúng định dạng JSON: [{"speaker":"A","zh":"...","pinyin":"...","vi":"..."},{"speaker":"B","zh":"...","pinyin":"...","vi":"..."}]. Không giải thích thêm.`;
                 
                 const raw = await callGeminiAPI([{ text: prompt }]);
                 const clean = extractJSON(raw);
