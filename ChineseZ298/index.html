@@ -337,22 +337,24 @@
         window.addEventListener('click', e => { const m = document.getElementById('theme-menu'); if (m && !e.target.closest('.relative')) m.classList.add('hidden'); });
 
         // ========================================================
-        // BỘ ĐIỀU PHỐI GỌI GEMINI API (CHUẨN HÓA CHO CẢ KHÓA MỚI AQ VÀ CŨ AIza)
-        // MỞ RỘNG DANH SÁCH MODEL ĐỂ CHỐNG LỖI "NOT FOUND"
+        // BỘ ĐIỀU PHỐI GỌI GEMINI API 
+        // XỬ LÝ KHÓA AQ... QUA URL VÀ QUÉT TOÀN DIỆN CÁC MODEL MỚI NHẤT
         // ========================================================
         async function callGeminiAPI(promptParts) {
             const userKey = (localStorage.getItem('user_gemini_api_key') || "").trim();
             if (!userKey) throw new Error("Chưa cài đặt Gemini API Key cá nhân. Vui lòng bấm biểu tượng chìa khóa 🔑 để lưu key!");
 
-            // Danh sách các model từ mới nhất/mạnh nhất đến phiên bản phổ thông nhất
-            // Điều này đảm bảo API Key của bất kỳ tài khoản/khu vực nào cũng sẽ tìm được model phù hợp.
+            // Danh sách quét dự phòng toàn diện để tạo lưới lọc an toàn
+            // Từ các bản mới nhất (3.8, 3.5, 2.5) lùi dần về các bản tiêu chuẩn hiện có (2.0, 1.5)
             const candidateModels = [
+                'gemini-3.8-flash',
+                'gemini-3.5-flash',
+                'gemini-2.5-flash',
                 'gemini-2.0-flash',
                 'gemini-2.0-flash-exp',
                 'gemini-1.5-flash-latest',
                 'gemini-1.5-flash-002',
-                'gemini-1.5-flash',
-                'gemini-pro'
+                'gemini-1.5-flash'
             ];
             
             let lastError = null;
@@ -360,7 +362,7 @@
 
             for (const model of candidateModels) {
                 try {
-                    // CHỈ truyền API Key qua URL (chuẩn xác nhất cho web tĩnh), loại bỏ hoàn toàn các Header gây xung đột
+                    // Truyền khóa an toàn qua URL, giải quyết hoàn toàn xung đột chuẩn AQ mới và AIzaSy cũ
                     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(userKey)}`;
                     
                     const resp = await fetch(url, {
@@ -383,7 +385,7 @@
                     lastErrorMessage = e.message;
                 }
             }
-            throw new Error(`Tài khoản của bạn chưa hỗ trợ các Model hiện tại. (Chi tiết: ${lastErrorMessage})`);
+            throw new Error(`Tài khoản của bạn chưa hỗ trợ, đã hết hạn mức hoặc API Key không hợp lệ. (Chi tiết lỗi gốc: ${lastErrorMessage})`);
         }
 
         function extractJSON(rawText) {
@@ -465,7 +467,7 @@
         function renderChatMsg(role, text) {
             const list = document.getElementById('chat-msg-list'); const d = document.createElement('div');
             if(role === 'system') { d.className = "flex space-x-1.5 mb-2"; d.innerHTML = `<div class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-[10px] shrink-0 font-bold">中</div><div class="bg-white border px-3 py-2 rounded-xl text-xs rounded-tl-none max-w-[85%] leading-relaxed shadow-sm">${text}</div>`; }
-            else { d.className = "flex justify-end mb-2"; d.innerHTML = `<div class="bg-rose-500 text-white px-3 py-2 rounded-xl text-xs rounded-tr-none max-w-[85%] shadow-sm">${text}</div>`; }
+            else { d.className = "flex justify-end mb-2"; d.innerHTML = `<div class="bg-rose-50 text-white px-3 py-2 rounded-xl text-xs rounded-tr-none max-w-[85%] shadow-sm">${text}</div>`; }
             list.appendChild(d); list.scrollTop = list.scrollHeight;
         }
         function handleChatSubmit() {
@@ -496,7 +498,7 @@
         }
 
         // ==========================================
-        // QUẢN LÝ POPUP API KEY (ĐÃ KHẮC PHỤC CHUẨN XÁC)
+        // QUẢN LÝ POPUP CÀI ĐẶT API KEY
         // ==========================================
         function openApiSetupModal(isFirstLogin = false) {
             let k = (localStorage.getItem('user_gemini_api_key') || "").trim();
@@ -1100,11 +1102,11 @@ Chỉ trả về JSON thuần túy (không dùng markdown \`\`\`json), định d
                     lastCreatedId = firstCreatedId || Date.now();
                     document.getElementById('decision-lesson-name').innerText = clean.length > 1 ? `${title} (Đã tách thành ${clean.length} phần bài học)` : title;
                     document.getElementById('create-decision-modal').classList.remove('hidden');
-                    return; // Đã tạo xong thành công bằng AI, không chạy xuống fallback
+                    return; 
 
                 } catch (err) {
                     console.error("Lỗi AI tạo bài:", err);
-                    alert("⚠️ AI không thể tạo bài: " + (err.message || "Lỗi kết nối API.") + "\nỨng dụng sẽ lưu bài học với cấu trúc mặc định.");
+                    alert("⚠️ " + (err.message || "Lỗi kết nối API.") + "\nỨng dụng sẽ lưu bài học bằng cấu trúc mặc định dự phòng.");
                 } finally {
                     if (statusEl) statusEl.classList.add('hidden');
                     if (btnArea) btnArea.classList.remove('opacity-50', 'pointer-events-none');
@@ -1215,7 +1217,7 @@ Chỉ trả về JSON thuần túy (không dùng markdown \`\`\`json), định d
                 outEl.innerHTML = `
                     <div class="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs text-left space-y-1">
                         <p class="font-bold">❌ Dịch thất bại:</p>
-                        <p class="text-[11px] opacity-80">${err.message || 'Vui lòng kiểm tra lại kết nối mạng hoặc API Key.'}</p>
+                        <p class="text-[11px] opacity-80">${err.message || 'Vui lòng kiểm tra lại kết nối mạng hoặc đổi API Key khác.'}</p>
                     </div>
                 `;
             }
