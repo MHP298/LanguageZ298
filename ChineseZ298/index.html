@@ -344,9 +344,10 @@
             if (!userKey) throw new Error("Chưa cài đặt Gemini API Key cá nhân. Vui lòng bấm biểu tượng chìa khóa 🔑 để lưu key!");
 
             // Danh sách ưu tiên bao gồm toàn bộ các model được cung cấp
-           const candidateModels = [
-                'gemini-2.5-flash',     // Phiên bản Flash mới, tốc độ rất nhanh
-                'gemini-2.0-flash',     // Phiên bản Flash phổ biến, cực kỳ ổn định
+            const candidateModels = [
+                'gemini-3.8-flash',
+                'gemini-3.6-flash',
+                'gemini-3.5-flash',
             ];
             
             let lastError = null;
