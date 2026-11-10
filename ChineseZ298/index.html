@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi" data-theme="lavender">
 <head>
-    <!-- 1. CƠ CHẾ AUTO-TIMESTAMP URL (TỰ ĐỘNG BẺ NHÁNH ?v= ĐỂ CHỐNG CACHE TRÌNH DUYỆT TRIỆT ĐỂ) -->
+    <!-- KỸ THUẬT AUTO-TIMESTAMP URL (TỰ ĐỘNG THÊM ?v= KHI VÀO TRANG) -->
     <script>
         (function() {
             var p = new URLSearchParams(window.location.search);
@@ -11,7 +11,6 @@
             }
         })();
     </script>
-
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#7c3aed">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -574,9 +573,9 @@
         </div>
     </div>
 
-    <!-- 2. BỘ NẠP MODULE JAVASCRIPT & TỰ ĐỘNG LÀM MỚI SERVICE WORKER -->
+        <!-- LIÊN KẾT CÁC MODULE JAVASCRIPT & CƠ CHẾ CHỐNG CACHE TỰ ĐỘNG -->
     <script>
-        // KỸ THUẬT 1: DYNAMIC CACHE BUSTING TỰ ĐỘNG BẰNG TIMESTAMP CHO CÁC MODULE JS
+        // KỸ THUẬT 1 & 2: DYNAMIC CACHE BUSTING TỰ ĐỘNG BẰNG TIMESTAMP
         const appVersion = Date.now();
         
         function loadModuleScript(src) {
@@ -585,23 +584,23 @@
                 s.src = src + '?v=' + appVersion;
                 s.async = false;
                 s.onload = resolve;
-                s.onerror = () => reject(new Error('Lỗi nạp file: ' + src));
+                s.onerror = () => reject(new Error('Lỗi tải tệp: ' + src));
                 document.body.appendChild(s);
             });
         }
 
-        // Nạp tuần tự card-engine.js trước rồi đến app-core.js
+        // Nạp tuần tự card-engine.js trước rồi tới app-core.js
         loadModuleScript('./card-engine.js')
             .then(() => loadModuleScript('./app-core.js'))
             .then(() => {
-                // Khởi động hệ thống khi cả 2 module JS đã nạp thành công
+                // Khởi động ứng dụng khi cả 2 module JS đã nạp thành công
                 if (window.CZAppCore && typeof window.CZAppCore.init === 'function') {
                     window.CZAppCore.init();
                 }
             })
             .catch(err => console.error("Lỗi nạp script:", err));
 
-        // KỸ THUẬT 2: TỰ ĐỘNG CẬP NHẬT SERVICE WORKER VÀ F5 KHI PHÁT HIỆN BẢN MỚI
+        // KỸ THUẬT 3: TỰ ĐỘNG CẬP NHẬT SERVICE WORKER VÀ F5 LẠI KHI CÓ BẢN MỚI
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
