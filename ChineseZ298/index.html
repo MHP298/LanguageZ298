@@ -1,37 +1,29 @@
 <!DOCTYPE html>
 <html lang="vi" data-theme="lavender">
 <head>
-    <script>
-        // Tự động kiểm tra và thêm timestamp nếu truy cập URL gốc để chống lưu cache trang HTML
-        (function() {
-            try {
-                var p = new URLSearchParams(window.location.search);
-                if (!p.has('v')) {
-                    p.set('v', Date.now());
-                    window.location.replace(window.location.pathname + '?' + p.toString() + window.location.hash);
-                }
-            } catch(e) {}
-        })();
-    </script>
-    <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#7c3aed">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="ChineseZ298">
-    <link rel="apple-touch-icon" href="./logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>ChineseZ298 - Ôn Tập Tiếng Trung AI</title>
+    
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#7c3aed">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ChineseZ298">
+    <link rel="apple-touch-icon" href="./logo.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@700;800;900&family=Noto+Sans+SC:wght@500;700;900&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
     <style>
         @custom-variant dark (&:where([data-theme="midnight"], [data-theme="midnight"] *));
 
@@ -157,7 +149,7 @@
 </head>
 <body class="flex flex-col">
     <!-- CHATBOX LIÊN HỆ ADMIN -->
-    <div id="floating-chat-btn" onclick="window.CZAppCore && window.CZAppCore.toggleSupportChat(event)" class="fixed bottom-20 right-3 sm:bottom-6 sm:right-6 w-11 h-11 sm:w-12 sm:h-12 bg-rose-600 text-white rounded-full flex items-center justify-center shadow-2xl cursor-pointer hover:scale-110 transition z-50">
+    <div id="floating-chat-btn" onclick="CZAppCore.toggleSupportChat(event)" class="fixed bottom-20 right-3 sm:bottom-6 sm:right-6 w-11 h-11 sm:w-12 sm:h-12 bg-rose-600 text-white rounded-full flex items-center justify-center shadow-2xl cursor-pointer hover:scale-110 transition z-50">
         <i class="fa-solid fa-headset text-base sm:text-lg"></i>
         <span id="chat-new-badge" class="hidden absolute -top-1.5 -right-1 px-1.5 py-0.5 rounded-full bg-amber-400 text-slate-900 font-black text-[9px] shadow-md animate-bounce border border-white">Mới</span>
     </div>
@@ -168,22 +160,22 @@
                 <i class="fa-solid fa-headset text-sm"></i>
                 <span id="support-chat-header-title" class="font-black text-xs sm:text-sm truncate">Liên hệ admin</span>
             </div>
-            <button onclick="window.CZAppCore && window.CZAppCore.closeSupportChat()" class="text-white hover:opacity-75 cursor-pointer ml-2"><i class="fa-solid fa-xmark text-base"></i></button>
+            <button onclick="CZAppCore.closeSupportChat()" class="text-white hover:opacity-75 cursor-pointer ml-2"><i class="fa-solid fa-xmark text-base"></i></button>
         </div>
         <div id="chat-msg-list" class="flex-1 p-3 overflow-y-auto text-xs flex flex-col space-y-2.5" style="background-color: var(--input-bg);"></div>
         
         <div id="chat-end-confirm-box" class="hidden p-2.5 bg-amber-500/15 border-t border-amber-500/30 text-left shrink-0 space-y-1.5">
             <p class="text-xs font-bold text-amber-600">❓ Chúng ta kết thúc vấn đề nhé?</p>
             <div class="flex gap-2">
-                <button onclick="window.CZAppCore && window.CZAppCore.confirmEndChat(true)" class="flex-1 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs cursor-pointer">Đồng ý</button>
-                <button onclick="window.CZAppCore && window.CZAppCore.confirmEndChat(false)" class="flex-1 py-1 bg-slate-400 hover:bg-slate-500 text-white font-bold rounded-xl text-xs cursor-pointer">Tiếp tục</button>
+                <button onclick="CZAppCore.confirmEndChat(true)" class="flex-1 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs cursor-pointer">Đồng ý</button>
+                <button onclick="CZAppCore.confirmEndChat(false)" class="flex-1 py-1 bg-slate-400 hover:bg-slate-500 text-white font-bold rounded-xl text-xs cursor-pointer">Tiếp tục</button>
             </div>
         </div>
 
         <div class="p-2 border-t border-slate-500/10 shrink-0 theme-card">
             <div class="flex items-center space-x-2">
-                <input type="text" id="chat-input-txt" placeholder="Nhập tin nhắn..." class="flex-1 custom-input rounded-xl px-3 py-2 text-xs focus:outline-none" onkeypress="if(event.key==='Enter') (window.CZAppCore && window.CZAppCore.handleChatSubmit())">
-                <button onclick="window.CZAppCore && window.CZAppCore.handleChatSubmit()" class="w-8 h-8 rounded-full btn-3d flex items-center justify-center shrink-0 cursor-pointer"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+                <input type="text" id="chat-input-txt" placeholder="Nhập tin nhắn..." class="flex-1 custom-input rounded-xl px-3 py-2 text-xs focus:outline-none" onkeypress="if(event.key==='Enter') CZAppCore.handleChatSubmit()">
+                <button onclick="CZAppCore.handleChatSubmit()" class="w-8 h-8 rounded-full btn-3d flex items-center justify-center shrink-0 cursor-pointer"><i class="fa-solid fa-paper-plane text-xs"></i></button>
             </div>
         </div>
     </div>
@@ -204,11 +196,11 @@
                     <div><label class="block text-[11px] font-bold uppercase opacity-80 mb-1">Tên đăng nhập</label><input type="text" id="login-username" placeholder="Nhập tên đăng nhập..." class="w-full custom-input rounded-xl px-3.5 py-2.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-rose-500"></div>
                     <div>
                         <label class="block text-[11px] font-bold uppercase opacity-80 mb-1">Mật khẩu</label>
-                        <div class="relative"><input type="password" id="login-password" placeholder="Nhập mật khẩu..." class="w-full custom-input rounded-xl pl-3.5 pr-10 py-2.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-rose-500"><button type="button" onclick="window.CZAppCore ? window.CZAppCore.togglePassVisibility('login-password','pass-icon') : null" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-xs opacity-60 cursor-pointer hover:opacity-100"><i id="pass-icon" class="fa-solid fa-eye"></i></button></div>
+                        <div class="relative"><input type="password" id="login-password" placeholder="Nhập mật khẩu..." class="w-full custom-input rounded-xl pl-3.5 pr-10 py-2.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-rose-500"><button type="button" onclick="CZAppCore.togglePassVisibility('login-password','pass-icon')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-xs opacity-60 cursor-pointer hover:opacity-100"><i id="pass-icon" class="fa-solid fa-eye"></i></button></div>
                     </div>
-                    <button onclick="window.CZAppCore ? window.CZAppCore.handleLogin() : null" class="w-full py-3 btn-3d font-bold text-xs rounded-xl cursor-pointer mt-1">Đăng Nhập</button>
+                    <button onclick="CZAppCore.handleLogin()" class="w-full py-3 btn-3d font-bold text-xs rounded-xl cursor-pointer mt-1">Đăng Nhập</button>
                 </div>
-                <div class="flex justify-between items-center pt-2.5 border-t border-slate-500/10 text-xs font-bold"><button type="button" onclick="window.CZAppCore ? window.CZAppCore.openRegisterModal() : null" id="btn-open-register" class="text-rose-600 hover:underline flex items-center space-x-1 cursor-pointer"><i class="fa-solid fa-user-plus text-[10px]"></i><span>Đăng ký tài khoản mới</span></button><button type="button" onclick="window.CZAppCore ? window.CZAppCore.openForgotModal() : null" class="opacity-60 hover:opacity-100 hover:underline cursor-pointer">Quên TK / Mật khẩu?</button></div>
+                <div class="flex justify-between items-center pt-2.5 border-t border-slate-500/10 text-xs font-bold"><button type="button" onclick="CZAppCore.openRegisterModal()" id="btn-open-register" class="text-rose-600 hover:underline flex items-center space-x-1 cursor-pointer"><i class="fa-solid fa-user-plus text-[10px]"></i><span>Đăng ký tài khoản mới</span></button><button type="button" onclick="CZAppCore.openForgotModal()" class="opacity-60 hover:opacity-100 hover:underline cursor-pointer">Quên TK / Mật khẩu?</button></div>
                 <div class="flex items-center justify-center space-x-2 pt-2.5 border-t border-slate-500/10 text-xs sm:text-[13px] font-bold opacity-85"><img src="./logo.png" onerror="this.onerror=null; this.src='logo.png';" alt="MRZ298" class="w-5 h-5 sm:w-6 sm:h-6 object-contain ant-flipped-right shrink-0"><span>Ứng dụng thiết kế &amp; phát triển bởi <strong class="text-rose-600 font-black">MRZ298</strong></span></div>
             </div>
         </div>
@@ -224,37 +216,37 @@
             </div>
             <div class="flex items-center space-x-1.5">
                 <div class="relative">
-                    <button onclick="window.CZAppCore && window.CZAppCore.toggleThemeMenu()" class="theme-card px-2 py-1 rounded-lg text-[11px] font-bold flex items-center space-x-1 cursor-pointer"><i class="fa-solid fa-palette text-rose-500"></i><span id="theme-lbl" class="hidden sm:inline">Lavender</span><i class="fa-solid fa-chevron-down text-[8px] opacity-70"></i></button>
-                    <div id="theme-menu" class="hidden absolute right-0 mt-1 w-44 rounded-xl bg-white border shadow-xl py-1 z-50 text-slate-800 text-xs"><button onclick="window.CZAppCore && window.CZAppCore.applyTheme('lavender','Lavender')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🌸 Lavender (Tím)</button><button onclick="window.CZAppCore && window.CZAppCore.applyTheme('nordic','Nordic')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🌊 Nordic (Xanh biển)</button><button onclick="window.CZAppCore && window.CZAppCore.applyTheme('sage','Sage Tea')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🍃 Sage (Xanh lá)</button><button onclick="window.CZAppCore && window.CZAppCore.applyTheme('warm','Warm Milk')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🥛 Warm (Sáng kem)</button><button onclick="window.CZAppCore && window.CZAppCore.applyTheme('midnight','Midnight')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🌙 Midnight (Đêm)</button></div>
+                    <button onclick="CZAppCore.toggleThemeMenu()" class="theme-card px-2 py-1 rounded-lg text-[11px] font-bold flex items-center space-x-1 cursor-pointer"><i class="fa-solid fa-palette text-rose-500"></i><span id="theme-lbl" class="hidden sm:inline">Lavender</span><i class="fa-solid fa-chevron-down text-[8px] opacity-70"></i></button>
+                    <div id="theme-menu" class="hidden absolute right-0 mt-1 w-44 rounded-xl bg-white border shadow-xl py-1 z-50 text-slate-800 text-xs"><button onclick="CZAppCore.applyTheme('lavender','Lavender')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🌸 Lavender (Tím)</button><button onclick="CZAppCore.applyTheme('nordic','Nordic')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🌊 Nordic (Xanh biển)</button><button onclick="CZAppCore.applyTheme('sage','Sage Tea')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🍃 Sage (Xanh lá)</button><button onclick="CZAppCore.applyTheme('warm','Warm Milk')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🥛 Warm (Sáng kem)</button><button onclick="CZAppCore.applyTheme('midnight','Midnight')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🌙 Midnight (Đêm)</button></div>
                 </div>
                 <span id="user-role-badge" class="text-[10px] px-2 py-0.5 rounded-lg bg-rose-500/10 text-rose-600 font-bold hidden sm:inline"></span>
-                <button onclick="window.CZAppCore && window.CZAppCore.handleLogout()" class="px-2 py-1 rounded-lg border border-slate-500/20 text-[11px] font-bold hover:bg-rose-600 hover:text-white transition cursor-pointer"><i class="fa-solid fa-right-from-bracket"></i></button>
+                <button onclick="CZAppCore.handleLogout()" class="px-2 py-1 rounded-lg border border-slate-500/20 text-[11px] font-bold hover:bg-rose-600 hover:text-white transition cursor-pointer"><i class="fa-solid fa-right-from-bracket"></i></button>
             </div>
         </header>
         <div class="flex-1 flex flex-col md:flex-row p-2 gap-2 min-h-0 overflow-hidden">
             <aside class="side-bar shrink-0 theme-card rounded-2xl p-1 sm:p-1.5 flex md:flex-col justify-between shadow-xs z-20 relative">
                 <div class="flex md:flex-col gap-1 w-full items-stretch">
-                    <button onclick="window.CZAppCore && window.CZAppCore.setTab('home')" id="tbtn-home" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold btn-3d flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <button onclick="CZAppCore.setTab('home')" id="tbtn-home" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold btn-3d flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
                         <i class="fa-solid fa-house text-xs sm:text-sm md:w-4 text-center"></i>
                         <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Trang chủ</span>
                     </button>
-                    <button onclick="window.CZAppCore && window.CZAppCore.setTab('profile')" id="tbtn-profile" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <button onclick="CZAppCore.setTab('profile')" id="tbtn-profile" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
                         <i class="fa-solid fa-id-card text-xs sm:text-sm md:w-4 text-center"></i>
                         <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Thông tin tài khoản</span>
                     </button>
-                    <button onclick="window.CZAppCore && window.CZAppCore.setTab('create')" id="tbtn-create" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <button onclick="CZAppCore.setTab('create')" id="tbtn-create" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
                         <i class="fa-solid fa-file-circle-plus text-xs sm:text-sm md:w-4 text-center"></i>
                         <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Tạo bài</span>
                     </button>
-                    <button onclick="window.CZAppCore && window.CZAppCore.setTab('room')" id="tbtn-room" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <button onclick="CZAppCore.setTab('room')" id="tbtn-room" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
                         <i class="fa-solid fa-graduation-cap text-xs sm:text-sm md:w-4 text-center"></i>
                         <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Phòng học</span>
                     </button>
-                    <button onclick="window.CZAppCore && window.CZAppCore.setTab('chat')" id="tbtn-chat" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <button onclick="CZAppCore.setTab('chat')" id="tbtn-chat" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
                         <i class="fa-solid fa-comments text-xs sm:text-sm md:w-4 text-center"></i>
                         <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Chat Dịch</span>
                     </button>
-                    <button onclick="window.CZAppCore && window.CZAppCore.setTab('admin')" id="admin-box" class="hidden flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-xs flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-1.5 cursor-pointer text-center md:text-left relative transition">
+                    <button onclick="CZAppCore.setTab('admin')" id="admin-box" class="hidden flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-xs flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-1.5 cursor-pointer text-center md:text-left relative transition">
                         <i class="fa-solid fa-users-gear text-xs sm:text-sm md:w-4 text-center"></i>
                         <span class="text-[10px] sm:text-xs truncate w-full block md:inline"><span class="md:hidden">Quản trị</span><span class="hidden md:inline">Quản lý tài khoản</span></span>
                         <span id="admin-sidebar-badge" class="hidden absolute top-1 right-1 w-2.5 h-2.5 bg-rose-600 rounded-full animate-pulse border border-white"></span>
@@ -277,7 +269,7 @@
                     <div class="w-7 h-7 bg-rose-600 rounded-lg flex items-center justify-center font-bold text-white text-xs shrink-0">中</div>
                     <h3 class="font-black text-sm text-rose-600">Cài đặt Gemini API Key cá nhân</h3>
                 </div>
-                <button onclick="window.CZAppCore && window.CZAppCore.closeApiSetupModal()" class="text-xs opacity-60 hover:opacity-100 cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button onclick="CZAppCore.closeApiSetupModal()" class="text-xs opacity-60 hover:opacity-100 cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             
             <p class="text-[11px] opacity-80 leading-relaxed font-semibold">
@@ -307,8 +299,8 @@
                     <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> <span>Mở Google AI Studio</span>
                 </a>
                 <div class="space-x-1.5 flex">
-                    <button onclick="window.CZAppCore && window.CZAppCore.skipApiKeySetup()" class="px-3 py-1.5 theme-card border rounded-xl text-xs font-bold opacity-75 hover:opacity-100 cursor-pointer">Dùng Offline</button>
-                    <button onclick="window.CZAppCore && window.CZAppCore.saveApiKeyFromPopup()" class="px-4 py-1.5 btn-3d text-xs font-bold rounded-xl cursor-pointer shadow">Lưu Key</button>
+                    <button onclick="CZAppCore.skipApiKeySetup()" class="px-3 py-1.5 theme-card border rounded-xl text-xs font-bold opacity-75 hover:opacity-100 cursor-pointer">Dùng Offline</button>
+                    <button onclick="CZAppCore.saveApiKeyFromPopup()" class="px-4 py-1.5 btn-3d text-xs font-bold rounded-xl cursor-pointer shadow">Lưu Key</button>
                 </div>
             </div>
 
@@ -328,19 +320,19 @@
             <div class="space-y-2 text-xs">
                 <div>
                     <label class="block font-bold opacity-80 mb-0.5">Mật khẩu hiện tại</label>
-                    <div class="relative"><input type="password" id="cp-current" class="w-full custom-input rounded-xl px-3 py-1.5"><button type="button" onclick="window.CZAppCore && window.CZAppCore.togglePassVisibility('cp-current','cp-eye1')" class="absolute inset-y-0 right-0 pr-3 flex items-center opacity-60"><i id="cp-eye1" class="fa-solid fa-eye"></i></button></div>
+                    <div class="relative"><input type="password" id="cp-current" class="w-full custom-input rounded-xl px-3 py-1.5"><button type="button" onclick="CZAppCore.togglePassVisibility('cp-current','cp-eye1')" class="absolute inset-y-0 right-0 pr-3 flex items-center opacity-60"><i id="cp-eye1" class="fa-solid fa-eye"></i></button></div>
                 </div>
                 <div>
                     <label class="block font-bold opacity-80 mb-0.5">Mật khẩu mới</label>
-                    <div class="relative"><input type="password" id="cp-new" class="w-full custom-input rounded-xl px-3 py-1.5"><button type="button" onclick="window.CZAppCore && window.CZAppCore.togglePassVisibility('cp-new','cp-eye2')" class="absolute inset-y-0 right-0 pr-3 flex items-center opacity-60"><i id="cp-eye2" class="fa-solid fa-eye"></i></button></div>
+                    <div class="relative"><input type="password" id="cp-new" class="w-full custom-input rounded-xl px-3 py-1.5"><button type="button" onclick="CZAppCore.togglePassVisibility('cp-new','cp-eye2')" class="absolute inset-y-0 right-0 pr-3 flex items-center opacity-60"><i id="cp-eye2" class="fa-solid fa-eye"></i></button></div>
                 </div>
                 <div>
                     <label class="block font-bold opacity-80 mb-0.5">Xác nhận mật khẩu mới</label>
-                    <div class="relative"><input type="password" id="cp-confirm" class="w-full custom-input rounded-xl px-3 py-1.5"><button type="button" onclick="window.CZAppCore && window.CZAppCore.togglePassVisibility('cp-confirm','cp-eye3')" class="absolute inset-y-0 right-0 pr-3 flex items-center opacity-60"><i id="cp-eye3" class="fa-solid fa-eye"></i></button></div>
+                    <div class="relative"><input type="password" id="cp-confirm" class="w-full custom-input rounded-xl px-3 py-1.5"><button type="button" onclick="CZAppCore.togglePassVisibility('cp-confirm','cp-eye3')" class="absolute inset-y-0 right-0 pr-3 flex items-center opacity-60"><i id="cp-eye3" class="fa-solid fa-eye"></i></button></div>
                 </div>
                 <div class="pt-2 flex gap-2">
                     <button onclick="document.getElementById('change-pass-modal').classList.add('hidden')" class="flex-1 py-2 bg-slate-200 text-slate-700 font-bold rounded-xl cursor-pointer">Hủy</button>
-                    <button onclick="window.CZAppCore && window.CZAppCore.submitChangePassword()" class="flex-1 py-2 btn-3d font-bold rounded-xl cursor-pointer">Lưu</button>
+                    <button onclick="CZAppCore.submitChangePassword()" class="flex-1 py-2 btn-3d font-bold rounded-xl cursor-pointer">Lưu</button>
                 </div>
             </div>
         </div>
@@ -377,7 +369,7 @@
                 <div><label class="block font-bold opacity-80 mb-0.5">4 số cuối SĐT</label><input type="text" id="eu-phone" maxlength="4" class="w-full custom-input rounded-xl px-3 py-1.5 font-mono"></div>
                 <div class="pt-2 flex gap-2">
                     <button onclick="document.getElementById('edit-user-modal').classList.add('hidden')" class="flex-1 py-2 bg-slate-200 text-slate-700 font-bold rounded-xl cursor-pointer">Hủy</button>
-                    <button onclick="window.CZAppCore && window.CZAppCore.saveEditedUser()" class="flex-1 py-2 btn-3d font-bold rounded-xl cursor-pointer">Lưu</button>
+                    <button onclick="CZAppCore.saveEditedUser()" class="flex-1 py-2 btn-3d font-bold rounded-xl cursor-pointer">Lưu</button>
                 </div>
             </div>
         </div>
@@ -419,20 +411,20 @@
                     <span class="w-7 h-7 rounded-lg bg-rose-500 text-white font-bold flex items-center justify-center text-xs shadow-xs"><i class="fa-solid fa-trash-can"></i></span>
                     <h3 class="font-black text-sm text-slate-800 dark:text-slate-100">Quản lý & Xóa bài học của bạn</h3>
                 </div>
-                <button onclick="window.CZAppCore && window.CZAppCore.closeManageLessonsModal()" class="text-xs opacity-60 hover:opacity-100 cursor-pointer"><i class="fa-solid fa-xmark text-base"></i></button>
+                <button onclick="CZAppCore.closeManageLessonsModal()" class="text-xs opacity-60 hover:opacity-100 cursor-pointer"><i class="fa-solid fa-xmark text-base"></i></button>
             </div>
             <div class="py-2.5 px-3 bg-slate-500/10 rounded-2xl my-2 flex justify-between items-center text-xs shrink-0">
                 <label class="flex items-center space-x-2 cursor-pointer font-bold">
-                    <input type="checkbox" id="manage-check-all-lessons" onchange="window.CZAppCore && window.CZAppCore.toggleSelectAllUserLessons(this.checked)" class="w-4 h-4 rounded text-rose-600 cursor-pointer">
+                    <input type="checkbox" id="manage-check-all-lessons" onchange="CZAppCore.toggleSelectAllUserLessons(this.checked)" class="w-4 h-4 rounded text-rose-600 cursor-pointer">
                     <span>Chọn tất cả</span>
                 </label>
-                <button onclick="window.CZAppCore && window.CZAppCore.deleteSelectedUserLessons()" class="px-3 py-1 bg-rose-600 hover:bg-rose-700 text-white font-bold text-[11px] rounded-xl flex items-center space-x-1 cursor-pointer">
+                <button onclick="CZAppCore.deleteSelectedUserLessons()" class="px-3 py-1 bg-rose-600 hover:bg-rose-700 text-white font-bold text-[11px] rounded-xl flex items-center space-x-1 cursor-pointer">
                     <i class="fa-solid fa-trash-can text-[10px]"></i><span>Xóa đã chọn</span>
                 </button>
             </div>
             <div id="manage-lessons-list-box" class="flex-1 overflow-y-auto min-h-0 space-y-1.5 pr-1"></div>
             <div class="pt-3 border-t mt-2 flex justify-end shrink-0">
-                <button onclick="window.CZAppCore && window.CZAppCore.closeManageLessonsModal()" class="px-4 py-1.5 bg-slate-200 hover:bg-slate-300 font-bold text-xs rounded-xl cursor-pointer transition text-slate-700">Đóng</button>
+                <button onclick="CZAppCore.closeManageLessonsModal()" class="px-4 py-1.5 bg-slate-200 hover:bg-slate-300 font-bold text-xs rounded-xl cursor-pointer transition text-slate-700">Đóng</button>
             </div>
         </div>
     </div>
@@ -447,8 +439,8 @@
                 <p class="text-[11px] opacity-60 mt-0.5">Bài học đã được đồng bộ lên Cloud Firebase!</p>
             </div>
             <div class="grid grid-cols-2 gap-3 pt-2">
-                <button onclick="window.CZAppCore && window.CZAppCore.decisionCreateMore()" class="py-2.5 px-3 theme-card border hover:border-rose-500 text-xs font-bold rounded-2xl shadow-xs transition cursor-pointer"><i class="fa-solid fa-plus mr-1 text-rose-500"></i> Tạo tiếp</button>
-                <button onclick="window.CZAppCore && window.CZAppCore.decisionGoStudy()" class="py-2.5 px-3 btn-3d text-xs font-bold rounded-2xl cursor-pointer"><i class="fa-solid fa-graduation-cap mr-1"></i> Vào học</button>
+                <button onclick="CZAppCore.decisionCreateMore()" class="py-2.5 px-3 theme-card border hover:border-rose-500 text-xs font-bold rounded-2xl shadow-xs transition cursor-pointer"><i class="fa-solid fa-plus mr-1 text-rose-500"></i> Tạo tiếp</button>
+                <button onclick="CZAppCore.decisionGoStudy()" class="py-2.5 px-3 btn-3d text-xs font-bold rounded-2xl cursor-pointer"><i class="fa-solid fa-graduation-cap mr-1"></i> Vào học</button>
             </div>
         </div>
     </div>
@@ -466,7 +458,7 @@
                 <div>
                     <label class="block font-bold opacity-80 mb-0.5">Nghề nghiệp</label>
                     <div class="flex gap-1.5">
-                        <select id="reg-job-select" onchange="window.CZAppCore && window.CZAppCore.onRegJobChanged(this.value)" class="flex-1 custom-input rounded-xl px-3 py-1.5 font-medium focus:outline-none">
+                        <select id="reg-job-select" onchange="CZAppCore.onRegJobChanged(this.value)" class="flex-1 custom-input rounded-xl px-3 py-1.5 font-medium focus:outline-none">
                             <option value="" disabled selected>Chọn nghề</option>
                             <option value="HS VTS">HS VTS</option>
                             <option value="Học sinh">Học sinh</option>
@@ -490,19 +482,19 @@
                     <label class="block font-bold opacity-80 mb-0.5">Mật khẩu</label>
                     <div class="relative">
                         <input type="password" id="reg-password" placeholder="Nhập mật khẩu..." class="w-full custom-input rounded-xl pl-3 pr-9 py-1.5">
-                        <button type="button" onclick="window.CZAppCore && window.CZAppCore.togglePassVisibility('reg-password','reg-eye1')" class="absolute inset-y-0 right-0 pr-3 flex items-center opacity-60"><i id="reg-eye1" class="fa-solid fa-eye"></i></button>
+                        <button type="button" onclick="CZAppCore.togglePassVisibility('reg-password','reg-eye1')" class="absolute inset-y-0 right-0 pr-3 flex items-center opacity-60"><i id="reg-eye1" class="fa-solid fa-eye"></i></button>
                     </div>
                 </div>
                 <div>
                     <label class="block font-bold opacity-80 mb-0.5">Xác nhận mật khẩu</label>
                     <div class="relative">
                         <input type="password" id="reg-confirm-password" placeholder="Nhập lại mật khẩu..." class="w-full custom-input rounded-xl pl-3 pr-9 py-1.5">
-                        <button type="button" onclick="window.CZAppCore && window.CZAppCore.togglePassVisibility('reg-confirm-password','reg-eye2')" class="absolute inset-y-0 right-0 pr-3 flex items-center opacity-60"><i id="reg-eye2" class="fa-solid fa-eye"></i></button>
+                        <button type="button" onclick="CZAppCore.togglePassVisibility('reg-confirm-password','reg-eye2')" class="absolute inset-y-0 right-0 pr-3 flex items-center opacity-60"><i id="reg-eye2" class="fa-solid fa-eye"></i></button>
                     </div>
                 </div>
                 <div class="pt-2 flex gap-2">
-                    <button type="button" onclick="window.CZAppCore && window.CZAppCore.closeRegisterModal()" class="flex-1 py-2.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-xs cursor-pointer transition">Hủy</button>
-                    <button type="button" onclick="window.CZAppCore && window.CZAppCore.handleRegister()" class="flex-1 py-2.5 btn-3d font-bold text-xs rounded-xl cursor-pointer shadow-xs transition">Đăng ký</button>
+                    <button type="button" onclick="CZAppCore.closeRegisterModal()" class="flex-1 py-2.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-xs cursor-pointer transition">Hủy</button>
+                    <button type="button" onclick="CZAppCore.handleRegister()" class="flex-1 py-2.5 btn-3d font-bold text-xs rounded-xl cursor-pointer shadow-xs transition">Đăng ký</button>
                 </div>
             </div>
         </div>
@@ -510,12 +502,12 @@
 
     <div id="forgot-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3">
         <div class="theme-card rounded-3xl p-5 max-w-sm w-full space-y-3 text-left shadow-2xl max-h-[92vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b pb-2"><h3 class="font-bold text-sm text-amber-600">Khôi phục mật khẩu</h3><button onclick="window.CZAppCore && window.CZAppCore.closeForgotModal()" class="text-xs opacity-60"><i class="fa-solid fa-xmark"></i></button></div>
+            <div class="flex justify-between items-center border-b pb-2"><h3 class="font-bold text-sm text-amber-600">Khôi phục mật khẩu</h3><button onclick="CZAppCore.closeForgotModal()" class="text-xs opacity-60"><i class="fa-solid fa-xmark"></i></button></div>
             <div class="space-y-2 text-xs">
                 <div><label class="block font-bold opacity-80 mb-0.5">Họ và tên đã đăng ký</label><input type="text" id="forgot-fullname" class="w-full custom-input rounded-xl px-3 py-1.5"></div>
                 <div><label class="block font-bold opacity-80 mb-0.5">4 số cuối điện thoại</label><input type="text" id="forgot-phone4" class="w-full custom-input rounded-xl px-3 py-1.5"></div>
                 <div><label class="block font-bold opacity-80 mb-0.5">Mật khẩu mới</label><input type="password" id="forgot-newpass" class="w-full custom-input rounded-xl px-3 py-1.5"></div>
-                <button onclick="window.CZAppCore && window.CZAppCore.handleForgotSubmit()" class="w-full py-2.5 btn-3d font-bold rounded-xl mt-1">Khôi phục</button>
+                <button onclick="CZAppCore.handleForgotSubmit()" class="w-full py-2.5 btn-3d font-bold rounded-xl mt-1">Khôi phục</button>
             </div>
         </div>
     </div>
@@ -575,61 +567,39 @@
         </div>
     </div>
 
-    <!-- NẠP TRỰC TIẾP MODULE JS ĐẢM BẢO THỨ TỰ THỰC THI CHÍNH XÁC -->
-    <script src="./card-engine.js?v=20261111_final"></script>
-    <script src="./app-core.js?v=20261111_final"></script>
-
+    <!-- LIÊN KẾT TRỰC TIẾP MODULE JAVASCRIPT (ĐỒNG BỘ - ĐẢM BẢO NÚT BẤM HOẠT ĐỘNG NGAY) -->
+    <script src="./card-engine.js"></script>
+    <script src="./app-core.js"></script>
     <script>
-        // TỰ ĐỘNG KHỞI TẠO HỆ THỐNG KHI DOM SẴN SÀNG
-        document.addEventListener('DOMContentLoaded', function() {
+        // Khởi động ứng dụng ngay khi DOM sẵn sàng
+        document.addEventListener('DOMContentLoaded', () => {
             if (window.CZAppCore && typeof window.CZAppCore.init === 'function') {
-                window.CZAppCore.init();
+                CZAppCore.init();
             }
         });
 
-        // QUẢN LÝ SERVICE WORKER (TỰ ĐỘNG CẬP NHẬT)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(function(registration) {
-                        registration.update();
-                        registration.onupdatefound = function() {
-                            var installingWorker = registration.installing;
-                            if (installingWorker) {
-                                installingWorker.onstatechange = function() {
-                                    if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                        window.location.reload();
-                                    }
-                                };
-                            }
-                        };
-                    })
-                    .catch(function(err) { console.warn('SW registration warning:', err); });
-            });
-        }
-
-        // CÁC HÀM TIỆN ÍCH GIAO DIỆN
-        document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
-        function setAppHeight() { document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px'); }
+        // CÁC THIẾT LẬP BỔ TRỢ GIAO DIỆN
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        function setAppHeight() { document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`); }
         window.addEventListener('resize', setAppHeight); 
         setAppHeight();
         
-        window.addEventListener('click', function(e) { 
-            var m = document.getElementById('theme-menu'); 
+        window.addEventListener('click', e => { 
+            const m = document.getElementById('theme-menu'); 
             if (m && !e.target.closest('.relative')) m.classList.add('hidden'); 
         });
 
-        // BINDING TOÀN CỤC CHỐNG LỖI INLINE ONCLICK TRÊN CÁC TRÌNH DUYỆT
-        window.speakZh = function(t) { return window.CZCardEngine && window.CZCardEngine.speakZh(t); };
-        window.handleLogin = function() { return window.CZAppCore && window.CZAppCore.handleLogin(); };
-        window.handleLogout = function() { return window.CZAppCore && window.CZAppCore.handleLogout(); };
-        window.setTab = function(t) { return window.CZAppCore && window.CZAppCore.setTab(t); };
-        window.openApiSetupModal = function(f) { return window.CZAppCore && window.CZAppCore.openApiSetupModal(f); };
-        window.closeApiSetupModal = function() { return window.CZAppCore && window.CZAppCore.closeApiSetupModal(); };
-        window.saveApiKeyFromPopup = function() { return window.CZAppCore && window.CZAppCore.saveApiKeyFromPopup(); };
-        window.skipApiKeySetup = function() { return window.CZAppCore && window.CZAppCore.skipApiKeySetup(); };
-        window.toggleThemeMenu = function() { return window.CZAppCore && window.CZAppCore.toggleThemeMenu(); };
-        window.applyTheme = function(k, l) { return window.CZAppCore && window.CZAppCore.applyTheme(k, l); };
+        // BẢO HIỂM HÀM TOÀN CỤC CHO NÚT BẤM INLINE
+        window.speakZh = (t) => window.CZCardEngine && window.CZCardEngine.speakZh(t);
+        window.handleLogin = () => window.CZAppCore && window.CZAppCore.handleLogin();
+        window.handleLogout = () => window.CZAppCore && window.CZAppCore.handleLogout();
+        window.setTab = (t) => window.CZAppCore && window.CZAppCore.setTab(t);
+        window.openApiSetupModal = (f) => window.CZAppCore && window.CZAppCore.openApiSetupModal(f);
+        window.closeApiSetupModal = () => window.CZAppCore && window.CZAppCore.closeApiSetupModal();
+        window.saveApiKeyFromPopup = () => window.CZAppCore && window.CZAppCore.saveApiKeyFromPopup();
+        window.skipApiKeySetup = () => window.CZAppCore && window.CZAppCore.skipApiKeySetup();
+        window.toggleThemeMenu = () => window.CZAppCore && window.CZAppCore.toggleThemeMenu();
+        window.applyTheme = (k, l) => window.CZAppCore && window.CZAppCore.applyTheme(k, l);
     </script>
 </body>
 </html>
