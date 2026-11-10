@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="vi" data-theme="lavender">
 <head>
+    <!-- KỸ THUẬT AUTO-TIMESTAMP URL (TỰ ĐỘNG THÊM ?v= KHI TRUY CẬP) -->
+    <script>
+        (function() {
+            if (window.location.protocol === 'file:') return;
+            var urlParams = new URLSearchParams(window.location.search);
+            if (!urlParams.has('v')) {
+                urlParams.set('v', Date.now());
+                var newUrl = window.location.pathname + '?' + urlParams.toString() + window.location.hash;
+                window.location.replace(newUrl);
+            }
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -567,9 +579,19 @@
         </div>
     </div>
 
-    <!-- LIÊN KẾT TRỰC TIẾP MODULE JAVASCRIPT (ĐỒNG BỘ - ĐẢM BẢO NÚT BẤM HOẠT ĐỘNG NGAY) -->
-    <script src="./card-engine.js"></script>
-    <script src="./app-core.js"></script>
+    <!-- LIÊN KẾT TRỰC TIẾP MODULE JAVASCRIPT KÈM TIMESTAMP CHỐNG CACHE TRUYỆT ĐỐI -->
+    <script>
+        // TỰ ĐỘNG XÓA BỎ BẢN SERVICE WORKER CŨ NẾU CÒN SỐNG TRÊN TRÌNH DUYỆT CỦA USER
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for (var reg of registrations) {
+                    reg.unregister();
+                }
+            }).catch(function(e){});
+        }
+    </script>
+    <script src="./card-engine.js?v=20261111_v3"></script>
+    <script src="./app-core.js?v=20261111_v3"></script>
     <script>
         // Khởi động ứng dụng ngay khi DOM sẵn sàng
         document.addEventListener('DOMContentLoaded', () => {
