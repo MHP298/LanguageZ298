@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="vi" data-theme="lavender">
 <head>
+    <!-- 1. CƠ CHẾ AUTO-TIMESTAMP URL (TỰ ĐỘNG BẺ NHÁNH ?v= ĐỂ CHỐNG CACHE TRÌNH DUYỆT TRIỆT ĐỂ) -->
+    <script>
+        (function() {
+            var p = new URLSearchParams(window.location.search);
+            if (!p.has('v')) {
+                p.set('v', Date.now());
+                window.location.replace(window.location.pathname + '?' + p.toString() + window.location.hash);
+            }
+        })();
+    </script>
+
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#7c3aed">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -563,9 +574,9 @@
         </div>
     </div>
 
-        <!-- LIÊN KẾT CÁC MODULE JAVASCRIPT & CƠ CHẾ CHỐNG CACHE TỰ ĐỘNG -->
+    <!-- 2. BỘ NẠP MODULE JAVASCRIPT & TỰ ĐỘNG LÀM MỚI SERVICE WORKER -->
     <script>
-        // KỸ THUẬT 1 & 2: DYNAMIC CACHE BUSTING TỰ ĐỘNG BẰNG TIMESTAMP
+        // KỸ THUẬT 1: DYNAMIC CACHE BUSTING TỰ ĐỘNG BẰNG TIMESTAMP CHO CÁC MODULE JS
         const appVersion = Date.now();
         
         function loadModuleScript(src) {
@@ -574,23 +585,23 @@
                 s.src = src + '?v=' + appVersion;
                 s.async = false;
                 s.onload = resolve;
-                s.onerror = () => reject(new Error('Lỗi tải tệp: ' + src));
+                s.onerror = () => reject(new Error('Lỗi nạp file: ' + src));
                 document.body.appendChild(s);
             });
         }
 
-        // Nạp tuần tự card-engine.js trước rồi tới app-core.js
+        // Nạp tuần tự card-engine.js trước rồi đến app-core.js
         loadModuleScript('./card-engine.js')
             .then(() => loadModuleScript('./app-core.js'))
             .then(() => {
-                // Khởi động ứng dụng khi cả 2 module JS đã nạp thành công
+                // Khởi động hệ thống khi cả 2 module JS đã nạp thành công
                 if (window.CZAppCore && typeof window.CZAppCore.init === 'function') {
                     window.CZAppCore.init();
                 }
             })
             .catch(err => console.error("Lỗi nạp script:", err));
 
-        // KỸ THUẬT 3: TỰ ĐỘNG CẬP NHẬT SERVICE WORKER VÀ F5 LẠI KHI CÓ BẢN MỚI
+        // KỸ THUẬT 2: TỰ ĐỘNG CẬP NHẬT SERVICE WORKER VÀ F5 KHI PHÁT HIỆN BẢN MỚI
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
