@@ -563,23 +563,56 @@
         </div>
     </div>
 
-    <!-- LIÊN KẾT CÁC MODULE JAVASCRIPT ĐÃ TÁCH RIÊNG BIỆT -->
-  <!-- MỚI: Thêm số phiên bản hoặc mốc thời gian -->
-  <script src="./card-engine.js?v=20261110_1"></script>
-  <script src="./app-core.js?v=20261110_1"></script>
+        <!-- LIÊN KẾT CÁC MODULE JAVASCRIPT & CƠ CHẾ CHỐNG CACHE TỰ ĐỘNG -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            CZAppCore.init();
-        });
+        // KỸ THUẬT 1 & 2: DYNAMIC CACHE BUSTING TỰ ĐỘNG BẰNG TIMESTAMP
+        const appVersion = Date.now();
+        
+        function loadModuleScript(src) {
+            return new Promise((resolve, reject) => {
+                const s = document.createElement('script');
+                s.src = src + '?v=' + appVersion;
+                s.async = false;
+                s.onload = resolve;
+                s.onerror = () => reject(new Error('Lỗi tải tệp: ' + src));
+                document.body.appendChild(s);
+            });
+        }
 
-        document.addEventListener('contextmenu', e => e.preventDefault());
+        // Nạp tuần tự card-engine.js trước rồi tới app-core.js
+        loadModuleScript('./card-engine.js')
+            .then(() => loadModuleScript('./app-core.js'))
+            .then(() => {
+                // Khởi động ứng dụng khi cả 2 module JS đã nạp thành công
+                if (window.CZAppCore && typeof window.CZAppCore.init === 'function') {
+                    window.CZAppCore.init();
+                }
+            })
+            .catch(err => console.error("Lỗi nạp script:", err));
+
+        // KỸ THUẬT 3: TỰ ĐỘNG CẬP NHẬT SERVICE WORKER VÀ F5 LẠI KHI CÓ BẢN MỚI
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('ServiceWorker registered:', reg.scope))
-                    .catch(err => console.log('ServiceWorker registration failed:', err));
+                    .then((registration) => {
+                        registration.update();
+                        registration.onupdatefound = () => {
+                            const installingWorker = registration.installing;
+                            if (installingWorker) {
+                                installingWorker.onstatechange = () => {
+                                    if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                        window.location.reload();
+                                    }
+                                };
+                            }
+                        };
+                    })
+                    .catch(err => console.log('SW registration error:', err));
             });
         }
+
+        // CÁC THIẾT LẬP BỔ TRỢ GIAO DIỆN
+        document.addEventListener('contextmenu', e => e.preventDefault());
         function setAppHeight() { document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`); }
         window.addEventListener('resize', setAppHeight); setAppHeight();
         window.addEventListener('click', e => { 
@@ -587,18 +620,17 @@
             if (m && !e.target.closest('.relative')) m.classList.add('hidden'); 
         });
 
-        window.CZCardEngine = CZCardEngine;
-        window.CZAppCore = CZAppCore;
-        window.speakZh = (t) => CZCardEngine.speakZh(t);
-        window.handleLogin = () => CZAppCore.handleLogin();
-        window.handleLogout = () => CZAppCore.handleLogout();
-        window.setTab = (t) => CZAppCore.setTab(t);
-        window.openApiSetupModal = (f) => CZAppCore.openApiSetupModal(f);
-        window.closeApiSetupModal = () => CZAppCore.closeApiSetupModal();
-        window.saveApiKeyFromPopup = () => CZAppCore.saveApiKeyFromPopup();
-        window.skipApiKeySetup = () => CZAppCore.skipApiKeySetup();
-        window.toggleThemeMenu = () => CZAppCore.toggleThemeMenu();
-        window.applyTheme = (k, l) => CZAppCore.applyTheme(k, l);
+        // BINDING TOÀN CỤC CHO CÁC NÚT BẤM INLINE TRÊN HTML
+        window.speakZh = (t) => window.CZCardEngine && window.CZCardEngine.speakZh(t);
+        window.handleLogin = () => window.CZAppCore && window.CZAppCore.handleLogin();
+        window.handleLogout = () => window.CZAppCore && window.CZAppCore.handleLogout();
+        window.setTab = (t) => window.CZAppCore && window.CZAppCore.setTab(t);
+        window.openApiSetupModal = (f) => window.CZAppCore && window.CZAppCore.openApiSetupModal(f);
+        window.closeApiSetupModal = () => window.CZAppCore && window.CZAppCore.closeApiSetupModal();
+        window.saveApiKeyFromPopup = () => window.CZAppCore && window.CZAppCore.saveApiKeyFromPopup();
+        window.skipApiKeySetup = () => window.CZAppCore && window.CZAppCore.skipApiKeySetup();
+        window.toggleThemeMenu = () => window.CZAppCore && window.CZAppCore.toggleThemeMenu();
+        window.applyTheme = (k, l) => window.CZAppCore && window.CZAppCore.applyTheme(k, l);
     </script>
 </body>
 </html>
