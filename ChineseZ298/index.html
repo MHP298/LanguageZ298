@@ -186,8 +186,8 @@
 
         <div class="p-2 border-t border-slate-500/10 shrink-0 theme-card">
             <div class="flex items-center space-x-2">
-                <input type="text" id="chat-input-txt" placeholder="Nhập tin nhắn..." class="flex-1 custom-input rounded-xl px-3 py-2 text-xs focus:outline-none" onkeypress="if(event.key==='Enter') window.CZAppCore && window.CZAppCore.handleChatSubmit()">
-                <button onclick="window.CZAppCore && window.CZAppCore.handleChatSubmit()" class="w-8 h-8 rounded-full btn-3d flex items-center justify-center shrink-0 cursor-pointer"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+                <input type="text" id="chat-input-txt" placeholder="Nhập tin nhắn..." class="flex-1 custom-input rounded-xl px-3 py-2 text-xs focus:outline-none">
+                <button id="btn-chat-submit" class="w-8 h-8 rounded-full btn-3d flex items-center justify-center shrink-0 cursor-pointer"><i class="fa-solid fa-paper-plane text-xs"></i></button>
             </div>
         </div>
     </div>
@@ -494,19 +494,19 @@
                     <label class="block font-bold opacity-80 mb-0.5">Mật khẩu</label>
                     <div class="relative">
                         <input type="password" id="reg-password" placeholder="Nhập mật khẩu..." class="w-full custom-input rounded-xl pl-3 pr-9 py-1.5">
-                        <button type="button" onclick="window.CZAppCore && window.CZAppCore.togglePassVisibility('reg-password','reg-eye1')" class="absolute inset-y-0 right-0 pr-3 flex items-center opacity-60"><i id="reg-eye1" class="fa-solid fa-eye"></i></button>
+                        <button type="button" id="btn-toggle-reg-pass1" class="absolute inset-y-0 right-0 pr-3 flex items-center opacity-60"><i id="reg-eye1" class="fa-solid fa-eye"></i></button>
                     </div>
                 </div>
                 <div>
                     <label class="block font-bold opacity-80 mb-0.5">Xác nhận mật khẩu</label>
                     <div class="relative">
                         <input type="password" id="reg-confirm-password" placeholder="Nhập lại mật khẩu..." class="w-full custom-input rounded-xl pl-3 pr-9 py-1.5">
-                        <button type="button" onclick="window.CZAppCore && window.CZAppCore.togglePassVisibility('reg-confirm-password','reg-eye2')" class="absolute inset-y-0 right-0 pr-3 flex items-center opacity-60"><i id="reg-eye2" class="fa-solid fa-eye"></i></button>
+                        <button type="button" id="btn-toggle-reg-pass2" class="absolute inset-y-0 right-0 pr-3 flex items-center opacity-60"><i id="reg-eye2" class="fa-solid fa-eye"></i></button>
                     </div>
                 </div>
                 <div class="pt-2 flex gap-2">
-                    <button type="button" onclick="window.CZAppCore && window.CZAppCore.closeRegisterModal()" class="flex-1 py-2.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-xs cursor-pointer transition">Hủy</button>
-                    <button type="button" onclick="window.CZAppCore && window.CZAppCore.handleRegister()" class="flex-1 py-2.5 btn-3d font-bold text-xs rounded-xl cursor-pointer shadow-xs transition">Đăng ký</button>
+                    <button type="button" id="btn-reg-cancel" class="flex-1 py-2.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-xs cursor-pointer transition">Hủy</button>
+                    <button type="button" id="btn-reg-submit" class="flex-1 py-2.5 btn-3d font-bold text-xs rounded-xl cursor-pointer shadow-xs transition">Đăng ký</button>
                 </div>
             </div>
         </div>
@@ -514,12 +514,12 @@
 
     <div id="forgot-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3">
         <div class="theme-card rounded-3xl p-5 max-w-sm w-full space-y-3 text-left shadow-2xl max-h-[92vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b pb-2"><h3 class="font-bold text-sm text-amber-600">Khôi phục mật khẩu</h3><button onclick="window.CZAppCore && window.CZAppCore.closeForgotModal()" class="text-xs opacity-60"><i class="fa-solid fa-xmark"></i></button></div>
+            <div class="flex justify-between items-center border-b pb-2"><h3 class="font-bold text-sm text-amber-600">Khôi phục mật khẩu</h3><button id="btn-forgot-cancel" class="text-xs opacity-60"><i class="fa-solid fa-xmark"></i></button></div>
             <div class="space-y-2 text-xs">
                 <div><label class="block font-bold opacity-80 mb-0.5">Họ và tên đã đăng ký</label><input type="text" id="forgot-fullname" class="w-full custom-input rounded-xl px-3 py-1.5"></div>
                 <div><label class="block font-bold opacity-80 mb-0.5">4 số cuối điện thoại</label><input type="text" id="forgot-phone4" class="w-full custom-input rounded-xl px-3 py-1.5"></div>
                 <div><label class="block font-bold opacity-80 mb-0.5">Mật khẩu mới</label><input type="password" id="forgot-newpass" class="w-full custom-input rounded-xl px-3 py-1.5"></div>
-                <button onclick="window.CZAppCore && window.CZAppCore.handleForgotSubmit()" class="w-full py-2.5 btn-3d font-bold rounded-xl mt-1">Khôi phục</button>
+                <button id="btn-forgot-submit" class="w-full py-2.5 btn-3d font-bold rounded-xl mt-1">Khôi phục</button>
             </div>
         </div>
     </div>
@@ -590,8 +590,8 @@
             }).catch(function(e){});
         }
     </script>
-    <script src="./card-engine.js?v=20261111_v1"></script>
-    <script src="./app-core.js?v=20261111_v1"></script>
+    <script src="./card-engine.js?v=20261111_v3"></script>
+    <script src="./app-core.js?v=20261111_v3"></script>
     <script>
         // Khởi động ứng dụng ngay khi DOM sẵn sàng
         document.addEventListener('DOMContentLoaded', () => {
