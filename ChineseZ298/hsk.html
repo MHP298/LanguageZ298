@@ -1,1 +1,217 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="lavender">
+<head>
+    <script>
+        (function() {
+            if (window.location.protocol === 'file:') return;
+            var urlParams = new URLSearchParams(window.location.search);
+            if (!urlParams.has('v')) {
+                urlParams.set('v', Date.now());
+                var newUrl = window.location.pathname + '?' + urlParams.toString() + window.location.hash;
+                window.location.replace(newUrl);
+            }
+        })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>HSK cùng AI - ChineseZ298</title>
+    <meta name="theme-color" content="#7c3aed">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="HSK cùng AI">
+    <link rel="apple-touch-icon" href="./logo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@700;800;900&family=Noto+Sans+SC:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <style>
+        @custom-variant dark (&:where([data-theme="midnight"], [data-theme="midnight"] *));
+
+        :root[data-theme="lavender"] { --bg-body: #ece5f8; --bg-card: rgba(255, 255, 255, 0.96); --border-card: #d5c3f0; --text-main: #23153c; --text-sub: #573a87; --input-bg: #ffffff; --grad-primary: linear-gradient(135deg, #7c3aed 0%, #c026d3 100%); --shadow-btn: 0 4px 14px rgba(124, 58, 237, 0.35); --btn-sec: #5b21b6; --btn-exit: #be123c; }
+        :root[data-theme="nordic"] { --bg-body: #d9eaf7; --bg-card: rgba(255, 255, 255, 0.96); --border-card: #b0d2ec; --text-main: #0c202d; --text-sub: #27526f; --input-bg: #ffffff; --grad-primary: linear-gradient(135deg, #0284c7 0%, #2563eb 100%); --shadow-btn: 0 4px 14px rgba(2, 132, 199, 0.35); --btn-sec: #0369a1; --btn-exit: #0f766e; }
+        :root[data-theme="sage"] { --bg-body: #d8ede0; --bg-card: rgba(255, 255, 255, 0.96); --border-card: #b1d8bf; --text-main: #0f2b1d; --text-sub: #2d5a40; --input-bg: #ffffff; --grad-primary: linear-gradient(135deg, #059669 0%, #0d9488 100%); --shadow-btn: 0 4px 14px rgba(5, 150, 105, 0.35); --btn-sec: #047857; --btn-exit: #b45309; }
+        :root[data-theme="warm"] { --bg-body: #f5eedb; --bg-card: rgba(255, 255, 255, 0.96); --border-card: #e5d4b5; --text-main: #34230d; --text-sub: #6c512c; --input-bg: #ffffff; --grad-primary: linear-gradient(135deg, #d97706 0%, #ea580c 100%); --shadow-btn: 0 4px 14px rgba(217, 119, 6, 0.35); --btn-sec: #c2410c; --btn-exit: #c026d3; }
+        :root[data-theme="midnight"] { --bg-body: #060b12; --bg-card: rgba(18, 27, 41, 0.96); --border-card: #22344a; --text-main: #f3f6fa; --text-sub: #9eb5ce; --input-bg: #0e1724; --grad-primary: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); --shadow-btn: 0 4px 16px rgba(244, 63, 94, 0.42); --btn-sec: #9f1239; --btn-exit: #e11d48; }
+
+        html, body { height: 100dvh; height: calc(var(--vh, 1vh) * 100); max-height: 100dvh; overflow: hidden; margin: 0; padding: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); user-select: none; -webkit-user-select: none; transition: background-color 0.25s ease, color 0.25s ease; }
+        input, textarea, select { user-select: auto; -webkit-user-select: auto; }
+        .theme-card { background-color: var(--bg-card); border: 1px solid var(--border-card); backdrop-filter: blur(12px); color: var(--text-main); }
+        .custom-input { background-color: var(--input-bg); border: 1px solid var(--border-card); color: var(--text-main); }
+        .font-chinese { font-family: 'Noto Sans SC', sans-serif; }
+        
+        .btn-3d { background: var(--grad-primary); color: #ffffff !important; box-shadow: var(--shadow-btn); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-3d:hover { transform: translateY(-1.5px); filter: brightness(1.05); }
+        .btn-3d:active { transform: translateY(1px) scale(0.98); }
+
+        .btn-theme-sec { background-color: var(--btn-sec); color: #ffffff !important; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-theme-sec:hover { filter: brightness(1.1); transform: translateY(-1.5px); }
+        .btn-theme-sec:active { transform: translateY(1px) scale(0.98); }
+
+        .btn-theme-exit { background-color: var(--btn-exit); color: #ffffff !important; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2); transition: all 0.2s ease; }
+        .btn-theme-exit:hover { filter: brightness(1.15); transform: translateY(-1px); }
+
+        .title-3d-ruby { font-family: 'Montserrat', sans-serif; font-weight: 900; color: #e11d48; text-shadow: 0 1px 0 #be123c, 0 2px 0 #9f1239, 0 3px 0 #881337, 0 4px 0 #700e2b, 0 5px 10px rgba(190, 18, 60, 0.35); letter-spacing: 0.05em; }
+        .badge-hsk-ruby {
+            background: linear-gradient(135deg, #e11d48 0%, #be123c 55%, #881337 100%);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            box-shadow: 0 2px 8px rgba(225, 29, 72, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 0.08em;
+        }
+        .ant-flipped-right { transform: scaleX(-1) !important; display: inline-block; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        @media (max-height: 520px) {
+            .app-header { height: 38px !important; padding-top: 2px !important; padding-bottom: 2px !important; }
+            .side-bar { height: auto !important; padding: 2px !important; }
+            .side-bar button { padding: 4px 6px !important; font-size: 10.5px !important; }
+        }
+    </style>
+</head>
+<body class="flex flex-col">
+    <!-- HEADER ĐỒNG BỘ CHINESEZ298 + HUY HIỆU HSK EXAM ĐỎ RUBY -->
+    <header class="app-header h-12 theme-card border-b px-2.5 sm:px-3 flex justify-between items-center shadow-xs shrink-0 z-30">
+        <div class="flex items-center space-x-1.5 sm:space-x-2 min-w-0">
+            <div class="w-7 h-7 bg-rose-600 rounded-lg flex items-center justify-center font-bold text-white text-xs shadow-xs shrink-0">中</div>
+            <h2 class="app-title text-sm sm:text-lg title-3d-ruby leading-none tracking-wider truncate">CHINESEZ298</h2>
+            <div class="flex items-center space-x-1 px-1.5 py-0.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-[9px] font-black text-rose-600 shrink-0">
+                <img src="./logo.png" onerror="this.onerror=null; this.src='logo.png';" alt="MRZ298" class="w-3.5 h-3.5 rounded-full object-contain ant-flipped-right">
+                <span class="tracking-wider hidden xs:inline">MRZ298</span>
+            </div>
+            <!-- HUY HIỆU HSK EXAM MÀU ĐỎ RUBY CHUẨN KỲ THI HSK -->
+            <span class="badge-hsk-ruby px-2 py-0.5 rounded-lg text-[9px] sm:text-[10px] font-black uppercase shrink-0 flex items-center space-x-1">
+                <i class="fa-solid fa-award text-[9px] text-amber-300"></i>
+                <span>HSK EXAM</span>
+            </span>
+        </div>
+        <div class="flex items-center space-x-1.5 shrink-0">
+            <div class="relative">
+                <button id="btn-hsk-theme-menu" class="theme-card px-2 py-1 rounded-lg text-[11px] font-bold flex items-center space-x-1 cursor-pointer">
+                    <i class="fa-solid fa-palette text-rose-500"></i>
+                    <span id="hsk-theme-lbl" class="hidden sm:inline">Lavender</span>
+                    <i class="fa-solid fa-chevron-down text-[8px] opacity-70"></i>
+                </button>
+                <div id="hsk-theme-menu" class="hidden absolute right-0 mt-1 w-44 rounded-xl bg-white border shadow-xl py-1 z-50 text-slate-800 text-xs"></div>
+            </div>
+            <span id="hsk-user-badge" class="text-[10px] px-2 py-0.5 rounded-lg bg-rose-500/10 text-rose-600 font-bold hidden md:inline"></span>
+            <a href="./index.html" class="px-2.5 py-1 rounded-lg btn-theme-exit text-[11px] font-bold flex items-center space-x-1 cursor-pointer shadow-xs" title="Quay lại giao diện chính ChineseZ298">
+                <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                <span class="hidden sm:inline">Về trang chính</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- LAYOUT 2 PHẦN: SIDEBAR + MAIN VIEWPORT (RESPONSIVE DESKTOP & MOBILE DỌC) -->
+    <div class="flex-1 flex flex-col md:flex-row p-2 gap-2 min-h-0 overflow-hidden">
+        <aside class="side-bar shrink-0 theme-card rounded-2xl p-1 sm:p-1.5 flex md:flex-col justify-between shadow-xs z-20 relative md:w-48">
+            <div class="flex md:flex-col gap-1 w-full items-stretch">
+                <button id="hsk-nav-setup" onclick="window.CZHskApp.switchTab('setup')" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2.5 rounded-xl font-bold btn-3d flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <i class="fa-solid fa-wand-magic-sparkles text-xs sm:text-sm md:w-4 text-center"></i>
+                    <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Tạo đề HSK</span>
+                </button>
+                <button id="hsk-nav-exam" onclick="window.CZHskApp.switchTab('exam')" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2.5 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <i class="fa-solid fa-file-pen text-xs sm:text-sm md:w-4 text-center"></i>
+                    <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Phòng thi</span>
+                </button>
+                <button id="hsk-nav-history" onclick="window.CZHskApp.switchTab('history')" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2.5 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <i class="fa-solid fa-clock-rotate-left text-xs sm:text-sm md:w-4 text-center"></i>
+                    <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Lịch sử thi</span>
+                </button>
+                <button onclick="window.location.href='./index.html'" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2.5 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <i class="fa-solid fa-house text-xs sm:text-sm md:w-4 text-center text-rose-500"></i>
+                    <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Trang chính</span>
+                </button>
+            </div>
+            <div class="mt-auto pt-2 border-t border-slate-500/10 hidden md:flex flex-col space-y-2">
+                <div class="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-left">
+                    <p class="text-[10px] font-black text-rose-600 uppercase">HSK cùng AI</p>
+                    <p class="text-[10px] opacity-75 mt-0.5 leading-snug">Luyện thi chuẩn HSK 1-6 với Nghe - Đọc - Viết & chấm điểm tự động.</p>
+                </div>
+                <div class="flex items-center justify-center space-x-2 opacity-80 pt-1">
+                    <img src="./logo.png" onerror="this.onerror=null; this.src='logo.png';" alt="MRZ298" class="w-6 h-6 object-contain ant-flipped-right shrink-0">
+                    <div class="text-left text-[9px] leading-tight">
+                        <p class="font-black text-rose-600 uppercase tracking-wider">MRZ298</p>
+                        <p class="opacity-60 font-semibold">Thiết kế &amp; Phát triển</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main id="hsk-main-viewport" class="flex-1 theme-card rounded-2xl p-2.5 sm:p-4 flex flex-col min-h-0 overflow-hidden shadow-xs relative"></main>
+    </div>
+
+    <!-- MODAL CHỌN BÀI HỌC TỪ DANH SÁCH (CÓ THỂ TÍCH NHIỀU BÀI) -->
+    <div id="hsk-lesson-picker-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3">
+        <div class="theme-card rounded-3xl p-4 sm:p-5 max-w-md w-full max-h-[85vh] flex flex-col justify-between text-left shadow-2xl border border-rose-500/20">
+            <div class="flex justify-between items-center border-b pb-2.5 shrink-0">
+                <div>
+                    <h3 class="font-black text-sm text-rose-600"><i class="fa-solid fa-layer-group mr-1.5"></i>Chọn bài học ôn thi HSK</h3>
+                    <p class="text-[10px] opacity-70">Có thể tích chọn 1 hoặc nhiều bài học cùng lúc</p>
+                </div>
+                <button onclick="window.CZHskApp.closeLessonPickerModal()" class="text-xs opacity-60 hover:opacity-100 cursor-pointer"><i class="fa-solid fa-xmark text-base"></i></button>
+            </div>
+            <div class="flex gap-1.5 my-2 shrink-0">
+                <button id="picker-tab-all" onclick="window.CZHskApp.setPickerFilter('all')" class="flex-1 py-1.5 rounded-xl text-xs font-bold btn-3d cursor-pointer">Tất cả</button>
+                <button id="picker-tab-sample" onclick="window.CZHskApp.setPickerFilter('sample')" class="flex-1 py-1.5 rounded-xl text-xs font-bold theme-card border cursor-pointer">Bài mẫu</button>
+                <button id="picker-tab-user" onclick="window.CZHskApp.setPickerFilter('user')" class="flex-1 py-1.5 rounded-xl text-xs font-bold theme-card border cursor-pointer">Của bạn</button>
+            </div>
+            <div id="hsk-picker-list" class="flex-1 overflow-y-auto min-h-0 space-y-1.5 py-1 pr-1"></div>
+            <div class="pt-2.5 border-t border-slate-500/10 flex justify-between items-center shrink-0">
+                <span id="hsk-picker-count" class="text-xs font-bold text-rose-600">Đã chọn: 0 bài</span>
+                <div class="flex gap-2">
+                    <button onclick="window.CZHskApp.clearSelectedLessons()" class="px-3 py-1.5 bg-slate-200 text-slate-700 font-bold text-xs rounded-xl cursor-pointer">Bỏ chọn</button>
+                    <button onclick="window.CZHskApp.confirmLessonPicker()" class="px-4 py-1.5 btn-3d font-bold text-xs rounded-xl cursor-pointer">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CÀI ĐẶT API KEY NẾU CHƯA CÓ -->
+    <div id="hsk-api-modal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[100] hidden flex items-center justify-center p-3">
+        <div class="theme-card rounded-3xl p-5 max-w-md w-full space-y-3.5 text-left shadow-2xl border border-rose-500/30">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-black text-sm text-rose-600"><i class="fa-solid fa-key mr-1.5"></i>Cài đặt Gemini API Key</h3>
+                <button onclick="document.getElementById('hsk-api-modal').classList.add('hidden')" class="text-xs opacity-60 cursor-pointer"><i class="fa-solid fa-xmark text-base"></i></button>
+            </div>
+            <p class="text-xs opacity-80 leading-relaxed">Để AI biên soạn đề thi HSK từ tài liệu/bài học, vui lòng nhập Gemini API Key cá nhân của bạn (được đồng bộ chung với trang chính):</p>
+            <input type="password" id="hsk-popup-api-key" placeholder="Dán API Key (AIzaSy...) vào đây" class="w-full custom-input rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-rose-500">
+            <div class="flex justify-between items-center pt-1">
+                <a href="https://aistudio.google.com/app/apikey" target="_blank" class="px-3 py-1.5 bg-blue-600 text-white font-bold text-xs rounded-xl">Lấy Key miễn phí</a>
+                <button onclick="window.CZHskApp.saveApiKey()" class="px-4 py-1.5 btn-3d text-xs font-bold rounded-xl cursor-pointer">Lưu Key</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(regs) {
+                for (var reg of regs) reg.unregister();
+            }).catch(function(e){});
+        }
+        var sysVersion = Date.now();
+        document.write('<script src="./hsk-engine.js?v=' + sysVersion + '"><\/script>');
+    </script>
+    <script>
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        function setAppHeight() { document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`); }
+        window.addEventListener('resize', setAppHeight); 
+        setAppHeight();
+        window.addEventListener('click', e => { 
+            const m = document.getElementById('hsk-theme-menu'); 
+            if (m && !e.target.closest('.relative')) m.classList.add('hidden'); 
+        });
+    </script>
+</body>
+</html>
 
