@@ -174,7 +174,7 @@ const CZHskApp = window.CZHskApp = {
         vp.innerHTML = `
             <div class="space-y-4 max-w-lg w-full my-auto px-2 mx-auto flex flex-col items-center justify-center text-center">
                 <span class="badge-hsk-ruby px-4 py-1.5 rounded-xl text-xs sm:text-sm font-black uppercase inline-flex items-center space-x-2 shadow-md mb-1"><i class="fa-solid fa-award text-amber-300"></i><span>HSK EXAM</span></span>
-                <h1 class="text-3xl sm:text-5xl title-3d-ruby uppercase leading-tight tracking-wider py-1">CHÀO MỪNG BẠN</h1>
+                <h1 class="text-2xl sm:text-4xl title-3d-ruby uppercase leading-tight tracking-wider py-1">CHINH PHỤC HSK CÙNG AI</h1>
                 
                 <div class="p-4 sm:p-5 rounded-2xl theme-card border shadow-xs flex items-center space-x-3 sm:space-x-4 text-left w-full">
                     <img src="./logo.png" onerror="this.onerror=null; this.src='logo.png';" alt="Chú Kiến" class="w-16 h-16 sm:w-20 sm:h-20 object-contain ant-flipped-right shrink-0 drop-shadow-sm">
@@ -207,7 +207,7 @@ const CZHskApp = window.CZHskApp = {
             .map(l => l.title);
 
         vp.innerHTML = `
-            <div class="w-full max-w-2xl mx-auto h-full flex flex-col justify-between overflow-y-auto no-scrollbar pr-1 text-left space-y-1.5 py-0">
+            <div class="w-full max-w-2xl mx-auto h-full flex flex-col justify-between overflow-y-auto no-scrollbar pr-1 text-left space-y-1 py-0">
                 <div class="flex items-center justify-between border-b pb-2 border-slate-500/10 shrink-0">
                     <div>
                         <h1 class="text-base sm:text-lg font-black text-rose-600 flex items-center space-x-2">
@@ -261,7 +261,7 @@ const CZHskApp = window.CZHskApp = {
                 ` : ''}
 
                 <!-- BƯỚC 2: NGUỒN DỮ LIỆU ĐẦU VÀO -->
-                <div class="space-y-2.5 p-3 rounded-2xl theme-card border border-slate-500/15">
+                <div class="space-y-1.5 p-2 rounded-2xl theme-card border border-slate-500/15">
                     <label class="block text-[11px] font-black uppercase text-rose-600">
                         2. Nguồn dữ liệu biên soạn đề ${this.genMode === 'ai_standard' ? '(Tùy chọn bổ sung)' : '(Chọn ít nhất 1 nguồn)'}
                     </label>
