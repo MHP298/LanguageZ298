@@ -207,7 +207,7 @@ const CZHskApp = window.CZHskApp = {
             .map(l => l.title);
 
         vp.innerHTML = `
-            <div class="w-full max-w-2xl mx-auto h-full flex flex-col justify-between overflow-y-auto no-scrollbar pr-1 text-left space-y-2 py-0.5">
+            <div class="w-full max-w-2xl mx-auto h-full flex flex-col justify-between overflow-y-auto no-scrollbar pr-1 text-left space-y-1.5 py-0">
                 <div class="flex items-center justify-between border-b pb-2 border-slate-500/10 shrink-0">
                     <div>
                         <h1 class="text-base sm:text-lg font-black text-rose-600 flex items-center space-x-2">
