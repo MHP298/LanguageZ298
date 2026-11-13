@@ -1,1263 +1,197 @@
-/**
- * MODULE: CZHskApp - TRỢ LÝ AI LUYỆN THI HSK CHUẨN QUỐC TẾ (CHINESEZ298)
- */
-const CZHskApp = window.CZHskApp = {
-    firebaseConfig: { 
-        apiKey: "AIzaSyAMj0Jf-GCdRCS9jawLmnqSqlGFubpe-Ps", 
-        authDomain: "chinesez298.firebaseapp.com", 
-        projectId: "chinesez298", 
-        storageBucket: "chinesez298.firebasestorage.app", 
-        messagingSenderId: "983534326817", 
-        appId: "1:983534326817:web:61d9f80a71e7bea8a93f60", 
-        measurementId: "G-PJEFS1G2DG" 
-    },
-    db: null,
-    currentAuth: null,
-    lessonsDB: [],
-    selectedLessonIds: [],
-    pickerFilter: 'all',
-    uploadedFile: null,
-
-    genMode: 'source', 
-    selectedHskLevel: 1, 
-    examDurationMinutes: 15,
-
-    currentExam: null,
-    userAnswers: {}, 
-    listenCounts: {}, 
-    isExamSubmitted: false,
-    examScore: 0,
-    timerInterval: null,
-    remainingSeconds: 0,
-    timeSpentSeconds: 0,
-
-    reviewShowPinyin: true,
-    reviewShowMeaning: true,
-    isReviewMode: false,
-
-    hskHistoryList: [],
-    activeTab: 'home',
-
-    THEMES: [
-        { key: 'lavender', label: 'Lavender', dot: '#7c3aed' },
-        { key: 'nordic', label: 'Nordic Blue', dot: '#0284c7' },
-        { key: 'sage', label: 'Sage Green', dot: '#059669' },
-        { key: 'warm', label: 'Warm Sand', dot: '#d97706' },
-        { key: 'midnight', label: 'Midnight Dark', dot: '#f43f5e' }
-    ],
-
-    async init() {
-        try {
-            const rawAuth = sessionStorage.getItem('chinesez_session_user');
-            if (!rawAuth) {
-                window.location.replace('./index.html');
-                return;
+<!DOCTYPE html>
+<html lang="vi" data-theme="lavender">
+<head>
+    <script>
+        (function() {
+            if (window.location.protocol === 'file:') return;
+            var urlParams = new URLSearchParams(window.location.search);
+            if (!urlParams.has('v')) {
+                urlParams.set('v', Date.now());
+                var newUrl = window.location.pathname + '?' + urlParams.toString() + window.location.hash;
+                window.location.replace(newUrl);
             }
-            this.currentAuth = JSON.parse(rawAuth);
-            if (!this.currentAuth || !this.currentAuth.username) {
-                window.location.replace('./index.html');
-                return;
-            }
-        } catch (e) {
-            window.location.replace('./index.html');
-            return;
+        })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>HSK cùng AI - ChineseZ298</title>
+    <meta name="theme-color" content="#7c3aed">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="HSK cùng AI">
+    <link rel="apple-touch-icon" href="./logo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@700;800;900&family=Noto+Sans+SC:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <style>
+        @custom-variant dark (&:where([data-theme="midnight"], [data-theme="midnight"] *));
+
+        :root[data-theme="lavender"] { --bg-body: #ece5f8; --bg-card: rgba(255, 255, 255, 0.96); --border-card: #d5c3f0; --text-main: #23153c; --text-sub: #573a87; --input-bg: #ffffff; --grad-primary: linear-gradient(135deg, #7c3aed 0%, #c026d3 100%); --shadow-btn: 0 4px 14px rgba(124, 58, 237, 0.35); --btn-sec: #5b21b6; --btn-exit: #be123c; }
+        :root[data-theme="nordic"] { --bg-body: #d9eaf7; --bg-card: rgba(255, 255, 255, 0.96); --border-card: #b0d2ec; --text-main: #0c202d; --text-sub: #27526f; --input-bg: #ffffff; --grad-primary: linear-gradient(135deg, #0284c7 0%, #2563eb 100%); --shadow-btn: 0 4px 14px rgba(2, 132, 199, 0.35); --btn-sec: #0369a1; --btn-exit: #0f766e; }
+        :root[data-theme="sage"] { --bg-body: #d8ede0; --bg-card: rgba(255, 255, 255, 0.96); --border-card: #b1d8bf; --text-main: #0f2b1d; --text-sub: #2d5a40; --input-bg: #ffffff; --grad-primary: linear-gradient(135deg, #059669 0%, #0d9488 100%); --shadow-btn: 0 4px 14px rgba(5, 150, 105, 0.35); --btn-sec: #047857; --btn-exit: #b45309; }
+        :root[data-theme="warm"] { --bg-body: #f5eedb; --bg-card: rgba(255, 255, 255, 0.96); --border-card: #e5d4b5; --text-main: #34230d; --text-sub: #6c512c; --input-bg: #ffffff; --grad-primary: linear-gradient(135deg, #d97706 0%, #ea580c 100%); --shadow-btn: 0 4px 14px rgba(217, 119, 6, 0.35); --btn-sec: #c2410c; --btn-exit: #c026d3; }
+        :root[data-theme="midnight"] { --bg-body: #060b12; --bg-card: rgba(18, 27, 41, 0.96); --border-card: #22344a; --text-main: #f3f6fa; --text-sub: #9eb5ce; --input-bg: #0e1724; --grad-primary: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); --shadow-btn: 0 4px 16px rgba(244, 63, 94, 0.42); --btn-sec: #9f1239; --btn-exit: #e11d48; }
+
+        html, body { height: 100dvh; height: calc(var(--vh, 1vh) * 100); max-height: 100dvh; overflow: hidden; margin: 0; padding: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); user-select: none; -webkit-user-select: none; transition: background-color 0.25s ease, color 0.25s ease; }
+        input, textarea, select { user-select: auto; -webkit-user-select: auto; }
+        .theme-card { background-color: var(--bg-card); border: 1px solid var(--border-card); backdrop-filter: blur(12px); color: var(--text-main); }
+        .custom-input { background-color: var(--input-bg); border: 1px solid var(--border-card); color: var(--text-main); }
+        .font-chinese { font-family: 'Noto Sans SC', sans-serif; }
+        
+        .btn-3d { background: var(--grad-primary); color: #ffffff !important; box-shadow: var(--shadow-btn); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-3d:hover { transform: translateY(-1.5px); filter: brightness(1.05); }
+        .btn-3d:active { transform: translateY(1px) scale(0.98); }
+
+        .btn-theme-sec { background-color: var(--btn-sec); color: #ffffff !important; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-theme-sec:hover { filter: brightness(1.1); transform: translateY(-1.5px); }
+        .btn-theme-sec:active { transform: translateY(1px) scale(0.98); }
+
+        .btn-theme-exit { background-color: var(--btn-exit); color: #ffffff !important; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2); transition: all 0.2s ease; }
+        .btn-theme-exit:hover { filter: brightness(1.15); transform: translateY(-1px); }
+
+        .title-3d-ruby { font-family: 'Montserrat', sans-serif; font-weight: 900; color: #e11d48; text-shadow: 0 1px 0 #be123c, 0 2px 0 #9f1239, 0 3px 0 #881337, 0 4px 0 #700e2b, 0 5px 10px rgba(190, 18, 60, 0.35); letter-spacing: 0.05em; }
+        .badge-hsk-ruby {
+            background: linear-gradient(135deg, #e11d48 0%, #be123c 55%, #881337 100%);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            box-shadow: 0 2px 8px rgba(225, 29, 72, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 0.08em;
         }
+        .ant-flipped-right { transform: scaleX(-1) !important; display: inline-block; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        const savedTheme = localStorage.getItem('chinesez_theme') || 'lavender';
-        const foundT = this.THEMES.find(t => t.key === savedTheme) || this.THEMES[0];
-        this.applyTheme(foundT.key, foundT.label);
-        this.renderThemeDropdown();
-
-        const btnTheme = document.getElementById('btn-hsk-theme-menu');
-        if (btnTheme) {
-            btnTheme.addEventListener('click', (e) => {
-                e.stopPropagation();
-                document.getElementById('hsk-theme-menu').classList.toggle('hidden');
-            });
+        @media (max-height: 520px) {
+            .app-header { height: 38px !important; padding-top: 2px !important; padding-bottom: 2px !important; }
+            .side-bar { height: auto !important; padding: 2px !important; }
+            .side-bar button { padding: 4px 6px !important; font-size: 10.5px !important; }
         }
+    </style>
+</head>
+<body class="flex flex-col">
+    <header class="app-header h-12 theme-card border-b px-2.5 sm:px-3 flex justify-between items-center shadow-xs shrink-0 z-30">
+        <div class="flex items-center space-x-1.5 sm:space-x-2 min-w-0">
+            <div class="w-7 h-7 bg-rose-600 rounded-lg flex items-center justify-center font-bold text-white text-xs shadow-xs shrink-0">中</div>
+            <h2 class="app-title text-sm sm:text-lg title-3d-ruby leading-none tracking-wider truncate">CHINESEZ298</h2>
+            <div class="flex items-center space-x-1 px-1.5 py-0.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-[9px] font-black text-rose-600 shrink-0">
+                <img src="./logo.png" onerror="this.onerror=null; this.src='logo.png';" alt="MRZ298" class="w-3.5 h-3.5 rounded-full object-contain ant-flipped-right">
+                <span class="tracking-wider hidden xs:inline">MRZ298</span>
+            </div>
+            <span class="badge-hsk-ruby px-2 py-0.5 rounded-lg text-[9px] sm:text-[10px] font-black uppercase shrink-0 flex items-center space-x-1">
+                <i class="fa-solid fa-award text-[9px] text-amber-300"></i>
+                <span>HSK EXAM</span>
+            </span>
+        </div>
+        <div class="flex items-center space-x-1.5 shrink-0">
+            <div class="relative">
+                <button id="btn-hsk-theme-menu" class="theme-card px-2 py-1 rounded-lg text-[11px] font-bold flex items-center space-x-1 cursor-pointer">
+                    <i class="fa-solid fa-palette text-rose-500"></i>
+                    <span id="hsk-theme-lbl" class="hidden sm:inline">Lavender</span>
+                    <i class="fa-solid fa-chevron-down text-[8px] opacity-70"></i>
+                </button>
+                <div id="hsk-theme-menu" class="hidden absolute right-0 mt-1 w-44 rounded-xl bg-white border shadow-xl py-1 z-50 text-slate-800 text-xs"></div>
+            </div>
+            <span id="hsk-user-badge" class="text-[10px] px-2 py-0.5 rounded-lg bg-rose-500/10 text-rose-600 font-bold hidden md:inline"></span>
+            <a href="./index.html" class="px-2.5 py-1 rounded-lg btn-theme-exit text-[11px] font-bold flex items-center space-x-1 cursor-pointer shadow-xs" title="Quay lại giao diện chính ChineseZ298">
+                <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                <span class="hidden sm:inline">Về trang chính</span>
+            </a>
+        </div>
+    </header>
 
-        const badge = document.getElementById('hsk-user-badge');
-        if (badge) badge.innerText = `${this.currentAuth.fullname} (${this.currentAuth.role})`;
-
-        try {
-            if (!firebase.apps.length) firebase.initializeApp(this.firebaseConfig);
-            this.db = firebase.firestore();
-        } catch (e) { console.warn('Firebase init:', e); }
-
-        try {
-            this.lessonsDB = JSON.parse(localStorage.getItem('chinesez_lessons')) || [];
-        } catch (e) { this.lessonsDB = []; }
-
-        if (this.db) {
-            try {
-                const [sysSnap, userSnap] = await Promise.all([
-                    this.db.collection("system_lessons").get(),
-                    this.db.collection("user_lessons").get()
-                ]);
-                const cloudLessons = [];
-                if (!sysSnap.empty) sysSnap.forEach(doc => cloudLessons.push(doc.data()));
-                if (!userSnap.empty) userSnap.forEach(doc => cloudLessons.push(doc.data()));
-                if (cloudLessons.length > 0) {
-                    cloudLessons.sort((a, b) => (parseInt(b.id, 10) || 0) - (parseInt(a.id, 10) || 0));
-                    this.lessonsDB = cloudLessons;
-                    localStorage.setItem('chinesez_lessons', JSON.stringify(this.lessonsDB));
-                }
-            } catch (err) {
-                console.warn("Lỗi đồng bộ bài học từ Firestore:", err);
-            }
-        }
-
-        this.switchTab('home');
-    },
-
-    renderThemeDropdown() {
-        const menu = document.getElementById('hsk-theme-menu');
-        if (!menu) return;
-        menu.innerHTML = this.THEMES.map(t => `
-            <button onclick="window.CZHskApp.applyTheme('${t.key}', '${t.label}')" class="w-full px-3 py-1.5 text-left hover:bg-slate-100 flex items-center space-x-2 font-semibold cursor-pointer">
-                <span class="w-2.5 h-2.5 rounded-full inline-block" style="background:${t.dot}"></span>
-                <span>${t.label}</span>
-            </button>
-        `).join('');
-    },
-
-    applyTheme(key, lbl) {
-        document.documentElement.setAttribute('data-theme', key);
-        localStorage.setItem('chinesez_theme', key);
-        const lblEl = document.getElementById('hsk-theme-lbl');
-        if (lblEl) lblEl.innerText = lbl;
-        const menu = document.getElementById('hsk-theme-menu');
-        if (menu) menu.classList.add('hidden');
-    },
-
-    getGreeting() {
-        const h = new Date().getHours();
-        if (h >= 5 && h < 11) return { text: "Chúc bạn có một buổi ôn tập thi HSK thật hiệu quả. CHINESEZ298 luôn đồng hành cùng bạn!", icon: "☀️" };
-        if (h >= 11 && h < 18) return { text: "Chúc bạn có một buổi ôn tập thi HSK thật hiệu quả. CHINESEZ298 luôn đồng hành cùng bạn!", icon: "🌤️" };
-        return { text: "Chúc bạn có một buổi ôn tập thi HSK thật hiệu quả. CHINESEZ298 luôn đồng hành cùng bạn!", icon: "🌙" };
-    },
-
-    switchTab(tab) {
-        this.activeTab = tab;
-        ['home', 'setup', 'exam', 'history'].forEach(t => {
-            const btn = document.getElementById(`hsk-nav-${t}`);
-            if (btn) {
-                if (t === tab) {
-                    btn.classList.add('btn-3d');
-                    btn.classList.remove('opacity-75');
-                } else {
-                    btn.classList.remove('btn-3d');
-                    btn.classList.add('opacity-75');
-                }
-            }
-        });
-
-        const vp = document.getElementById('hsk-main-viewport');
-        if (!vp) return;
-
-        if (tab === 'home') {
-            this.renderHomeWelcomeView(vp);
-        } else if (tab === 'setup') {
-            this.renderSetupView(vp);
-        } else if (tab === 'exam') {
-            this.renderExamView(vp);
-        } else if (tab === 'history') {
-            this.renderHistoryView(vp);
-        }
-    },
-
-    // ==========================================
-    // 0. MÀN HÌNH CHÀO MỪNG (HOME DASHBOARD HSK)
-    // ==========================================
-    renderHomeWelcomeView(vp) {
-        const g = this.getGreeting();
-        vp.innerHTML = `
-            <div class="space-y-4 max-w-lg w-full my-auto px-2 mx-auto flex flex-col items-center justify-center text-center">
-                <div class="w-16 h-16 bg-gradient-to-tr from-rose-600 to-red-700 rounded-3xl flex items-center justify-center mx-auto text-3xl font-black text-white shadow-lg shadow-rose-500/30 shrink-0">中</div>
-                <h1 class="text-3xl sm:text-5xl title-3d-ruby uppercase leading-tight tracking-wider py-1">CHÀO MỪNG BẠN</h1>
-                
-                <div class="p-4 sm:p-5 rounded-2xl theme-card border shadow-xs flex items-center space-x-3 sm:space-x-4 text-left w-full">
-                    <img src="./logo.png" onerror="this.onerror=null; this.src='logo.png';" alt="Chú Kiến" class="w-16 h-16 sm:w-20 sm:h-20 object-contain ant-flipped-right shrink-0 drop-shadow-sm">
-                    <div class="flex-1 space-y-1">
-                        <span class="text-2xl">${g.icon}</span>
-                        <p class="text-xs sm:text-sm font-semibold opacity-90 leading-relaxed italic">"${g.text}"</p>
-                    </div>
+    <div class="flex-1 flex flex-col md:flex-row p-2 gap-2 min-h-0 overflow-hidden">
+        <aside class="side-bar shrink-0 theme-card rounded-2xl p-1 sm:p-1.5 flex md:flex-col justify-between shadow-xs z-20 relative md:w-48">
+            <div class="flex md:flex-col gap-1 w-full items-stretch">
+                <button id="hsk-nav-home" onclick="window.CZHskApp.switchTab('home')" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2.5 rounded-xl font-bold btn-3d flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <i class="fa-solid fa-house text-xs sm:text-sm md:w-4 text-center"></i>
+                    <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Trang chủ</span>
+                </button>
+                <button id="hsk-nav-setup" onclick="window.CZHskApp.switchTab('setup')" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2.5 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <i class="fa-solid fa-wand-magic-sparkles text-xs sm:text-sm md:w-4 text-center"></i>
+                    <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Tạo đề HSK</span>
+                </button>
+                <button id="hsk-nav-exam" onclick="window.CZHskApp.switchTab('exam')" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2.5 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <i class="fa-solid fa-file-pen text-xs sm:text-sm md:w-4 text-center"></i>
+                    <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Phòng thi</span>
+                </button>
+                <button id="hsk-nav-history" onclick="window.CZHskApp.switchTab('history')" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2.5 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <i class="fa-solid fa-clock-rotate-left text-xs sm:text-sm md:w-4 text-center"></i>
+                    <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Lịch sử thi</span>
+                </button>
+            </div>
+            <div class="mt-auto pt-2 border-t border-slate-500/10 hidden md:flex flex-col space-y-2">
+                <div class="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-left">
+                    <p class="text-[10px] font-black text-rose-600 uppercase">HSK cùng AI</p>
+                    <p class="text-[10px] opacity-75 mt-0.5 leading-snug">Luyện thi chuẩn HSK 1-6 với Nghe - Đọc - Viết & chấm điểm tự động.</p>
                 </div>
-
-                <div class="pt-2 flex flex-wrap items-center justify-center gap-3 w-full">
-                    <button onclick="window.CZHskApp.switchTab('setup')" class="px-7 py-3.5 btn-3d font-bold text-xs sm:text-sm rounded-2xl cursor-pointer shadow-md inline-flex items-center space-x-2">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        <span>Tạo đề HSK cùng AI</span>
-                    </button>
-                    <button onclick="window.CZHskApp.switchTab('history')" class="px-6 py-3.5 btn-theme-sec font-bold text-xs sm:text-sm rounded-2xl cursor-pointer shadow-md inline-flex items-center space-x-2">
-                        <i class="fa-solid fa-clock-rotate-left"></i>
-                        <span>Lịch sử luyện đề</span>
-                    </button>
+                <div class="flex items-center justify-center space-x-2 opacity-80 pt-1">
+                    <img src="./logo.png" onerror="this.onerror=null; this.src='logo.png';" alt="MRZ298" class="w-6 h-6 object-contain ant-flipped-right shrink-0">
+                    <div class="text-left text-[9px] leading-tight">
+                        <p class="font-black text-rose-600 uppercase tracking-wider">MRZ298</p>
+                        <p class="opacity-60 font-semibold">Thiết kế &amp; Phát triển</p>
+                    </div>
                 </div>
             </div>
-        `;
-    },
+        </aside>
 
-    // ==========================================
-    // 1. GIAO DIỆN THIẾT LẬP & TẠO ĐỀ THI HSK
-    // ==========================================
-    renderSetupView(vp) {
-        const selectedTitles = this.lessonsDB
-            .filter(l => this.selectedLessonIds.includes(String(l.id)))
-            .map(l => l.title);
+        <main id="hsk-main-viewport" class="flex-1 theme-card rounded-2xl p-2.5 sm:p-4 flex flex-col min-h-0 overflow-hidden shadow-xs relative"></main>
+    </div>
 
-        vp.innerHTML = `
-            <div class="w-full max-w-2xl mx-auto h-full flex flex-col justify-between overflow-y-auto pr-1 text-left space-y-3 py-1">
-                <div class="flex items-center justify-between border-b pb-2 border-slate-500/10 shrink-0">
-                    <div>
-                        <h1 class="text-base sm:text-lg font-black text-rose-600 flex items-center space-x-2">
-                            <i class="fa-solid fa-graduation-cap"></i>
-                            <span>Luyện Đề Chuẩn HSK Cùng AI</span>
-                        </h1>
-                        <p class="text-[11px] opacity-75">Tạo đề thi Nghe - Đọc - Viết từ bài học, tài liệu hoặc theo cấp độ HSK 1–6</p>
-                    </div>
-                    <button onclick="window.location.href='./index.html'" class="px-2.5 py-1 rounded-xl theme-card border text-[11px] font-bold hover:border-rose-500 cursor-pointer shrink-0">
-                        <i class="fa-solid fa-house text-rose-500 mr-1"></i>Trang chính
-                    </button>
+    <!-- MODAL CHỌN BÀI HỌC -->
+    <div id="hsk-lesson-picker-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3">
+        <div class="theme-card rounded-3xl p-4 sm:p-5 max-w-md w-full max-h-[85vh] flex flex-col justify-between text-left shadow-2xl border border-rose-500/20">
+            <div class="flex justify-between items-center border-b pb-2.5 shrink-0">
+                <div>
+                    <h3 class="font-black text-sm text-rose-600"><i class="fa-solid fa-layer-group mr-1.5"></i>Chọn bài học ôn thi HSK</h3>
+                    <p class="text-[10px] opacity-70">Có thể tích chọn 1 hoặc nhiều bài học cùng lúc</p>
                 </div>
-
-                <!-- BƯỚC 1: CHỌN PHƯƠNG THỨC TẠO ĐỀ -->
-                <div class="space-y-2">
-                    <label class="block text-[11px] font-black uppercase text-rose-600">1. Chọn chế độ ra đề</label>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <div onclick="window.CZHskApp.setGenMode('source')" class="p-3 rounded-2xl border-2 cursor-pointer transition ${this.genMode === 'source' ? 'border-rose-500 bg-rose-500/10 shadow-xs' : 'theme-card opacity-80 hover:opacity-100'}">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-black text-rose-600"><i class="fa-solid fa-book-open-reader mr-1.5"></i>Bám sát bài học / tài liệu</span>
-                                <i class="fa-solid ${this.genMode === 'source' ? 'fa-circle-check text-rose-600' : 'fa-circle opacity-30'}"></i>
-                            </div>
-                            <p class="text-[10.5px] opacity-75 mt-1">AI tự động đánh giá độ khó từ vựng/ngữ pháp trong nguồn dữ liệu bạn cung cấp để ra đề chuẩn HSK.</p>
-                        </div>
-
-                        <div onclick="window.CZHskApp.setGenMode('ai_standard')" class="p-3 rounded-2xl border-2 cursor-pointer transition ${this.genMode === 'ai_standard' ? 'border-rose-500 bg-rose-500/10 shadow-xs' : 'theme-card opacity-80 hover:opacity-100'}">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-black text-rose-600"><i class="fa-solid fa-wand-magic-sparkles mr-1.5"></i>AI soạn đề chuẩn HSK</span>
-                                <i class="fa-solid ${this.genMode === 'ai_standard' ? 'fa-circle-check text-rose-600' : 'fa-circle opacity-30'}"></i>
-                            </div>
-                            <p class="text-[10.5px] opacity-75 mt-1">Chọn trực tiếp cấp độ từ HSK 1 đến HSK 6 (có thể kèm chủ đề gợi ý hoặc chọn thêm bài học).</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CHỌN CẤP ĐỘ HSK 1-6 -->
-                ${this.genMode === 'ai_standard' ? `
-                <div class="p-3 rounded-2xl theme-card border border-rose-500/20 space-y-2">
-                    <label class="block text-[11px] font-black uppercase text-rose-600">Chọn cấp độ kỳ thi HSK</label>
-                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
-                        ${[1, 2, 3, 4, 5, 6].map(lvl => `
-                            <button type="button" onclick="window.CZHskApp.setHskLevel(${lvl})" class="py-2 rounded-xl text-xs font-black transition cursor-pointer ${this.selectedHskLevel === lvl ? 'btn-3d' : 'theme-card border hover:border-rose-500'}">
-                                HSK ${lvl}
-                            </button>
-                        `).join('')}
-                    </div>
-                    <p class="text-[10.5px] opacity-75 italic">
-                        ${this.selectedHskLevel >= 3 ? '✓ Bao gồm đầy đủ 3 kỹ năng: Nghe (听力) + Đọc hiểu (阅读) + Viết/Sắp xếp câu (书写).' : '✓ Cấp độ HSK 1–2 gồm 2 kỹ năng chuẩn: Nghe (听力) + Đọc hiểu (阅读).'}
-                    </p>
-                </div>
-                ` : ''}
-
-                <!-- BƯỚC 2: NGUỒN DỮ LIỆU ĐẦU VÀO -->
-                <div class="space-y-2.5 p-3 rounded-2xl theme-card border border-slate-500/15">
-                    <label class="block text-[11px] font-black uppercase text-rose-600">
-                        2. Nguồn dữ liệu biên soạn đề ${this.genMode === 'ai_standard' ? '(Tùy chọn bổ sung)' : '(Chọn ít nhất 1 nguồn)'}
-                    </label>
-
-                    <div class="space-y-1">
-                        <div class="flex items-center justify-between">
-                            <span class="text-[11px] font-bold opacity-85"><i class="fa-solid fa-list-check text-rose-500 mr-1"></i>Từ danh sách bài học có sẵn:</span>
-                            <button type="button" onclick="window.CZHskApp.openLessonPickerModal()" class="px-3 py-1 rounded-xl btn-theme-sec text-xs font-bold cursor-pointer shadow-xs">
-                                <i class="fa-solid fa-folder-plus mr-1"></i>Chọn bài học (${this.selectedLessonIds.length})
-                            </button>
-                        </div>
-                        ${selectedTitles.length > 0 ? `
-                            <div class="flex flex-wrap gap-1 pt-1">
-                                ${selectedTitles.map(t => `<span class="px-2 py-0.5 rounded-lg bg-rose-500/10 text-rose-600 border border-rose-500/20 text-[10.5px] font-bold truncate max-w-[220px] font-chinese">${t}</span>`).join('')}
-                            </div>
-                        ` : `<p class="text-[10.5px] opacity-55 italic">Chưa chọn bài học nào từ thư viện.</p>`}
-                    </div>
-
-                    <div class="pt-1 border-t border-slate-500/10">
-                        <label class="block text-[10.5px] font-bold opacity-80 mb-1">Dán link drive tài liệu (pdf/word) hoặc link bài đọc:</label>
-                        <div class="flex items-center gap-1.5">
-                            <input type="text" id="hsk-in-link" placeholder="Link ở dạng chia sẻ mức độ xem..." class="flex-1 custom-input rounded-xl px-3 py-1.5 text-xs focus:outline-none">
-                            <button type="button" onclick="window.CZHskApp.addExtraLinkInput()" class="w-8 h-8 rounded-xl bg-purple-600 text-white font-bold flex items-center justify-center shrink-0 shadow-sm hover:scale-105 cursor-pointer transition" title="Thêm ô link tiếp theo">
-                                <i class="fa-solid fa-plus text-xs"></i>
-                            </button>
-                        </div>
-                        <div id="hsk-extra-links-container"></div>
-                    </div>
-
-                    <div class="pt-1 border-t border-slate-500/10 flex items-center justify-between flex-wrap gap-2">
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <input type="file" id="hsk-file-upload" onchange="window.CZHskApp.onFileSelected(event)" accept="image/*,.pdf,.txt,.doc,.docx" class="hidden">
-                            <button type="button" onclick="document.getElementById('hsk-file-upload').click()" class="px-3 py-1.5 rounded-xl text-xs font-bold border border-rose-300/80 bg-white dark:bg-slate-800 hover:bg-rose-50 text-rose-600 flex items-center space-x-1.5 cursor-pointer transition shadow-xs">
-                                <i class="fa-solid fa-cloud-arrow-up"></i>
-                                <span>Tải lên ảnh/file tài liệu</span>
-                            </button>
-                            <div id="hsk-uploaded-badge" class="${this.uploadedFile ? 'flex' : 'hidden'} items-center space-x-1.5 px-2.5 py-1 bg-emerald-500/10 text-emerald-600 rounded-xl border border-emerald-500/30 text-[11px] font-bold max-w-[200px]">
-                                <i class="fa-regular fa-file-lines text-xs"></i>
-                                <span id="hsk-uploaded-name" class="truncate">${this.uploadedFile ? this.uploadedFile.name : ''}</span>
-                                <button type="button" onclick="window.CZHskApp.removeUploadedFile()" class="text-rose-600 ml-1 font-black cursor-pointer">✕</button>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center space-x-1.5">
-                            <label class="text-[10.5px] font-bold opacity-80">Thời gian:</label>
-                            <select id="hsk-duration-select" onchange="window.CZHskApp.examDurationMinutes = parseInt(this.value, 10)" class="custom-input rounded-xl px-2 py-1 text-xs font-bold">
-                                <option value="10" ${this.examDurationMinutes === 10 ? 'selected' : ''}>10 phút</option>
-                                <option value="15" ${this.examDurationMinutes === 15 ? 'selected' : ''}>15 phút</option>
-                                <option value="20" ${this.examDurationMinutes === 20 ? 'selected' : ''}>20 phút</option>
-                                <option value="30" ${this.examDurationMinutes === 30 ? 'selected' : ''}>30 phút</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div>
-                        <input type="text" id="hsk-custom-topic" placeholder="Chủ đề hoặc yêu cầu trọng tâm (tùy chọn, VD: Giao tiếp sân bay, Ngữ pháp chữ 把...)" class="w-full custom-input rounded-xl px-3 py-1.5 text-xs focus:outline-none">
-                    </div>
-                </div>
-
-                <div id="hsk-generating-status" class="hidden p-3 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-600 font-bold text-xs text-center animate-pulse">
-                    🤖 AI đang biên soạn đề thi chuẩn HSK (Nghe - Đọc - Viết) kèm Pinyin & giải thích chi tiết... Vui lòng đợi!
-                </div>
-
-                <div class="pt-1 shrink-0">
-                    <button id="btn-generate-hsk" onclick="window.CZHskApp.generateHskExam()" class="w-full py-3 btn-3d font-black text-xs sm:text-sm rounded-2xl cursor-pointer shadow-md flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        <span>Bắt đầu tạo đề thi HSK & Vào phòng thi</span>
-                    </button>
+                <button onclick="window.CZHskApp.closeLessonPickerModal()" class="text-xs opacity-60 hover:opacity-100 cursor-pointer"><i class="fa-solid fa-xmark text-base"></i></button>
+            </div>
+            <div class="flex gap-1.5 my-2 shrink-0">
+                <button id="picker-tab-all" onclick="window.CZHskApp.setPickerFilter('all')" class="flex-1 py-1.5 rounded-xl text-xs font-bold btn-3d cursor-pointer">Tất cả</button>
+                <button id="picker-tab-sample" onclick="window.CZHskApp.setPickerFilter('sample')" class="flex-1 py-1.5 rounded-xl text-xs font-bold theme-card border cursor-pointer">Bài mẫu</button>
+                <button id="picker-tab-user" onclick="window.CZHskApp.setPickerFilter('user')" class="flex-1 py-1.5 rounded-xl text-xs font-bold theme-card border cursor-pointer">Của bạn</button>
+            </div>
+            <div id="hsk-picker-list" class="flex-1 overflow-y-auto min-h-0 space-y-1.5 py-1 pr-1"></div>
+            <div class="pt-2.5 border-t border-slate-500/10 flex justify-between items-center shrink-0">
+                <span id="hsk-picker-count" class="text-xs font-bold text-rose-600">Đã chọn: 0 bài</span>
+                <div class="flex gap-2">
+                    <button onclick="window.CZHskApp.clearSelectedLessons()" class="px-3 py-1.5 bg-slate-200 text-slate-700 font-bold text-xs rounded-xl cursor-pointer">Bỏ chọn</button>
+                    <button onclick="window.CZHskApp.confirmLessonPicker()" class="px-4 py-1.5 btn-3d font-bold text-xs rounded-xl cursor-pointer">Xác nhận</button>
                 </div>
             </div>
-        `;
-    },
+        </div>
+    </div>
 
-    setGenMode(mode) {
-        this.genMode = mode;
-        this.renderSetupView(document.getElementById('hsk-main-viewport'));
-    },
-
-    setHskLevel(lvl) {
-        this.selectedHskLevel = lvl;
-        this.renderSetupView(document.getElementById('hsk-main-viewport'));
-    },
-
-    addExtraLinkInput() {
-        const mainInput = document.getElementById('hsk-in-link');
-        const container = document.getElementById('hsk-extra-links-container');
-        if (!mainInput || !container) return;
-        const val = mainInput.value.trim();
-        if (!val) {
-            alert("Vui lòng dán link vào ô trước khi bấm dấu +!");
-            mainInput.focus();
-            return;
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(regs) {
+                for (var reg of regs) reg.unregister();
+            }).catch(function(e){});
         }
-        const div = document.createElement('div');
-        div.className = "flex items-center gap-1.5 mt-1.5";
-        div.innerHTML = `
-            <input type="text" value="${val}" readonly class="hsk-extra-link flex-1 custom-input rounded-xl px-3 py-1.5 text-xs opacity-90 truncate cursor-default">
-            <button type="button" onclick="this.parentElement.remove()" class="w-8 h-8 rounded-xl bg-rose-500/10 text-rose-600 flex items-center justify-center shrink-0 cursor-pointer">
-                <i class="fa-solid fa-trash-can text-xs"></i>
-            </button>
-        `;
-        container.appendChild(div);
-        mainInput.value = '';
-    },
-
-    onFileSelected(e) {
-        const f = e.target.files[0];
-        if (!f) return;
-        this.uploadedFile = f;
-        const badge = document.getElementById('hsk-uploaded-badge');
-        const nameEl = document.getElementById('hsk-uploaded-name');
-        if (badge && nameEl) {
-            nameEl.innerText = f.name;
-            badge.classList.remove('hidden');
-            badge.classList.add('flex');
-        }
-    },
-
-    removeUploadedFile() {
-        this.uploadedFile = null;
-        const inp = document.getElementById('hsk-file-upload');
-        if (inp) inp.value = '';
-        const badge = document.getElementById('hsk-uploaded-badge');
-        if (badge) {
-            badge.classList.add('hidden');
-            badge.classList.remove('flex');
-        }
-    },
-
-    openLessonPickerModal() {
-        this.pickerFilter = 'all';
-        this.renderPickerList();
-        document.getElementById('hsk-lesson-picker-modal').classList.remove('hidden');
-    },
-
-    closeLessonPickerModal() {
-        document.getElementById('hsk-lesson-picker-modal').classList.add('hidden');
-    },
-
-    setPickerFilter(filter) {
-        this.pickerFilter = filter;
-        ['all', 'sample', 'user'].forEach(f => {
-            const btn = document.getElementById(`picker-tab-${f}`);
-            if (btn) {
-                btn.className = (f === filter)
-                    ? "flex-1 py-1.5 rounded-xl text-xs font-bold btn-3d cursor-pointer"
-                    : "flex-1 py-1.5 rounded-xl text-xs font-bold theme-card border cursor-pointer";
-            }
+        var sysVersion = Date.now();
+        document.write('<script src="./hsk-engine.js?v=' + sysVersion + '"><\/script>');
+    </script>
+    <script>
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        function setAppHeight() { document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`); }
+        window.addEventListener('resize', setAppHeight); 
+        setAppHeight();
+        window.addEventListener('click', e => { 
+            const m = document.getElementById('hsk-theme-menu'); 
+            if (m && !e.target.closest('.relative')) m.classList.add('hidden'); 
         });
-        this.renderPickerList();
-    },
-
-    renderPickerList() {
-        const listEl = document.getElementById('hsk-picker-list');
-        const countEl = document.getElementById('hsk-picker-count');
-        if (!listEl) return;
-
-        let filtered = this.lessonsDB;
-        if (this.pickerFilter === 'sample') filtered = this.lessonsDB.filter(l => l.isSystem);
-        else if (this.pickerFilter === 'user') filtered = this.lessonsDB.filter(l => !l.isSystem);
-
-        if (filtered.length === 0) {
-            listEl.innerHTML = `<div class="p-6 text-center text-xs opacity-60">Không có bài học nào trong mục này.</div>`;
-        } else {
-            listEl.innerHTML = filtered.map(l => {
-                const isChecked = this.selectedLessonIds.includes(String(l.id));
-                return `
-                    <label class="p-2.5 theme-card rounded-2xl border flex items-center justify-between cursor-pointer hover:border-rose-500 transition shadow-xs">
-                        <div class="flex items-center space-x-2.5 truncate mr-2">
-                            <input type="checkbox" onchange="window.CZHskApp.toggleLessonSelection('${l.id}', this.checked)" ${isChecked ? 'checked' : ''} class="w-4 h-4 rounded text-rose-600 cursor-pointer shrink-0">
-                            <div class="truncate">
-                                <p class="text-xs font-bold truncate font-chinese">${l.title}</p>
-                                <p class="text-[10px] opacity-60">${l.isSystem ? 'Bài mẫu' : 'Của bạn'} • ${l.vocabs ? l.vocabs.length : 0} từ vựng</p>
-                            </div>
-                        </div>
-                        <span class="text-[10px] px-2 py-0.5 rounded-lg bg-rose-500/10 text-rose-600 font-bold shrink-0">${l.date || ''}</span>
-                    </label>
-                `;
-            }).join('');
-        }
-        if (countEl) countEl.innerText = `Đã chọn: ${this.selectedLessonIds.length} bài`;
-    },
-
-    toggleLessonSelection(id, checked) {
-        const sid = String(id);
-        if (checked) {
-            if (!this.selectedLessonIds.includes(sid)) this.selectedLessonIds.push(sid);
-        } else {
-            this.selectedLessonIds = this.selectedLessonIds.filter(x => x !== sid);
-        }
-        const countEl = document.getElementById('hsk-picker-count');
-        if (countEl) countEl.innerText = `Đã chọn: ${this.selectedLessonIds.length} bài`;
-    },
-
-    clearSelectedLessons() {
-        this.selectedLessonIds = [];
-        this.renderPickerList();
-    },
-
-    confirmLessonPicker() {
-        this.closeLessonPickerModal();
-        this.renderSetupView(document.getElementById('hsk-main-viewport'));
-    },
-
-    fileToBase64(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result.split(',')[1]);
-            reader.onerror = error => reject(error);
-        });
-    },
-
-    fileToText(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsText(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-        });
-    },
-
-    async callGeminiAPI(promptParts) {
-        const userKey = (localStorage.getItem('user_gemini_api_key') || "").trim();
-        if (!userKey) {
-            alert("⚠️ Bạn chưa cài đặt Gemini API Key. Vui lòng quay lại trang chính -> vào thẻ Thông tin tài khoản để cài đặt API Key nhé!");
-            window.location.href = './index.html';
-            throw new Error("NO_API_KEY");
-        }
-
-        const candidateModels = [
-            'gemini-3.5-flash-lite',
-            'gemini-3.8-flash',
-            'gemini-3.1-pro',
-            
-        ];
-
-        let lastError = "";
-        for (const model of candidateModels) {
-            try {
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(userKey)}`;
-                const resp = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: promptParts }],
-                        generationConfig: { responseMimeType: "application/json" }
-                    })
-                });
-                if (resp.ok) {
-                    const data = await resp.json();
-                    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                    if (text) return text;
-                } else {
-                    const errJson = await resp.json().catch(() => ({}));
-                    lastError = errJson.error?.message || `HTTP ${resp.status}`;
-                }
-            } catch (e) {
-                lastError = e.message;
-            }
-        }
-        throw new Error(lastError || "Không thể kết nối Gemini API.");
-    },
-
-    extractJSON(rawText) {
-        let clean = rawText.trim().replace(/```json/gi, '').replace(/```/g, '').trim();
-        try {
-            return JSON.parse(clean);
-        } catch (e) {
-            const first = clean.search(/[\[\{]/);
-            const last = Math.max(clean.lastIndexOf(']'), clean.lastIndexOf('}'));
-            if (first !== -1 && last !== -1 && last > first) {
-                return JSON.parse(clean.substring(first, last + 1));
-            }
-            throw e;
-        }
-    },
-
-    async generateHskExam() {
-        const userKey = (localStorage.getItem('user_gemini_api_key') || "").trim();
-        if (!userKey) {
-            alert("⚠️ Bạn chưa cài đặt Gemini API Key. Vui lòng quay lại trang chính -> vào thẻ Thông tin tài khoản để cài đặt API Key nhé!");
-            window.location.href = './index.html';
-            return;
-        }
-
-        const mainLink = (document.getElementById('hsk-in-link')?.value || '').trim();
-        const extraLinks = Array.from(document.querySelectorAll('.hsk-extra-link')).map(el => el.value.trim()).filter(Boolean);
-        const allLinks = [mainLink, ...extraLinks].filter(Boolean);
-        const customTopic = (document.getElementById('hsk-custom-topic')?.value || '').trim();
-
-        const chosenLessons = this.lessonsDB.filter(l => this.selectedLessonIds.includes(String(l.id)));
-
-        if (this.genMode === 'source' && chosenLessons.length === 0 && allLinks.length === 0 && !this.uploadedFile && !customTopic) {
-            alert("Vui lòng chọn ít nhất 1 bài học, tải lên tài liệu hoặc dán link để AI tạo đề!");
-            return;
-        }
-
-        const statusEl = document.getElementById('hsk-generating-status');
-        const btnEl = document.getElementById('btn-generate-hsk');
-        if (statusEl) statusEl.classList.remove('hidden');
-        if (btnEl) btnEl.classList.add('opacity-50', 'pointer-events-none');
-
-        try {
-            let promptParts = [];
-            let fileText = "";
-
-            if (this.uploadedFile) {
-                const file = this.uploadedFile;
-                const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
-                const isImage = file.type.startsWith('image/');
-                if (isImage || isPdf) {
-                    const b64 = await this.fileToBase64(file);
-                    promptParts.push({ inlineData: { mimeType: isPdf ? 'application/pdf' : file.type, data: b64 } });
-                } else {
-                    fileText = await this.fileToText(file);
-                }
-            }
-
-            let lessonsContext = "";
-            if (chosenLessons.length > 0) {
-                lessonsContext = chosenLessons.map(l => {
-                    const vStr = (l.vocabs || []).map(v => `${v.hanzi}(${v.pinyin}): ${v.meaning}`).join('; ');
-                    const gStr = (l.grammar || []).map(g => `${g.pattern} [${g.formula}]`).join('; ');
-                    return `- Bài "${l.title}": Từ vựng: [${vStr}]. Ngữ pháp: [${gStr}].`;
-                }).join('\n');
-            }
-
-            const levelInstruction = (this.genMode === 'ai_standard')
-                ? `Cấp độ bắt buộc: HSK ${this.selectedHskLevel}. ${this.selectedHskLevel >= 3 ? 'Đề thi BẮT BUỘC có đủ 3 phần: Phần 1 Nghe (4 câu), Phần 2 Đọc hiểu (4 câu), Phần 3 Viết/Sắp xếp câu (3 câu).' : 'Đề thi gồm 2 phần chuẩn HSK 1-2: Phần 1 Nghe (5 câu), Phần 2 Đọc hiểu (5 câu).'}`
-                : `Tự động đánh giá độ khó từ vựng & ngữ pháp trong tài liệu/bài học được cung cấp để xác định cấp độ HSK tương ứng (từ HSK 1 đến HSK 6). Tạo đề thi chuẩn HSK gồm: Phần 1 Nghe (4 câu), Phần 2 Đọc hiểu (4 câu), và nếu độ khó tương đương HSK 3 trở lên thì thêm Phần 3 Viết/Sắp xếp câu (2-3 câu).`;
-
-            const promptText = `
-Bạn là Hội đồng ra đề thi HSK quốc tế (Hanban/CTI) chuyên nghiệp. Hãy biên soạn một đề thi thử HSK chất lượng cao bằng tiếng Trung giản thể.
-
-THÔNG TIN ĐẦU VÀO:
-- Chế độ: ${this.genMode === 'ai_standard' ? `Soạn đề chuẩn HSK ${this.selectedHskLevel}` : 'Bám sát nội dung bài học/tài liệu'}
-- ${levelInstruction}
-- Chủ đề / Yêu cầu thêm: "${customTopic || 'Tổng hợp chuẩn HSK'}"
-- Các bài học đã chọn:
-${lessonsContext || '(Không có)'}
-- Link tài liệu tham khảo: ${allLinks.join(' ; ') || '(Không có)'}
-- Nội dung file văn bản đính kèm: ${fileText.substring(0, 4000) || '(Không có)'}
-
-YÊU CẦU CẤU TRÚC ĐỀ THI JSON:
-Trả về duy nhất 1 object JSON có cấu trúc chính xác như sau:
-{
-  "examTitle": "Tên đề thi (VD: Đề thi thử HSK 3 - Tổng hợp Bài 1 & 2)",
-  "detectedLevel": 3,
-  "sourceSummary": "Tóm tắt ngắn gọn nguồn tạo đề",
-  "questions": [
-    {
-      "id": 1,
-      "section": "listening",
-      "type": "listening_dialogue",
-      "instruction": "Nghe đoạn hội thoại và chọn đáp án đúng",
-      "audioLines": [
-        {"speaker": "A", "zh": "请问，去火车站怎么走？", "pinyin": "Qǐngwèn, qù huǒchēzhàn zěnme zǒu?", "vi": "Xin hỏi, đi đến ga tàu hỏa đi như thế nào?"},
-        {"speaker": "B", "zh": "往前走，第二个路口往右拐就到了。", "pinyin": "Wǎng qián zǒu, dì èr gè lùkǒu wǎng yòu guǎi jiù dào le.", "vi": "Đi thẳng về phía trước, ngã tư thứ hai rẽ phải là tới."}
-      ],
-      "questionZh": "女的要去哪里？",
-      "questionPinyin": "Nǚ de yào qù nǎlǐ?",
-      "questionVi": "Người nữ muốn đi đâu?",
-      "options": [
-        {"key": "A", "zh": "火车站", "pinyin": "huǒchēzhàn", "vi": "Ga tàu hỏa"},
-        {"key": "B", "zh": "飞机场", "pinyin": "fēijīchǎng", "vi": "Sân bay"},
-        {"key": "C", "zh": "图书馆", "pinyin": "túshūguǎn", "vi": "Thư viện"},
-        {"key": "D", "zh": "医院", "pinyin": "yīyuàn", "vi": "Bệnh viện"}
-      ],
-      "correctAnswer": "A",
-      "explanationVi": "Giải thích chi tiết bằng tiếng Việt vì sao chọn A dựa trên lời thoại."
-    },
-    {
-      "id": 5,
-      "section": "reading",
-      "type": "reading_choice",
-      "instruction": "Đọc câu/đoạn văn và chọn từ hoặc đáp án đúng nhất",
-      "passageZh": "今天天气真好，我们一起去公园散步吧。",
-      "passagePinyin": "Jīntiān tiānqì zhēn hǎo, wǒmen yīqǐ qù gōngyuán sànbù ba.",
-      "passageVi": "Thời tiết hôm nay thật đẹp, chúng ta cùng đi công viên tản bộ nhé.",
-      "questionZh": "他们打算去做什么？",
-      "questionPinyin": "Tāmen dǎsuàn qù zuò shénme?",
-      "questionVi": "Họ dự định đi làm gì?",
-      "options": [
-        {"key": "A", "zh": "去散步", "pinyin": "qù sànbù", "vi": "Đi tản bộ"},
-        {"key": "B", "zh": "去买东西", "pinyin": "qù mǎi dōngxi", "vi": "Đi mua đồ"},
-        {"key": "C", "zh": "去看电影", "pinyin": "qù kàn diànyǐng", "vi": "Đi xem phim"},
-        {"key": "D", "zh": "在家里休息", "pinyin": "zài jiālǐ xiūxi", "vi": "Nghỉ ngơi ở nhà"}
-      ],
-      "correctAnswer": "A",
-      "explanationVi": "Trong câu có cụm '去公园散步' (đi công viên tản bộ)."
-    },
-    {
-      "id": 9,
-      "section": "writing",
-      "type": "writing_reorder",
-      "instruction": "Sắp xếp các từ/cụm từ sau thành câu hoàn chỉnh đúng ngữ pháp",
-      "wordBank": ["把", "我", "作业", "做完了"],
-      "wordBankPinyin": ["bǎ", "wǒ", "zuòyè", "zuò wán le"],
-      "correctSentenceZh": "我把作业做完了",
-      "correctSentencePinyin": "Wǒ bǎ zuòyè zuò wán le.",
-      "correctSentenceVi": "Tôi đã làm xong bài tập về nhà rồi.",
-      "explanationVi": "Cấu trúc câu chữ 把: Chủ ngữ (我) + 把 + Tân ngữ (作业) + Động từ + Bổ ngữ kết quả (做完了)."
-    }
-  ]
-}
-
-QUY TẮC QUAN TRỌNG:
-- Mọi câu tiếng Trung đều PHẢI có đầy đủ trường Pinyin chuẩn thanh điệu và nghĩa tiếng Việt (vi) để phục vụ chức năng Ẩn/Hiện Pinyin và Ẩn/Hiện Nghĩa khi xem lại bài thi.
-- Không xuất bất kỳ văn bản nào ngoài JSON.`;
-
-            promptParts.push({ text: promptText });
-            const rawResp = await this.callGeminiAPI(promptParts);
-            const examData = this.extractJSON(rawResp);
-
-            if (!examData || !Array.isArray(examData.questions) || examData.questions.length === 0) {
-                throw new Error("Dữ liệu đề thi trả về chưa hợp lệ. Vui lòng thử lại!");
-            }
-
-            examData.createdAt = new Date().toISOString();
-            examData.sourceLabel = chosenLessons.length > 0
-                ? chosenLessons.map(l => l.title).join(', ')
-                : (this.uploadedFile ? this.uploadedFile.name : (allLinks[0] || customTopic || `HSK ${this.selectedHskLevel}`));
-
-            this.startExamSession(examData);
-
-        } catch (err) {
-            console.error("Lỗi tạo đề HSK:", err);
-            if (err.message !== "NO_API_KEY") {
-                alert("❌ Không thể tạo đề thi: " + (err.message || "Vui lòng kiểm tra lại API Key hoặc mạng."));
-            }
-        } finally {
-            if (statusEl) statusEl.classList.add('hidden');
-            if (btnEl) btnEl.classList.remove('opacity-50', 'pointer-events-none');
-        }
-    },
-
-    startExamSession(examData) {
-        this.currentExam = examData;
-        this.userAnswers = {};
-        this.listenCounts = {};
-        this.isExamSubmitted = false;
-        this.isReviewMode = false;
-        this.examScore = 0;
-
-        examData.questions.forEach((q, idx) => {
-            if (q.section === 'writing' || q.type === 'writing_reorder') {
-                this.userAnswers[idx] = [];
-            }
-        });
-
-        this.remainingSeconds = (this.examDurationMinutes || 15) * 60;
-        this.timeSpentSeconds = 0;
-        this.startTimer();
-        this.switchTab('exam');
-    },
-
-    startTimer() {
-        if (this.timerInterval) clearInterval(this.timerInterval);
-        this.timerInterval = setInterval(() => {
-            if (this.isExamSubmitted) {
-                clearInterval(this.timerInterval);
-                return;
-            }
-            this.remainingSeconds--;
-            this.timeSpentSeconds++;
-            const timerEl = document.getElementById('hsk-timer-display');
-            if (timerEl) {
-                timerEl.innerText = this.formatTime(this.remainingSeconds);
-                if (this.remainingSeconds <= 60) {
-                    timerEl.classList.add('text-rose-600', 'animate-pulse');
-                }
-            }
-            if (this.remainingSeconds <= 0) {
-                clearInterval(this.timerInterval);
-                alert("⏰ Đã hết thời gian làm bài! Hệ thống tự động nộp bài của bạn.");
-                this.submitHskExam(true);
-            }
-        }, 1000);
-    },
-
-    formatTime(sec) {
-        const s = Math.max(0, sec);
-        const m = Math.floor(s / 60);
-        const r = s % 60;
-        return `${String(m).padStart(2, '0')}:${String(r).padStart(2, '0')}`;
-    },
-
-    speakAudioLines(qIdx) {
-        if (!('speechSynthesis' in window)) return;
-        const q = this.currentExam?.questions?.[qIdx];
-        if (!q || !Array.isArray(q.audioLines)) return;
-
-        if (!this.isExamSubmitted && !this.isReviewMode) {
-            const count = this.listenCounts[qIdx] || 0;
-            if (count >= 2) {
-                alert("Quy chế thi HSK: Mỗi câu nghe chỉ được nghe tối đa 2 lần!");
-                return;
-            }
-            this.listenCounts[qIdx] = count + 1;
-            const badge = document.getElementById(`listen-count-${qIdx}`);
-            if (badge) badge.innerText = `${this.listenCounts[qIdx]}/2 lượt`;
-        }
-
-        window.speechSynthesis.cancel();
-        let delay = 50;
-        q.audioLines.forEach((line, i) => {
-            const cleanText = (line.zh || '').replace(/[^一-龥㐀-䶿，。！？、]/g, ' ').trim();
-            if (!cleanText) return;
-            setTimeout(() => {
-                const u = new SpeechSynthesisUtterance(cleanText);
-                u.lang = 'zh-CN';
-                u.rate = 0.85;
-                u.pitch = (i % 2 === 1) ? 1.12 : 0.95;
-                window.speechSynthesis.speak(u);
-            }, delay);
-            delay += Math.max(1800, cleanText.length * 260 + 450);
-        });
-    },
-
-    speakSingleZh(text) {
-        if (!('speechSynthesis' in window)) return;
-        window.speechSynthesis.cancel();
-        const clean = (text || '').replace(/[^一-龥㐀-䶿，。！？、]/g, ' ').trim();
-        if (!clean) return;
-        setTimeout(() => {
-            const u = new SpeechSynthesisUtterance(clean);
-            u.lang = 'zh-CN';
-            u.rate = 0.85;
-            window.speechSynthesis.speak(u);
-        }, 50);
-    },
-
-    selectMcqOption(qIdx, optKey) {
-        if (this.isExamSubmitted || this.isReviewMode) return;
-        this.userAnswers[qIdx] = optKey;
-        this.renderExamView(document.getElementById('hsk-main-viewport'));
-    },
-
-    pickWritingWord(qIdx, wordIdx) {
-        if (this.isExamSubmitted || this.isReviewMode) return;
-        const arr = Array.isArray(this.userAnswers[qIdx]) ? [...this.userAnswers[qIdx]] : [];
-        if (!arr.includes(wordIdx)) {
-            arr.push(wordIdx);
-            this.userAnswers[qIdx] = arr;
-            this.renderExamView(document.getElementById('hsk-main-viewport'));
-        }
-    },
-
-    unpickWritingWord(qIdx, posInAnswer) {
-        if (this.isExamSubmitted || this.isReviewMode) return;
-        const arr = Array.isArray(this.userAnswers[qIdx]) ? [...this.userAnswers[qIdx]] : [];
-        arr.splice(posInAnswer, 1);
-        this.userAnswers[qIdx] = arr;
-        this.renderExamView(document.getElementById('hsk-main-viewport'));
-    },
-
-    renderExamView(vp) {
-        if (!this.currentExam) {
-            vp.innerHTML = `
-                <div class="my-auto text-center space-y-3 p-4">
-                    <div class="w-14 h-14 rounded-2xl bg-rose-500/10 text-rose-600 mx-auto flex items-center justify-center text-2xl">
-                        <i class="fa-solid fa-file-circle-question"></i>
-                    </div>
-                    <h3 class="text-base font-black">Chưa có đề thi đang mở</h3>
-                    <p class="text-xs opacity-75 max-w-xs mx-auto">Hãy sang mục <b>Tạo đề HSK</b> để AI biên soạn đề thi mới hoặc mở lại đề từ <b>Lịch sử thi</b>.</p>
-                    <button onclick="window.CZHskApp.switchTab('setup')" class="px-5 py-2 btn-3d text-xs font-bold rounded-xl cursor-pointer">Tạo đề thi ngay</button>
-                </div>
-            `;
-            return;
-        }
-
-        const exam = this.currentExam;
-        const questions = exam.questions || [];
-        const showControls = this.isExamSubmitted || this.isReviewMode;
-
-        let questionsHtml = questions.map((q, idx) => {
-            const isListening = (q.section === 'listening');
-            const isWriting = (q.section === 'writing' || q.type === 'writing_reorder');
-            const sectionLabel = isListening ? '🎧 Phần Nghe (听力)' : (isWriting ? '✍️ Phần Viết (书写)' : '📖 Phần Đọc hiểu (阅读)');
-            const sectionColor = isListening ? 'bg-blue-500/10 text-blue-600' : (isWriting ? 'bg-purple-500/10 text-purple-600' : 'bg-emerald-500/10 text-emerald-600');
-
-            let isCorrect = false;
-            if (showControls) {
-                if (isWriting) {
-                    const pickedIndices = this.userAnswers[idx] || [];
-                    const userStr = pickedIndices.map(wi => (q.wordBank || [])[wi] || '').join('').replace(/\s+/g, '');
-                    const targetStr = (q.correctSentenceZh || '').replace(/[。！？，、\s]/g, '');
-                    isCorrect = (userStr === targetStr && userStr.length > 0);
-                } else {
-                    isCorrect = (this.userAnswers[idx] === q.correctAnswer);
-                }
-            }
-
-            let bodyHtml = '';
-            if (isListening) {
-                const usedCount = this.listenCounts[idx] || 0;
-                bodyHtml += `
-                    <div class="p-3 rounded-2xl bg-slate-500/5 border border-slate-500/10 flex items-center justify-between gap-2">
-                        <div class="flex items-center space-x-2.5">
-                            <button type="button" onclick="window.CZHskApp.speakAudioLines(${idx})" class="w-10 h-10 rounded-full btn-3d flex items-center justify-center shrink-0 cursor-pointer shadow">
-                                <i class="fa-solid fa-volume-high text-sm"></i>
-                            </button>
-                            <div class="text-left">
-                                <p class="text-xs font-bold">${q.instruction || 'Nghe và chọn đáp án đúng'}</p>
-                                <p id="listen-count-${idx}" class="text-[10.5px] font-semibold text-rose-600">
-                                    ${showControls ? 'Đã mở khóa nghe không giới hạn' : `${usedCount}/2 lượt nghe`}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                if (showControls && Array.isArray(q.audioLines)) {
-                    bodyHtml += `
-                        <div class="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 space-y-1.5 text-left">
-                            <p class="text-[10px] font-black uppercase text-amber-700 dark:text-amber-400">📜 Nội dung băng nghe (Script):</p>
-                            ${q.audioLines.map(line => `
-                                <div class="text-xs border-b border-amber-500/10 pb-1 last:border-none last:pb-0">
-                                    <div class="flex items-center justify-between">
-                                        <span class="font-bold font-chinese"><b>${line.speaker}:</b> ${line.zh}</span>
-                                        <button type="button" onclick="window.CZHskApp.speakSingleZh('${(line.zh || '').replace(/'/g, "\\'")}')" class="text-rose-600 hover:scale-110 cursor-pointer ml-2"><i class="fa-solid fa-volume-high text-[11px]"></i></button>
-                                    </div>
-                                    ${this.reviewShowPinyin && line.pinyin ? `<p class="text-[11px] text-rose-600 font-semibold">🔊 ${line.pinyin}</p>` : ''}
-                                    ${this.reviewShowMeaning && line.vi ? `<p class="text-[11px] opacity-85">🇻🇳 ${line.vi}</p>` : ''}
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                }
-            } else if (!isWriting && q.passageZh) {
-                bodyHtml += `
-                    <div class="p-3 rounded-2xl bg-slate-500/5 border border-slate-500/10 text-left space-y-1">
-                        <div class="flex justify-between items-start gap-2">
-                            <p class="text-sm sm:text-base font-bold font-chinese leading-relaxed">${q.passageZh}</p>
-                            ${showControls ? `<button type="button" onclick="window.CZHskApp.speakSingleZh('${(q.passageZh || '').replace(/'/g, "\\'")}')" class="text-rose-600 hover:scale-110 cursor-pointer shrink-0 pt-0.5"><i class="fa-solid fa-volume-high text-xs"></i></button>` : ''}
-                        </div>
-                        ${showControls && this.reviewShowPinyin && q.passagePinyin ? `<p class="text-xs text-rose-600 font-semibold">🔊 ${q.passagePinyin}</p>` : ''}
-                        ${showControls && this.reviewShowMeaning && q.passageVi ? `<p class="text-xs opacity-85">🇻🇳 ${q.passageVi}</p>` : ''}
-                    </div>
-                `;
-            }
-
-            if (!isWriting) {
-                if (q.questionZh) {
-                    bodyHtml += `
-                        <div class="text-left space-y-0.5 pt-1">
-                            <div class="flex items-center justify-between">
-                                <p class="text-xs sm:text-sm font-black font-chinese text-rose-600">${q.questionZh}</p>
-                                ${showControls ? `<button type="button" onclick="window.CZHskApp.speakSingleZh('${(q.questionZh || '').replace(/'/g, "\\'")}')" class="text-rose-600 hover:scale-110 cursor-pointer ml-2"><i class="fa-solid fa-volume-high text-xs"></i></button>` : ''}
-                            </div>
-                            ${showControls && this.reviewShowPinyin && q.questionPinyin ? `<p class="text-[11px] text-rose-500 font-semibold">🔊 ${q.questionPinyin}</p>` : ''}
-                            ${showControls && this.reviewShowMeaning && q.questionVi ? `<p class="text-[11px] opacity-80">🇻🇳 ${q.questionVi}</p>` : ''}
-                        </div>
-                    `;
-                }
-
-                const optionsHtml = (q.options || []).map(opt => {
-                    const isPicked = (this.userAnswers[idx] === opt.key);
-                    const isRightOpt = (q.correctAnswer === opt.key);
-
-                    let optStyle = 'theme-card border hover:border-rose-400';
-                    if (!showControls && isPicked) {
-                        optStyle = 'border-2 border-rose-500 bg-rose-500/10 shadow-xs';
-                    } else if (showControls) {
-                        if (isRightOpt) optStyle = 'border-2 border-emerald-500 bg-emerald-500/15';
-                        else if (isPicked && !isRightOpt) optStyle = 'border-2 border-rose-500 bg-rose-500/15';
-                        else optStyle = 'theme-card border opacity-75';
-                    }
-
-                    return `
-                        <div onclick="window.CZHskApp.selectMcqOption(${idx}, '${opt.key}')" class="p-2.5 rounded-xl flex items-center justify-between gap-2 cursor-pointer transition ${optStyle}">
-                            <div class="flex items-center space-x-2.5 text-left min-w-0">
-                                <span class="w-6 h-6 rounded-full ${isPicked || (showControls && isRightOpt) ? 'bg-rose-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200'} font-black text-xs flex items-center justify-center shrink-0">${opt.key}</span>
-                                <div class="min-w-0">
-                                    <p class="text-xs sm:text-sm font-bold font-chinese truncate">${opt.zh}</p>
-                                    ${showControls && this.reviewShowPinyin && opt.pinyin ? `<p class="text-[10.5px] text-rose-600 font-semibold">${opt.pinyin}</p>` : ''}
-                                    ${showControls && this.reviewShowMeaning && opt.vi ? `<p class="text-[10.5px] opacity-80">${opt.vi}</p>` : ''}
-                                </div>
-                            </div>
-                            ${showControls ? `
-                                <button type="button" onclick="event.stopPropagation(); window.CZHskApp.speakSingleZh('${(opt.zh || '').replace(/'/g, "\\'")}')" class="text-rose-500 hover:scale-110 cursor-pointer shrink-0 px-1">
-                                    <i class="fa-solid fa-volume-high text-xs"></i>
-                                </button>
-                            ` : ''}
-                        </div>
-                    `;
-                }).join('');
-
-                bodyHtml += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">${optionsHtml}</div>`;
-            } else {
-                const wordBank = q.wordBank || [];
-                const pickedIndices = Array.isArray(this.userAnswers[idx]) ? this.userAnswers[idx] : [];
-
-                const answerSlotsHtml = pickedIndices.length > 0
-                    ? pickedIndices.map((wi, pos) => `
-                        <button type="button" onclick="window.CZHskApp.unpickWritingWord(${idx}, ${pos})" class="px-3 py-1.5 rounded-xl bg-rose-600 text-white font-black text-sm font-chinese shadow-xs cursor-pointer hover:scale-105 transition">
-                            ${wordBank[wi]}
-                        </button>
-                    `).join('')
-                    : `<span class="text-xs opacity-50 italic">Chạm vào các thẻ từ bên dưới để xếp thành câu...</span>`;
-
-                const bankHtml = wordBank.map((w, wi) => {
-                    const alreadyUsed = pickedIndices.includes(wi);
-                    const py = (q.wordBankPinyin || [])[wi] || '';
-                    return `
-                        <button type="button" onclick="window.CZHskApp.pickWritingWord(${idx}, ${wi})" ${alreadyUsed ? 'disabled' : ''} class="px-3 py-1.5 rounded-xl border text-sm font-bold font-chinese transition ${alreadyUsed ? 'opacity-30 border-dashed cursor-not-allowed' : 'theme-card hover:border-rose-500 cursor-pointer shadow-xs'}">
-                            <span>${w}</span>
-                            ${showControls && this.reviewShowPinyin && py ? `<span class="block text-[10px] text-rose-500 font-sans">${py}</span>` : ''}
-                        </button>
-                    `;
-                }).join('');
-
-                bodyHtml += `
-                    <div class="space-y-2 text-left">
-                        <p class="text-xs font-bold opacity-85">${q.instruction || 'Sắp xếp các từ sau thành câu hoàn chỉnh:'}</p>
-                        <div class="min-h-[46px] p-2.5 rounded-2xl border-2 border-dashed border-rose-500/40 bg-rose-500/5 flex flex-wrap items-center gap-1.5">
-                            ${answerSlotsHtml}
-                        </div>
-                        <div class="flex flex-wrap gap-2 pt-1">${bankHtml}</div>
-                    </div>
-                `;
-            }
-
-            let reviewBoxHtml = '';
-            if (showControls) {
-                reviewBoxHtml = `
-                    <div class="mt-2 p-3 rounded-2xl border text-left text-xs space-y-1 ${isCorrect ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-rose-500/10 border-rose-500/30'}">
-                        <div class="flex items-center justify-between">
-                            <span class="font-black ${isCorrect ? 'text-emerald-600' : 'text-rose-600'}">
-                                ${isCorrect ? '✓ Chính xác!' : '✗ Chưa chính xác'}
-                            </span>
-                            ${isWriting && q.correctSentenceZh ? `
-                                <button type="button" onclick="window.CZHskApp.speakSingleZh('${q.correctSentenceZh.replace(/'/g, "\\'")}')" class="text-rose-600 font-bold hover:underline cursor-pointer flex items-center space-x-1">
-                                    <i class="fa-solid fa-volume-high"></i><span>Nghe câu đúng</span>
-                                </button>
-                            ` : ''}
-                        </div>
-                        ${isWriting ? `
-                            <p class="font-black font-chinese text-sm text-emerald-700 dark:text-emerald-400">Đáp án chuẩn: ${q.correctSentenceZh || ''}</p>
-                            ${this.reviewShowPinyin && q.correctSentencePinyin ? `<p class="text-[11px] text-rose-600 font-semibold">🔊 ${q.correctSentencePinyin}</p>` : ''}
-                            ${this.reviewShowMeaning && q.correctSentenceVi ? `<p class="text-[11px] opacity-85">🇻🇳 ${q.correctSentenceVi}</p>` : ''}
-                        ` : `
-                            <p class="font-bold">Đáp án đúng: <span class="text-emerald-600 font-black">${q.correctAnswer}</span></p>
-                        `}
-                        <p class="text-[11.5px] leading-relaxed pt-1 border-t border-slate-500/10">
-                            <b class="text-rose-600">💡 Giải thích:</b> ${q.explanationVi || ''}
-                        </p>
-                    </div>
-                `;
-            }
-
-            return `
-                <div class="p-3.5 rounded-2xl theme-card border border-slate-500/15 space-y-2 shadow-xs">
-                    <div class="flex items-center justify-between border-b pb-1.5 border-slate-500/10">
-                        <span class="text-xs font-black text-rose-600">Câu ${idx + 1} / ${questions.length}</span>
-                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg ${sectionColor}">${sectionLabel}</span>
-                    </div>
-                    ${bodyHtml}
-                    ${reviewBoxHtml}
-                </div>
-            `;
-        }).join('');
-
-        let topBarHtml = '';
-        if (!showControls) {
-            topBarHtml = `
-                <div class="shrink-0 flex items-center justify-between p-2.5 rounded-2xl theme-card border border-rose-500/20 shadow-xs gap-2">
-                    <div class="truncate text-left">
-                        <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-rose-600 text-white">HSK ${exam.detectedLevel || this.selectedHskLevel}</span>
-                        <h2 class="text-xs sm:text-sm font-black truncate mt-0.5 font-chinese">${exam.examTitle}</h2>
-                    </div>
-                    <div class="flex items-center space-x-2 shrink-0">
-                        <div class="px-3 py-1.5 rounded-xl bg-slate-500/10 font-mono font-black text-xs sm:text-sm flex items-center space-x-1.5">
-                            <i class="fa-regular fa-clock text-rose-600"></i>
-                            <span id="hsk-timer-display">${this.formatTime(this.remainingSeconds)}</span>
-                        </div>
-                        <button type="button" onclick="window.CZHskApp.submitHskExam(false)" class="px-4 py-2 btn-3d font-bold text-xs rounded-xl cursor-pointer shadow">
-                            Nộp bài
-                        </button>
-                    </div>
-                </div>
-            `;
-        } else {
-            const totalQ = questions.length;
-            const score100 = Math.round((this.examScore / Math.max(1, totalQ)) * 100);
-            topBarHtml = `
-                <div class="shrink-0 p-2.5 sm:p-3 rounded-2xl theme-card border-2 border-emerald-500/40 bg-emerald-500/5 space-y-2 shadow-xs">
-                    <div class="flex flex-wrap items-center justify-between gap-2">
-                        <div class="text-left">
-                            <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-emerald-600 text-white">KẾT QUẢ BÀI THI HSK ${exam.detectedLevel || ''}</span>
-                            <p class="text-sm sm:text-base font-black mt-0.5">
-                                Điểm số: <span class="text-rose-600 text-lg">${score100}/100</span>
-                                <span class="text-xs font-bold opacity-75 ml-1">(Đúng ${this.examScore}/${totalQ} câu)</span>
-                            </p>
-                        </div>
-                        <div class="flex flex-wrap items-center gap-1.5">
-                            <button type="button" onclick="window.CZHskApp.toggleReviewPinyin()" class="px-2.5 py-1.5 rounded-xl border text-[11px] font-bold cursor-pointer ${this.reviewShowPinyin ? 'bg-rose-600 text-white border-rose-600' : 'theme-card'}">
-                                ${this.reviewShowPinyin ? 'Ẩn Pinyin' : 'Hiện Pinyin'}
-                            </button>
-                            <button type="button" onclick="window.CZHskApp.toggleReviewMeaning()" class="px-2.5 py-1.5 rounded-xl border text-[11px] font-bold cursor-pointer ${this.reviewShowMeaning ? 'bg-rose-600 text-white border-rose-600' : 'theme-card'}">
-                                ${this.reviewShowMeaning ? 'Ẩn Nghĩa' : 'Hiện Nghĩa'}
-                            </button>
-                            <button type="button" onclick="window.CZHskApp.switchTab('setup')" class="px-3 py-1.5 btn-3d text-[11px] font-bold rounded-xl cursor-pointer">
-                                + Đề mới
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        vp.innerHTML = `
-            <div class="w-full max-w-3xl mx-auto h-full flex flex-col justify-between space-y-2 min-h-0">
-                ${topBarHtml}
-                <div class="flex-1 min-h-0 overflow-y-auto space-y-2.5 pr-1 py-0.5">
-                    ${questionsHtml}
-                </div>
-            </div>
-        `;
-    },
-
-    toggleReviewPinyin() {
-        this.reviewShowPinyin = !this.reviewShowPinyin;
-        this.renderExamView(document.getElementById('hsk-main-viewport'));
-    },
-
-    toggleReviewMeaning() {
-        this.reviewShowMeaning = !this.reviewShowMeaning;
-        this.renderExamView(document.getElementById('hsk-main-viewport'));
-    },
-
-    async submitHskExam(isAuto) {
-        if (!this.currentExam || this.isExamSubmitted) return;
-        if (!isAuto && !confirm("Bạn có chắc chắn muốn nộp bài thi HSK này không?")) return;
-
-        if (this.timerInterval) clearInterval(this.timerInterval);
-        this.isExamSubmitted = true;
-        this.isReviewMode = true;
-        this.reviewShowPinyin = true;
-        this.reviewShowMeaning = true;
-
-        const questions = this.currentExam.questions || [];
-        let correctCount = 0;
-
-        questions.forEach((q, idx) => {
-            const isWriting = (q.section === 'writing' || q.type === 'writing_reorder');
-            if (isWriting) {
-                const pickedIndices = this.userAnswers[idx] || [];
-                const userStr = pickedIndices.map(wi => (q.wordBank || [])[wi] || '').join('').replace(/\s+/g, '');
-                const targetStr = (q.correctSentenceZh || '').replace(/[。！？，、\s]/g, '');
-                if (userStr === targetStr && userStr.length > 0) correctCount++;
-            } else {
-                if (this.userAnswers[idx] === q.correctAnswer) correctCount++;
-            }
-        });
-
-        this.examScore = correctCount;
-        const totalQ = questions.length;
-        const score100 = Math.round((correctCount / Math.max(1, totalQ)) * 100);
-
-        const now = new Date();
-        const dateStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-        const resultId = `hsk_${Date.now()}`;
-
-        const record = {
-            id: resultId,
-            username: this.currentAuth.username,
-            fullname: this.currentAuth.fullname,
-            job: this.currentAuth.job || '',
-            className: this.currentAuth.className || '',
-            examTitle: this.currentExam.examTitle,
-            hskLevel: this.currentExam.detectedLevel || this.selectedHskLevel,
-            sourceLabel: this.currentExam.sourceLabel || '',
-            score100: score100,
-            correctCount: correctCount,
-            totalQuestions: totalQ,
-            timeSpent: this.formatTime(this.timeSpentSeconds),
-            submittedAt: dateStr,
-            timestamp: Date.now(),
-            examSnapshot: this.currentExam,
-            userAnswersSnapshot: this.userAnswers
-        };
-
-        try {
-            const localHist = JSON.parse(localStorage.getItem('chinesez_hsk_history')) || [];
-            localHist.unshift(record);
-            localStorage.setItem('chinesez_hsk_history', JSON.stringify(localHist.slice(0, 30)));
-        } catch (e) {}
-
-        if (this.db) {
-            try {
-                await this.db.collection("hsk_results").doc(resultId).set(record);
-            } catch (e) {
-                console.warn("Lỗi lưu kết quả HSK lên Firestore:", e);
-            }
-        }
-
-        this.renderExamView(document.getElementById('hsk-main-viewport'));
-    },
-
-    async renderHistoryView(vp) {
-        vp.innerHTML = `<div class="my-auto text-center text-xs opacity-70"><i class="fa-solid fa-spinner fa-spin text-rose-600 mr-1.5"></i>Đang tải lịch sử luyện đề HSK...</div>`;
-
-        let records = [];
-        try {
-            const localHist = JSON.parse(localStorage.getItem('chinesez_hsk_history')) || [];
-            records = localHist.filter(r => r.username === this.currentAuth.username);
-        } catch (e) {}
-
-        if (this.db) {
-            try {
-                const snap = await this.db.collection("hsk_results")
-                    .where("username", "==", this.currentAuth.username)
-                    .get();
-                if (!snap.empty) {
-                    const cloudRecs = [];
-                    snap.forEach(doc => cloudRecs.push(doc.data()));
-                    cloudRecs.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                    records = cloudRecs;
-                }
-            } catch (e) {
-                console.warn("Lỗi tải lịch sử HSK từ Firestore:", e);
-            }
-        }
-
-        this.hskHistoryList = records;
-
-        if (records.length === 0) {
-            vp.innerHTML = `
-                <div class="my-auto text-center space-y-3 p-4">
-                    <div class="w-14 h-14 rounded-2xl bg-rose-500/10 text-rose-600 mx-auto flex items-center justify-center text-2xl">
-                        <i class="fa-solid fa-clock-rotate-left"></i>
-                    </div>
-                    <h3 class="text-base font-black">Chưa có lịch sử luyện đề</h3>
-                    <p class="text-xs opacity-75">Hoàn thành bài thi đầu tiên để theo dõi tiến bộ của bạn nhé!</p>
-                    <button onclick="window.CZHskApp.switchTab('setup')" class="px-5 py-2 btn-3d text-xs font-bold rounded-xl cursor-pointer">Tạo đề thi ngay</button>
-                </div>
-            `;
-            return;
-        }
-
-        const listHtml = records.map((r, i) => `
-            <div class="p-3 rounded-2xl theme-card border border-slate-500/15 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-left shadow-xs">
-                <div class="space-y-0.5 min-w-0 flex-1">
-                    <div class="flex items-center space-x-2">
-                        <span class="px-2 py-0.5 rounded bg-rose-600 text-white text-[10px] font-black shrink-0">HSK ${r.hskLevel}</span>
-                        <h4 class="text-xs sm:text-sm font-black truncate font-chinese">${r.examTitle}</h4>
-                    </div>
-                    <p class="text-[10.5px] opacity-70 truncate">Nguồn: ${r.sourceLabel || 'Tự chọn'} • Ngày: ${r.submittedAt}</p>
-                </div>
-                <div class="flex items-center justify-between sm:justify-end space-x-3 shrink-0 pt-1 sm:pt-0 border-t sm:border-none border-slate-500/10">
-                    <div class="text-left sm:text-right">
-                        <span class="text-sm font-black text-rose-600">${r.score100}/100 điểm</span>
-                        <span class="block text-[10px] opacity-70">Đúng ${r.correctCount}/${r.totalQuestions} • ${r.timeSpent || ''}</span>
-                    </div>
-                    ${r.examSnapshot ? `
-                        <button type="button" onclick="window.CZHskApp.openSavedExamReview(${i})" class="px-3 py-1.5 btn-theme-sec text-xs font-bold rounded-xl cursor-pointer shadow-xs">
-                            <i class="fa-solid fa-eye mr-1"></i>Xem lại đề
-                        </button>
-                    ` : ''}
-                </div>
-            </div>
-        `).join('');
-
-        vp.innerHTML = `
-            <div class="w-full max-w-3xl mx-auto h-full flex flex-col space-y-2.5 min-h-0">
-                <div class="flex items-center justify-between border-b pb-2 border-slate-500/10 shrink-0">
-                    <h2 class="text-sm sm:text-base font-black text-rose-600"><i class="fa-solid fa-trophy mr-1.5"></i>Lịch sử luyện đề HSK (${records.length} bài)</h2>
-                    <button onclick="window.CZHskApp.switchTab('setup')" class="px-3 py-1 btn-3d text-xs font-bold rounded-xl cursor-pointer">+ Tạo đề mới</button>
-                </div>
-                <div class="flex-1 min-h-0 overflow-y-auto space-y-2 pr-1">
-                    ${listHtml}
-                </div>
-            </div>
-        `;
-    },
-
-    openSavedExamReview(recordIdx) {
-        const rec = this.hskHistoryList[recordIdx];
-        if (!rec || !rec.examSnapshot) return;
-        this.currentExam = rec.examSnapshot;
-        this.userAnswers = rec.userAnswersSnapshot || {};
-        this.examScore = rec.correctCount || 0;
-        this.isExamSubmitted = true;
-        this.isReviewMode = true;
-        this.reviewShowPinyin = true;
-        this.reviewShowMeaning = true;
-        this.switchTab('exam');
-    }
-};
-
-window.CZHskApp = CZHskApp;
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => window.CZHskApp.init());
-} else {
-    window.CZHskApp.init();
-}
+    </script>
+</body>
+</html>
