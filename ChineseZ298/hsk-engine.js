@@ -587,8 +587,7 @@ const CZHskApp = window.CZHskApp = {
                     const vStr = (l.vocabs || []).map(v => `${v.hanzi}(${v.pinyin}): ${v.meaning}`).join('; ');
                     const gStr = (l.grammar || []).map(g => `${g.pattern} [${g.formula}]`).join('; ');
                     return `- Bài "${l.title}": Từ vựng: [${vStr}]. Ngữ pháp: [${gStr}].`;
-                }).join('
-');
+                }).join('\n');
             }
 
             const levelInstruction = (this.genMode === 'ai_standard')
@@ -884,7 +883,7 @@ QUY TẮC QUAN TRỌNG:
                                 <div class="text-xs border-b border-amber-500/10 pb-1 last:border-none last:pb-0">
                                     <div class="flex items-center justify-between">
                                         <span class="font-bold font-chinese"><b>${line.speaker}:</b> ${line.zh}</span>
-                                        <button type="button" onclick="window.CZHskApp.speakSingleZh('${(line.zh || '').replace(/'/g, "\'")}')" class="text-rose-600 hover:scale-110 cursor-pointer ml-2"><i class="fa-solid fa-volume-high text-[11px]"></i></button>
+                                        <button type="button" onclick="window.CZHskApp.speakSingleZh('${(line.zh || '').replace(/'/g, "\\'")}')" class="text-rose-600 hover:scale-110 cursor-pointer ml-2"><i class="fa-solid fa-volume-high text-[11px]"></i></button>
                                     </div>
                                     ${this.reviewShowPinyin && line.pinyin ? `<p class="text-[11px] text-rose-600 font-semibold">🔊 ${line.pinyin}</p>` : ''}
                                     ${this.reviewShowMeaning && line.vi ? `<p class="text-[11px] opacity-85">🇻🇳 ${line.vi}</p>` : ''}
@@ -898,7 +897,7 @@ QUY TẮC QUAN TRỌNG:
                     <div class="p-3 rounded-2xl bg-slate-500/5 border border-slate-500/10 text-left space-y-1">
                         <div class="flex justify-between items-start gap-2">
                             <p class="text-sm sm:text-base font-bold font-chinese leading-relaxed">${q.passageZh}</p>
-                            ${showControls ? `<button type="button" onclick="window.CZHskApp.speakSingleZh('${(q.passageZh || '').replace(/'/g, "\'")}')" class="text-rose-600 hover:scale-110 cursor-pointer shrink-0 pt-0.5"><i class="fa-solid fa-volume-high text-xs"></i></button>` : ''}
+                            ${showControls ? `<button type="button" onclick="window.CZHskApp.speakSingleZh('${(q.passageZh || '').replace(/'/g, "\\'")}')" class="text-rose-600 hover:scale-110 cursor-pointer shrink-0 pt-0.5"><i class="fa-solid fa-volume-high text-xs"></i></button>` : ''}
                         </div>
                         ${showControls && this.reviewShowPinyin && q.passagePinyin ? `<p class="text-xs text-rose-600 font-semibold">🔊 ${q.passagePinyin}</p>` : ''}
                         ${showControls && this.reviewShowMeaning && q.passageVi ? `<p class="text-xs opacity-85">🇻🇳 ${q.passageVi}</p>` : ''}
@@ -912,7 +911,7 @@ QUY TẮC QUAN TRỌNG:
                         <div class="text-left space-y-0.5 pt-1">
                             <div class="flex items-center justify-between">
                                 <p class="text-xs sm:text-sm font-black font-chinese text-rose-600">${q.questionZh}</p>
-                                ${showControls ? `<button type="button" onclick="window.CZHskApp.speakSingleZh('${(q.questionZh || '').replace(/'/g, "\'")}')" class="text-rose-600 hover:scale-110 cursor-pointer ml-2"><i class="fa-solid fa-volume-high text-xs"></i></button>` : ''}
+                                ${showControls ? `<button type="button" onclick="window.CZHskApp.speakSingleZh('${(q.questionZh || '').replace(/'/g, "\\'")}')" class="text-rose-600 hover:scale-110 cursor-pointer ml-2"><i class="fa-solid fa-volume-high text-xs"></i></button>` : ''}
                             </div>
                             ${showControls && this.reviewShowPinyin && q.questionPinyin ? `<p class="text-[11px] text-rose-500 font-semibold">🔊 ${q.questionPinyin}</p>` : ''}
                             ${showControls && this.reviewShowMeaning && q.questionVi ? `<p class="text-[11px] opacity-80">🇻🇳 ${q.questionVi}</p>` : ''}
@@ -944,7 +943,7 @@ QUY TẮC QUAN TRỌNG:
                                 </div>
                             </div>
                             ${showControls ? `
-                                <button type="button" onclick="event.stopPropagation(); window.CZHskApp.speakSingleZh('${(opt.zh || '').replace(/'/g, "\'")}')" class="text-rose-500 hover:scale-110 cursor-pointer shrink-0 px-1">
+                                <button type="button" onclick="event.stopPropagation(); window.CZHskApp.speakSingleZh('${(opt.zh || '').replace(/'/g, "\\'")}')" class="text-rose-500 hover:scale-110 cursor-pointer shrink-0 px-1">
                                     <i class="fa-solid fa-volume-high text-xs"></i>
                                 </button>
                             ` : ''}
@@ -996,7 +995,7 @@ QUY TẮC QUAN TRỌNG:
                                 ${isCorrect ? '✓ Chính xác!' : '✗ Chưa chính xác'}
                             </span>
                             ${isWriting && q.correctSentenceZh ? `
-                                <button type="button" onclick="window.CZHskApp.speakSingleZh('${q.correctSentenceZh.replace(/'/g, "\'")}')" class="text-rose-600 font-bold hover:underline cursor-pointer flex items-center space-x-1">
+                                <button type="button" onclick="window.CZHskApp.speakSingleZh('${q.correctSentenceZh.replace(/'/g, "\\'")}')" class="text-rose-600 font-bold hover:underline cursor-pointer flex items-center space-x-1">
                                     <i class="fa-solid fa-volume-high"></i><span>Nghe câu đúng</span>
                                 </button>
                             ` : ''}
