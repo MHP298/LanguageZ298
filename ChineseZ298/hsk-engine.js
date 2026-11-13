@@ -173,7 +173,7 @@ const CZHskApp = window.CZHskApp = {
         const g = this.getGreeting();
         vp.innerHTML = `
             <div class="space-y-4 max-w-lg w-full my-auto px-2 mx-auto flex flex-col items-center justify-center text-center">
-                <div class="w-16 h-16 bg-gradient-to-tr from-rose-600 to-red-700 rounded-3xl flex items-center justify-center mx-auto text-3xl font-black text-white shadow-lg shadow-rose-500/30 shrink-0">中</div>
+                <span class="badge-hsk-ruby px-4 py-1.5 rounded-xl text-xs sm:text-sm font-black uppercase inline-flex items-center space-x-2 shadow-md mb-1"><i class="fa-solid fa-award text-amber-300"></i><span>HSK EXAM</span></span>
                 <h1 class="text-3xl sm:text-5xl title-3d-ruby uppercase leading-tight tracking-wider py-1">CHÀO MỪNG BẠN</h1>
                 
                 <div class="p-4 sm:p-5 rounded-2xl theme-card border shadow-xs flex items-center space-x-3 sm:space-x-4 text-left w-full">
