@@ -18,29 +18,25 @@ const CZHskApp = window.CZHskApp = {
     pickerFilter: 'all',
     uploadedFile: null,
 
-    // Cấu hình đề thi
-    genMode: 'source', // 'source' (bám sát bài học/tài liệu) | 'ai_standard' (AI soạn chuẩn HSK 1-6)
-    selectedHskLevel: 1, // 1..6
+    genMode: 'source', 
+    selectedHskLevel: 1, 
     examDurationMinutes: 15,
 
-    // Trạng thái phòng thi
     currentExam: null,
-    userAnswers: {}, // { qIndex: answer }
-    listenCounts: {}, // { qIndex: count }
+    userAnswers: {}, 
+    listenCounts: {}, 
     isExamSubmitted: false,
     examScore: 0,
     timerInterval: null,
     remainingSeconds: 0,
     timeSpentSeconds: 0,
 
-    // Chế độ Xem lại đề
     reviewShowPinyin: true,
     reviewShowMeaning: true,
     isReviewMode: false,
 
-    // Lịch sử thi
     hskHistoryList: [],
-    activeTab: 'setup',
+    activeTab: 'home',
 
     THEMES: [
         { key: 'lavender', label: 'Lavender', dot: '#7c3aed' },
@@ -51,7 +47,6 @@ const CZHskApp = window.CZHskApp = {
     ],
 
     async init() {
-        // 1. Kiểm tra đăng nhập đồng bộ từ index.html
         try {
             const rawAuth = sessionStorage.getItem('chinesez_session_user');
             if (!rawAuth) {
@@ -68,7 +63,6 @@ const CZHskApp = window.CZHskApp = {
             return;
         }
 
-        // 2. Kế thừa Theme từ index.html
         const savedTheme = localStorage.getItem('chinesez_theme') || 'lavender';
         const foundT = this.THEMES.find(t => t.key === savedTheme) || this.THEMES[0];
         this.applyTheme(foundT.key, foundT.label);
@@ -85,13 +79,11 @@ const CZHskApp = window.CZHskApp = {
         const badge = document.getElementById('hsk-user-badge');
         if (badge) badge.innerText = `${this.currentAuth.fullname} (${this.currentAuth.role})`;
 
-        // 3. Khởi tạo Firebase Firestore
         try {
             if (!firebase.apps.length) firebase.initializeApp(this.firebaseConfig);
             this.db = firebase.firestore();
         } catch (e) { console.warn('Firebase init:', e); }
 
-        // 4. Nạp danh sách bài học từ localStorage + Firestore (system_lessons & user_lessons)
         try {
             this.lessonsDB = JSON.parse(localStorage.getItem('chinesez_lessons')) || [];
         } catch (e) { this.lessonsDB = []; }
@@ -115,7 +107,7 @@ const CZHskApp = window.CZHskApp = {
             }
         }
 
-        this.switchTab('setup');
+        this.switchTab('home');
     },
 
     renderThemeDropdown() {
@@ -138,20 +130,16 @@ const CZHskApp = window.CZHskApp = {
         if (menu) menu.classList.add('hidden');
     },
 
-    saveApiKey() {
-        const val = (document.getElementById('hsk-popup-api-key').value || '').trim();
-        if (val.length < 15) {
-            alert("Vui lòng dán đúng chuỗi Gemini API Key!");
-            return;
-        }
-        localStorage.setItem('user_gemini_api_key', val);
-        document.getElementById('hsk-api-modal').classList.add('hidden');
-        alert("✅ Đã lưu API Key thành công!");
+    getGreeting() {
+        const h = new Date().getHours();
+        if (h >= 5 && h < 11) return { text: "Chúc bạn có một buổi ôn tập thi HSK thật hiệu quả. CHINESEZ298 luôn đồng hành cùng bạn!", icon: "☀️" };
+        if (h >= 11 && h < 18) return { text: "Chúc bạn có một buổi ôn tập thi HSK thật hiệu quả. CHINESEZ298 luôn đồng hành cùng bạn!", icon: "🌤️" };
+        return { text: "Chúc bạn có một buổi ôn tập thi HSK thật hiệu quả. CHINESEZ298 luôn đồng hành cùng bạn!", icon: "🌙" };
     },
 
     switchTab(tab) {
         this.activeTab = tab;
-        ['setup', 'exam', 'history'].forEach(t => {
+        ['home', 'setup', 'exam', 'history'].forEach(t => {
             const btn = document.getElementById(`hsk-nav-${t}`);
             if (btn) {
                 if (t === tab) {
@@ -167,13 +155,47 @@ const CZHskApp = window.CZHskApp = {
         const vp = document.getElementById('hsk-main-viewport');
         if (!vp) return;
 
-        if (tab === 'setup') {
+        if (tab === 'home') {
+            this.renderHomeWelcomeView(vp);
+        } else if (tab === 'setup') {
             this.renderSetupView(vp);
         } else if (tab === 'exam') {
             this.renderExamView(vp);
         } else if (tab === 'history') {
             this.renderHistoryView(vp);
         }
+    },
+
+    // ==========================================
+    // 0. MÀN HÌNH CHÀO MỪNG (HOME DASHBOARD HSK)
+    // ==========================================
+    renderHomeWelcomeView(vp) {
+        const g = this.getGreeting();
+        vp.innerHTML = `
+            <div class="space-y-4 max-w-lg w-full my-auto px-2 mx-auto flex flex-col items-center justify-center text-center">
+                <div class="w-16 h-16 bg-gradient-to-tr from-rose-600 to-red-700 rounded-3xl flex items-center justify-center mx-auto text-3xl font-black text-white shadow-lg shadow-rose-500/30 shrink-0">中</div>
+                <h1 class="text-3xl sm:text-5xl title-3d-ruby uppercase leading-tight tracking-wider py-1">CHÀO MỪNG BẠN</h1>
+                
+                <div class="p-4 sm:p-5 rounded-2xl theme-card border shadow-xs flex items-center space-x-3 sm:space-x-4 text-left w-full">
+                    <img src="./logo.png" onerror="this.onerror=null; this.src='logo.png';" alt="Chú Kiến" class="w-16 h-16 sm:w-20 sm:h-20 object-contain ant-flipped-right shrink-0 drop-shadow-sm">
+                    <div class="flex-1 space-y-1">
+                        <span class="text-2xl">${g.icon}</span>
+                        <p class="text-xs sm:text-sm font-semibold opacity-90 leading-relaxed italic">"${g.text}"</p>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex flex-wrap items-center justify-center gap-3 w-full">
+                    <button onclick="window.CZHskApp.switchTab('setup')" class="px-7 py-3.5 btn-3d font-bold text-xs sm:text-sm rounded-2xl cursor-pointer shadow-md inline-flex items-center space-x-2">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>Tạo đề HSK cùng AI</span>
+                    </button>
+                    <button onclick="window.CZHskApp.switchTab('history')" class="px-6 py-3.5 btn-theme-sec font-bold text-xs sm:text-sm rounded-2xl cursor-pointer shadow-md inline-flex items-center space-x-2">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span>Lịch sử luyện đề</span>
+                    </button>
+                </div>
+            </div>
+        `;
     },
 
     // ==========================================
@@ -194,8 +216,8 @@ const CZHskApp = window.CZHskApp = {
                         </h1>
                         <p class="text-[11px] opacity-75">Tạo đề thi Nghe - Đọc - Viết từ bài học, tài liệu hoặc theo cấp độ HSK 1–6</p>
                     </div>
-                    <button onclick="document.getElementById('hsk-api-modal').classList.remove('hidden')" class="px-2.5 py-1 rounded-xl theme-card border text-[11px] font-bold hover:border-rose-500 cursor-pointer shrink-0">
-                        <i class="fa-solid fa-key text-rose-500 mr-1"></i>API Key
+                    <button onclick="window.location.href='./index.html'" class="px-2.5 py-1 rounded-xl theme-card border text-[11px] font-bold hover:border-rose-500 cursor-pointer shrink-0">
+                        <i class="fa-solid fa-house text-rose-500 mr-1"></i>Trang chính
                     </button>
                 </div>
 
@@ -221,7 +243,7 @@ const CZHskApp = window.CZHskApp = {
                     </div>
                 </div>
 
-                <!-- CHỌN CẤP ĐỘ HSK 1-6 (HIỂN THỊ KHI CHỌN AI SOẠN ĐỀ HSK) -->
+                <!-- CHỌN CẤP ĐỘ HSK 1-6 -->
                 ${this.genMode === 'ai_standard' ? `
                 <div class="p-3 rounded-2xl theme-card border border-rose-500/20 space-y-2">
                     <label class="block text-[11px] font-black uppercase text-rose-600">Chọn cấp độ kỳ thi HSK</label>
@@ -238,13 +260,12 @@ const CZHskApp = window.CZHskApp = {
                 </div>
                 ` : ''}
 
-                <!-- BƯỚC 2: NGUỒN DỮ LIỆU ĐẦU VÀO (THIẾT KẾ ĐỒNG BỘ TAB TẠO BÀI) -->
+                <!-- BƯỚC 2: NGUỒN DỮ LIỆU ĐẦU VÀO -->
                 <div class="space-y-2.5 p-3 rounded-2xl theme-card border border-slate-500/15">
                     <label class="block text-[11px] font-black uppercase text-rose-600">
                         2. Nguồn dữ liệu biên soạn đề ${this.genMode === 'ai_standard' ? '(Tùy chọn bổ sung)' : '(Chọn ít nhất 1 nguồn)'}
                     </label>
 
-                    <!-- Nguồn A: Chọn từ danh sách bài học -->
                     <div class="space-y-1">
                         <div class="flex items-center justify-between">
                             <span class="text-[11px] font-bold opacity-85"><i class="fa-solid fa-list-check text-rose-500 mr-1"></i>Từ danh sách bài học có sẵn:</span>
@@ -259,7 +280,6 @@ const CZHskApp = window.CZHskApp = {
                         ` : `<p class="text-[10.5px] opacity-55 italic">Chưa chọn bài học nào từ thư viện.</p>`}
                     </div>
 
-                    <!-- Nguồn B: Dán link Drive / tài liệu -->
                     <div class="pt-1 border-t border-slate-500/10">
                         <label class="block text-[10.5px] font-bold opacity-80 mb-1">Dán link drive tài liệu (pdf/word) hoặc link bài đọc:</label>
                         <div class="flex items-center gap-1.5">
@@ -271,7 +291,6 @@ const CZHskApp = window.CZHskApp = {
                         <div id="hsk-extra-links-container"></div>
                     </div>
 
-                    <!-- Nguồn C: Tải lên ảnh / PDF / TXT -->
                     <div class="pt-1 border-t border-slate-500/10 flex items-center justify-between flex-wrap gap-2">
                         <div class="flex items-center gap-2 flex-wrap">
                             <input type="file" id="hsk-file-upload" onchange="window.CZHskApp.onFileSelected(event)" accept="image/*,.pdf,.txt,.doc,.docx" class="hidden">
@@ -297,13 +316,11 @@ const CZHskApp = window.CZHskApp = {
                         </div>
                     </div>
 
-                    <!-- Ghi chú / Chủ đề bổ sung -->
                     <div>
                         <input type="text" id="hsk-custom-topic" placeholder="Chủ đề hoặc yêu cầu trọng tâm (tùy chọn, VD: Giao tiếp sân bay, Ngữ pháp chữ 把...)" class="w-full custom-input rounded-xl px-3 py-1.5 text-xs focus:outline-none">
                     </div>
                 </div>
 
-                <!-- TRẠNG THÁI & NÚT TẠO ĐỀ -->
                 <div id="hsk-generating-status" class="hidden p-3 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-600 font-bold text-xs text-center animate-pulse">
                     🤖 AI đang biên soạn đề thi chuẩn HSK (Nghe - Đọc - Viết) kèm Pinyin & giải thích chi tiết... Vui lòng đợi!
                 </div>
@@ -374,9 +391,6 @@ const CZHskApp = window.CZHskApp = {
         }
     },
 
-    // ==========================================
-    // POPUP CHỌN BÀI HỌC TỪ THƯ VIỆN
-    // ==========================================
     openLessonPickerModal() {
         this.pickerFilter = 'all';
         this.renderPickerList();
@@ -452,9 +466,6 @@ const CZHskApp = window.CZHskApp = {
         this.renderSetupView(document.getElementById('hsk-main-viewport'));
     },
 
-    // ==========================================
-    // GỌI GEMINI AI TẠO ĐỀ THI HSK CHUẨN
-    // ==========================================
     fileToBase64(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -475,7 +486,11 @@ const CZHskApp = window.CZHskApp = {
 
     async callGeminiAPI(promptParts) {
         const userKey = (localStorage.getItem('user_gemini_api_key') || "").trim();
-        if (!userKey) throw new Error("NO_API_KEY");
+        if (!userKey) {
+            alert("⚠️ Bạn chưa cài đặt Gemini API Key. Vui lòng quay lại trang chính -> vào thẻ Thông tin tài khoản để cài đặt API Key nhé!");
+            window.location.href = './index.html';
+            throw new Error("NO_API_KEY");
+        }
 
         const candidateModels = [
             'gemini-3.5-flash-lite',
@@ -528,7 +543,8 @@ const CZHskApp = window.CZHskApp = {
     async generateHskExam() {
         const userKey = (localStorage.getItem('user_gemini_api_key') || "").trim();
         if (!userKey) {
-            document.getElementById('hsk-api-modal').classList.remove('hidden');
+            alert("⚠️ Bạn chưa cài đặt Gemini API Key. Vui lòng quay lại trang chính -> vào thẻ Thông tin tài khoản để cài đặt API Key nhé!");
+            window.location.href = './index.html';
             return;
         }
 
@@ -565,7 +581,6 @@ const CZHskApp = window.CZHskApp = {
                 }
             }
 
-            // Tổng hợp từ vựng & ngữ pháp từ các bài học đã chọn
             let lessonsContext = "";
             if (chosenLessons.length > 0) {
                 lessonsContext = chosenLessons.map(l => {
@@ -657,9 +672,6 @@ Trả về duy nhất 1 object JSON có cấu trúc chính xác như sau:
 
 QUY TẮC QUAN TRỌNG:
 - Mọi câu tiếng Trung đều PHẢI có đầy đủ trường Pinyin chuẩn thanh điệu và nghĩa tiếng Việt (vi) để phục vụ chức năng Ẩn/Hiện Pinyin và Ẩn/Hiện Nghĩa khi xem lại bài thi.
-- Với phần "listening": dùng "audioLines" (có thể 1 câu độc thoại hoặc 2-3 câu hội thoại A-B).
-- Với phần "reading": dùng "passageZh", "passagePinyin", "passageVi" và "questionZh", "questionPinyin", "questionVi" cùng 4 lựa chọn A, B, C, D.
-- Với phần "writing": dùng "wordBank" (mảng 4-6 từ/cụm từ tiếng Trung bị xáo trộn thứ tự) và "correctSentenceZh" (chuỗi ghép liền không khoảng trắng giữa chữ Hán, không dấu câu cuối).
 - Không xuất bất kỳ văn bản nào ngoài JSON.`;
 
             promptParts.push({ text: promptText });
@@ -670,7 +682,6 @@ QUY TẮC QUAN TRỌNG:
                 throw new Error("Dữ liệu đề thi trả về chưa hợp lệ. Vui lòng thử lại!");
             }
 
-            // Chuẩn hóa dữ liệu đề thi
             examData.createdAt = new Date().toISOString();
             examData.sourceLabel = chosenLessons.length > 0
                 ? chosenLessons.map(l => l.title).join(', ')
@@ -680,16 +691,15 @@ QUY TẮC QUAN TRỌNG:
 
         } catch (err) {
             console.error("Lỗi tạo đề HSK:", err);
-            alert("❌ Không thể tạo đề thi: " + (err.message || "Vui lòng kiểm tra lại API Key hoặc mạng."));
+            if (err.message !== "NO_API_KEY") {
+                alert("❌ Không thể tạo đề thi: " + (err.message || "Vui lòng kiểm tra lại API Key hoặc mạng."));
+            }
         } finally {
             if (statusEl) statusEl.classList.add('hidden');
             if (btnEl) btnEl.classList.remove('opacity-50', 'pointer-events-none');
         }
     },
 
-    // ==========================================
-    // 2. PHÒNG THI HSK & CHẾ ĐỘ XEM LẠI ĐỀ
-    // ==========================================
     startExamSession(examData) {
         this.currentExam = examData;
         this.userAnswers = {};
@@ -698,7 +708,6 @@ QUY TẮC QUAN TRỌNG:
         this.isReviewMode = false;
         this.examScore = 0;
 
-        // Khởi tạo mảng rỗng cho các câu sắp xếp từ
         examData.questions.forEach((q, idx) => {
             if (q.section === 'writing' || q.type === 'writing_reorder') {
                 this.userAnswers[idx] = [];
@@ -742,16 +751,11 @@ QUY TẮC QUAN TRỌNG:
         return `${String(m).padStart(2, '0')}:${String(r).padStart(2, '0')}`;
     },
 
-    // Phát âm tiếng Trung (tách nhịp hội thoại A - B)
     speakAudioLines(qIdx) {
-        if (!('speechSynthesis' in window)) {
-            alert("Trình duyệt của bạn không hỗ trợ phát âm tự động.");
-            return;
-        }
+        if (!('speechSynthesis' in window)) return;
         const q = this.currentExam?.questions?.[qIdx];
         if (!q || !Array.isArray(q.audioLines)) return;
 
-        // Khi đang thi thật: giới hạn tối đa 2 lần nghe/câu
         if (!this.isExamSubmitted && !this.isReviewMode) {
             const count = this.listenCounts[qIdx] || 0;
             if (count >= 2) {
@@ -772,7 +776,7 @@ QUY TẮC QUAN TRỌNG:
                 const u = new SpeechSynthesisUtterance(cleanText);
                 u.lang = 'zh-CN';
                 u.rate = 0.85;
-                u.pitch = (i % 2 === 1) ? 1.12 : 0.95; // Tạo khác biệt nhẹ giữa giọng Nam/Nữ
+                u.pitch = (i % 2 === 1) ? 1.12 : 0.95;
                 window.speechSynthesis.speak(u);
             }, delay);
             delay += Math.max(1800, cleanText.length * 260 + 450);
@@ -798,7 +802,6 @@ QUY TẮC QUAN TRỌNG:
         this.renderExamView(document.getElementById('hsk-main-viewport'));
     },
 
-    // Thao tác chạm để xếp từ (Tap-to-order) cho phần Viết
     pickWritingWord(qIdx, wordIdx) {
         if (this.isExamSubmitted || this.isReviewMode) return;
         const arr = Array.isArray(this.userAnswers[qIdx]) ? [...this.userAnswers[qIdx]] : [];
@@ -842,7 +845,6 @@ QUY TẮC QUAN TRỌNG:
             const sectionLabel = isListening ? '🎧 Phần Nghe (听力)' : (isWriting ? '✍️ Phần Viết (书写)' : '📖 Phần Đọc hiểu (阅读)');
             const sectionColor = isListening ? 'bg-blue-500/10 text-blue-600' : (isWriting ? 'bg-purple-500/10 text-purple-600' : 'bg-emerald-500/10 text-emerald-600');
 
-            // Đánh giá đúng/sai khi đã nộp bài hoặc xem lại
             let isCorrect = false;
             if (showControls) {
                 if (isWriting) {
@@ -856,7 +858,6 @@ QUY TẮC QUAN TRỌNG:
             }
 
             let bodyHtml = '';
-
             if (isListening) {
                 const usedCount = this.listenCounts[idx] || 0;
                 bodyHtml += `
@@ -875,7 +876,6 @@ QUY TẮC QUAN TRỌNG:
                     </div>
                 `;
 
-                // Khi Xem lại đề: hiện transcript lời thoại kèm Pinyin / Nghĩa tùy nút gạt
                 if (showControls && Array.isArray(q.audioLines)) {
                     bodyHtml += `
                         <div class="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 space-y-1.5 text-left">
@@ -894,7 +894,6 @@ QUY TẮC QUAN TRỌNG:
                     `;
                 }
             } else if (!isWriting && q.passageZh) {
-                // Đoạn đọc hiểu
                 bodyHtml += `
                     <div class="p-3 rounded-2xl bg-slate-500/5 border border-slate-500/10 text-left space-y-1">
                         <div class="flex justify-between items-start gap-2">
@@ -907,7 +906,6 @@ QUY TẮC QUAN TRỌNG:
                 `;
             }
 
-            // Câu hỏi & Lựa chọn A/B/C/D (cho Nghe & Đọc)
             if (!isWriting) {
                 if (q.questionZh) {
                     bodyHtml += `
@@ -956,7 +954,6 @@ QUY TẮC QUAN TRỌNG:
 
                 bodyHtml += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">${optionsHtml}</div>`;
             } else {
-                // Phần Viết: Sắp xếp từ (Tap-to-order)
                 const wordBank = q.wordBank || [];
                 const pickedIndices = Array.isArray(this.userAnswers[idx]) ? this.userAnswers[idx] : [];
 
@@ -990,7 +987,6 @@ QUY TẮC QUAN TRỌNG:
                 `;
             }
 
-            // Hộp giải thích chi tiết khi Xem lại đề / sau khi nộp bài
             let reviewBoxHtml = '';
             if (showControls) {
                 reviewBoxHtml = `
@@ -1031,7 +1027,6 @@ QUY TẮC QUAN TRỌNG:
             `;
         }).join('');
 
-        // Thanh công cụ trên cùng của phòng thi
         let topBarHtml = '';
         if (!showControls) {
             topBarHtml = `
@@ -1052,7 +1047,6 @@ QUY TẮC QUAN TRỌNG:
                 </div>
             `;
         } else {
-            // Thanh kết quả + Nút Xem lại đề (Ẩn/Hiện Pinyin, Ẩn/Hiện Nghĩa)
             const totalQ = questions.length;
             const score100 = Math.round((this.examScore / Math.max(1, totalQ)) * 100);
             topBarHtml = `
@@ -1130,7 +1124,6 @@ QUY TẮC QUAN TRỌNG:
         const totalQ = questions.length;
         const score100 = Math.round((correctCount / Math.max(1, totalQ)) * 100);
 
-        // Lưu kết quả lên Firestore (collection: hsk_results) & localStorage
         const now = new Date();
         const dateStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
         const resultId = `hsk_${Date.now()}`;
@@ -1154,14 +1147,12 @@ QUY TẮC QUAN TRỌNG:
             userAnswersSnapshot: this.userAnswers
         };
 
-        // Lưu localStorage dự phòng
         try {
             const localHist = JSON.parse(localStorage.getItem('chinesez_hsk_history')) || [];
             localHist.unshift(record);
             localStorage.setItem('chinesez_hsk_history', JSON.stringify(localHist.slice(0, 30)));
         } catch (e) {}
 
-        // Lưu lên Cloud Firestore
         if (this.db) {
             try {
                 await this.db.collection("hsk_results").doc(resultId).set(record);
@@ -1173,9 +1164,6 @@ QUY TẮC QUAN TRỌNG:
         this.renderExamView(document.getElementById('hsk-main-viewport'));
     },
 
-    // ==========================================
-    // 3. LỊCH SỬ LUYỆN ĐỀ HSK CỦA NGƯỜI DÙNG
-    // ==========================================
     async renderHistoryView(vp) {
         vp.innerHTML = `<div class="my-auto text-center text-xs opacity-70"><i class="fa-solid fa-spinner fa-spin text-rose-600 mr-1.5"></i>Đang tải lịch sử luyện đề HSK...</div>`;
 
