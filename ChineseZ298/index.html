@@ -12,6 +12,15 @@
                 window.location.replace(newUrl);
             }
         })();
+
+        // KIỂM TRA SESSION NGAY LẬP TỨC TRONG HEAD ĐỂ ẨN TRANG ĐĂNG NHẬP TỪ FRAME 0
+        try {
+            if (sessionStorage.getItem('chinesez_session_user')) {
+                var instantStyle = document.createElement('style');
+                instantStyle.innerHTML = '#auth-screen { display: none !important; } #main-app-screen { display: flex !important; }';
+                document.head.appendChild(instantStyle);
+            }
+        } catch(e) {}
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
