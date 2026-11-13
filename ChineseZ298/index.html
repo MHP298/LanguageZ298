@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi" data-theme="lavender">
 <head>
-    <!-- KỸ THUẬT AUTO-TIMESTAMP URL (TỰ ĐỘNG THÊM ?v= KHI TRUY CẬP) -->
+    <!-- KỸ THUẬT AUTO-TIMESTAMP URL & EARLY SESSION CHECK -->
     <script>
         (function() {
             if (window.location.protocol === 'file:') return;
@@ -13,10 +13,10 @@
             }
         })();
 
-        // KIỂM TRA SESSION NGAY LẬP TỨC TRONG HEAD ĐỂ ẨN TRANG ĐĂNG NHẬP TỪ FRAME 0
         try {
             if (sessionStorage.getItem('chinesez_session_user')) {
                 var instantStyle = document.createElement('style');
+                instantStyle.id = 'instant-auth-style';
                 instantStyle.innerHTML = '#auth-screen { display: none !important; } #main-app-screen { display: flex !important; }';
                 document.head.appendChild(instantStyle);
             }
@@ -332,7 +332,7 @@
         </div>
     </div>
 
-    <!-- POPUP ĐĂNG KÝ VỚI NÚT HỦY & ĐĂNG KÝ HÀI HÒA THEME -->
+    <!-- POPUP ĐĂNG KÝ -->
     <div id="register-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3">
         <div class="theme-card rounded-3xl p-5 max-w-sm w-full space-y-3 text-left shadow-2xl border max-h-[92vh] overflow-y-auto">
             <div class="border-b pb-2">
@@ -400,7 +400,7 @@
         </div>
     </div>
 
-    <!-- CÁC POPUP KHÁC TRONG HỆ THỐNG SẼ ĐƯỢC LOAD ĐỘNG TỪ JAVASCRIPT -->
+    <!-- CÁC POPUP KHÁC -->
     <div id="change-pass-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-[105] hidden flex items-center justify-center p-3"></div>
     <div id="edit-user-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-[115] hidden flex items-center justify-center p-3"></div>
     <div id="user-lessons-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-[115] hidden flex items-center justify-center p-3"></div>
@@ -410,7 +410,6 @@
     <div id="doc-info-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-[125] hidden flex items-center justify-center p-3"></div>
     <div id="login-history-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-[125] hidden flex items-center justify-center p-3"></div>
 
-    <!-- DỌN DẸP SERVICE WORKER CŨ & NẠP ĐỒNG BỘ JS TRỰC TIẾP -->
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -418,7 +417,6 @@
             }).catch(function(e){});
         }
         
-        // Nạp JS đồng bộ (Blocking) & Tự động chống Cache
         var sysVersion = Date.now();
         document.write('<script src="./card-engine.js?v=' + sysVersion + '"><\/script>');
         document.write('<script src="./app-core.js?v=' + sysVersion + '"><\/script>');
