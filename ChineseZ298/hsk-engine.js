@@ -221,8 +221,8 @@ const CZHskApp = window.CZHskApp = {
                     </button>
                 </div>
 
-                <!-- BƯỚC 1: CHỌN PHƯƠNG THỨC TẠO ĐỀ (THU GỌN KÍCH THƯỚC) -->
-                <div class="space-y-1.5">
+                <!-- BƯỚC 1: CHỌN PHƯƠNG THỨC TẠO ĐỀ -->
+                <div class="space-y-2">
                     <label class="block text-[11px] font-black uppercase text-rose-600">1. Chọn chế độ ra đề</label>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div onclick="window.CZHskApp.setGenMode('source')" class="p-2 rounded-xl border-2 cursor-pointer transition ${this.genMode === 'source' ? 'border-rose-500 bg-rose-500/10 shadow-xs' : 'theme-card opacity-80 hover:opacity-100'}">
@@ -245,23 +245,23 @@ const CZHskApp = window.CZHskApp = {
 
                 <!-- CHỌN CẤP ĐỘ HSK 1-6 -->
                 ${this.genMode === 'ai_standard' ? `
-                <div class="p-2.5 rounded-2xl theme-card border border-rose-500/20 space-y-1.5">
+                <div class="p-3 rounded-2xl theme-card border border-rose-500/20 space-y-2">
                     <label class="block text-[11px] font-black uppercase text-rose-600">Chọn cấp độ kỳ thi HSK</label>
                     <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
                         ${[1, 2, 3, 4, 5, 6].map(lvl => `
-                            <button type="button" onclick="window.CZHskApp.setHskLevel(${lvl})" class="py-1.5 rounded-xl text-xs font-black transition cursor-pointer ${this.selectedHskLevel === lvl ? 'btn-3d' : 'theme-card border hover:border-rose-500'}">
+                            <button type="button" onclick="window.CZHskApp.setHskLevel(${lvl})" class="py-2 rounded-xl text-xs font-black transition cursor-pointer ${this.selectedHskLevel === lvl ? 'btn-3d' : 'theme-card border hover:border-rose-500'}">
                                 HSK ${lvl}
                             </button>
                         `).join('')}
                     </div>
-                    <p class="text-[10px] opacity-75 italic">
-                        ${this.selectedHskLevel >= 3 ? '✓ Bao gồm đủ 3 kỹ năng: Nghe + Đọc hiểu + Viết/Sắp xếp câu.' : '✓ Cấp độ HSK 1–2 gồm 2 kỹ năng: Nghe + Đọc hiểu.'}
+                    <p class="text-[10.5px] opacity-75 italic">
+                        ${this.selectedHskLevel >= 3 ? '✓ Bao gồm đầy đủ 3 kỹ năng: Nghe (听力) + Đọc hiểu (阅读) + Viết/Sắp xếp câu (书写).' : '✓ Cấp độ HSK 1–2 gồm 2 kỹ năng chuẩn: Nghe (听力) + Đọc hiểu (阅读).'}
                     </p>
                 </div>
                 ` : ''}
 
                 <!-- BƯỚC 2: NGUỒN DỮ LIỆU ĐẦU VÀO -->
-                <div class="space-y-2 p-2.5 rounded-2xl theme-card border border-slate-500/15">
+                <div class="space-y-2.5 p-3 rounded-2xl theme-card border border-slate-500/15">
                     <label class="block text-[11px] font-black uppercase text-rose-600">
                         2. Nguồn dữ liệu biên soạn đề ${this.genMode === 'ai_standard' ? '(Tùy chọn bổ sung)' : '(Chọn ít nhất 1 nguồn)'}
                     </label>
@@ -274,14 +274,14 @@ const CZHskApp = window.CZHskApp = {
                             </button>
                         </div>
                         ${selectedTitles.length > 0 ? `
-                            <div class="flex flex-wrap gap-1 pt-0.5">
-                                ${selectedTitles.map(t => `<span class="px-2 py-0.5 rounded-lg bg-rose-500/10 text-rose-600 border border-rose-500/20 text-[10px] font-bold truncate max-w-[220px] font-chinese">${t}</span>`).join('')}
+                            <div class="flex flex-wrap gap-1 pt-1">
+                                ${selectedTitles.map(t => `<span class="px-2 py-0.5 rounded-lg bg-rose-500/10 text-rose-600 border border-rose-500/20 text-[10.5px] font-bold truncate max-w-[220px] font-chinese">${t}</span>`).join('')}
                             </div>
-                        ` : `<p class="text-[10px] opacity-55 italic">Chưa chọn bài học nào từ thư viện.</p>`}
+                        ` : `<p class="text-[10.5px] opacity-55 italic">Chưa chọn bài học nào từ thư viện.</p>`}
                     </div>
 
                     <div class="pt-1 border-t border-slate-500/10">
-                        <label class="block text-[10px] font-bold opacity-80 mb-0.5">Dán link drive tài liệu (pdf/word) hoặc link bài đọc:</label>
+                        <label class="block text-[10.5px] font-bold opacity-80 mb-1">Dán link drive tài liệu (pdf/word) hoặc link bài đọc:</label>
                         <div class="flex items-center gap-1.5">
                             <input type="text" id="hsk-in-link" placeholder="Link ở dạng chia sẻ mức độ xem..." class="flex-1 custom-input rounded-xl px-3 py-1.5 text-xs focus:outline-none">
                             <button type="button" onclick="window.CZHskApp.addExtraLinkInput()" class="w-8 h-8 rounded-xl bg-purple-600 text-white font-bold flex items-center justify-center shrink-0 shadow-sm hover:scale-105 cursor-pointer transition" title="Thêm ô link tiếp theo">
@@ -306,7 +306,7 @@ const CZHskApp = window.CZHskApp = {
                         </div>
 
                         <div class="flex items-center space-x-1.5">
-                            <label class="text-[10px] font-bold opacity-80">Thời gian:</label>
+                            <label class="text-[10.5px] font-bold opacity-80">Thời gian:</label>
                             <select id="hsk-duration-select" onchange="window.CZHskApp.examDurationMinutes = parseInt(this.value, 10)" class="custom-input rounded-xl px-2 py-1 text-xs font-bold">
                                 <option value="10" ${this.examDurationMinutes === 10 ? 'selected' : ''}>10 phút</option>
                                 <option value="15" ${this.examDurationMinutes === 15 ? 'selected' : ''}>15 phút</option>
@@ -316,18 +316,17 @@ const CZHskApp = window.CZHskApp = {
                         </div>
                     </div>
 
-                    <!-- Ô NHẬP CHỦ ĐỀ TRỌNG TÂM (TĂNG KÍCH THƯỚC TO HƠN, NỔI BẬT HƠN) -->
                     <div>
                         <input type="text" id="hsk-custom-topic" placeholder="Chủ đề hoặc yêu cầu trọng tâm (tùy chọn, VD: Giao tiếp sân bay, Ngữ pháp chữ 把...)" class="w-full custom-input rounded-2xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-rose-500 shadow-xs">
                     </div>
                 </div>
 
-                <div id="hsk-generating-status" class="hidden p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-600 font-bold text-xs text-center animate-pulse">
+                <div id="hsk-generating-status" class="hidden p-3 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-600 font-bold text-xs text-center animate-pulse">
                     🤖 AI đang biên soạn đề thi chuẩn HSK (Nghe - Đọc - Viết) kèm Pinyin & giải thích chi tiết... Vui lòng đợi!
                 </div>
 
-                <div class="pt-0.5 shrink-0">
-                    <button id="btn-generate-hsk" onclick="window.CZHskApp.generateHskExam()" class="w-full py-2.5 btn-3d font-black text-xs sm:text-sm rounded-2xl cursor-pointer shadow-md flex items-center justify-center space-x-2">
+                <div class="pt-1 shrink-0">
+                    <button id="btn-generate-hsk" onclick="window.CZHskApp.generateHskExam()" class="w-full py-3 btn-3d font-black text-xs sm:text-sm rounded-2xl cursor-pointer shadow-md flex items-center justify-center space-x-2">
                         <i class="fa-solid fa-wand-magic-sparkles"></i>
                         <span>Bắt đầu tạo đề thi HSK & Vào phòng thi</span>
                     </button>
@@ -884,7 +883,7 @@ QUY TẮC QUAN TRỌNG:
                                 <div class="text-xs border-b border-amber-500/10 pb-1 last:border-none last:pb-0">
                                     <div class="flex items-center justify-between">
                                         <span class="font-bold font-chinese"><b>${line.speaker}:</b> ${line.zh}</span>
-                                        <button type="button" onclick="window.CZHskApp.speakSingleZh('${(line.zh || '').replace(/'/g, "\\'")}')" class="text-rose-600 hover:scale-110 cursor-pointer ml-2"><i class="fa-solid fa-volume-high text-[11px]"></i></button>
+                                        <button type="button" onclick="window.CZHskApp.speakSingleZh('${(line.zh || '').replace(/'/g, "\'")}')" class="text-rose-600 hover:scale-110 cursor-pointer ml-2"><i class="fa-solid fa-volume-high text-[11px]"></i></button>
                                     </div>
                                     ${this.reviewShowPinyin && line.pinyin ? `<p class="text-[11px] text-rose-600 font-semibold">🔊 ${line.pinyin}</p>` : ''}
                                     ${this.reviewShowMeaning && line.vi ? `<p class="text-[11px] opacity-85">🇻🇳 ${line.vi}</p>` : ''}
@@ -898,7 +897,7 @@ QUY TẮC QUAN TRỌNG:
                     <div class="p-3 rounded-2xl bg-slate-500/5 border border-slate-500/10 text-left space-y-1">
                         <div class="flex justify-between items-start gap-2">
                             <p class="text-sm sm:text-base font-bold font-chinese leading-relaxed">${q.passageZh}</p>
-                            ${showControls ? `<button type="button" onclick="window.CZHskApp.speakSingleZh('${(q.passageZh || '').replace(/'/g, "\\'")}')" class="text-rose-600 hover:scale-110 cursor-pointer shrink-0 pt-0.5"><i class="fa-solid fa-volume-high text-xs"></i></button>` : ''}
+                            ${showControls ? `<button type="button" onclick="window.CZHskApp.speakSingleZh('${(q.passageZh || '').replace(/'/g, "\'")}')" class="text-rose-600 hover:scale-110 cursor-pointer shrink-0 pt-0.5"><i class="fa-solid fa-volume-high text-xs"></i></button>` : ''}
                         </div>
                         ${showControls && this.reviewShowPinyin && q.passagePinyin ? `<p class="text-xs text-rose-600 font-semibold">🔊 ${q.passagePinyin}</p>` : ''}
                         ${showControls && this.reviewShowMeaning && q.passageVi ? `<p class="text-xs opacity-85">🇻🇳 ${q.passageVi}</p>` : ''}
@@ -912,7 +911,7 @@ QUY TẮC QUAN TRỌNG:
                         <div class="text-left space-y-0.5 pt-1">
                             <div class="flex items-center justify-between">
                                 <p class="text-xs sm:text-sm font-black font-chinese text-rose-600">${q.questionZh}</p>
-                                ${showControls ? `<button type="button" onclick="window.CZHskApp.speakSingleZh('${(q.questionZh || '').replace(/'/g, "\\'")}')" class="text-rose-600 hover:scale-110 cursor-pointer ml-2"><i class="fa-solid fa-volume-high text-xs"></i></button>` : ''}
+                                ${showControls ? `<button type="button" onclick="window.CZHskApp.speakSingleZh('${(q.questionZh || '').replace(/'/g, "\'")}')" class="text-rose-600 hover:scale-110 cursor-pointer ml-2"><i class="fa-solid fa-volume-high text-xs"></i></button>` : ''}
                             </div>
                             ${showControls && this.reviewShowPinyin && q.questionPinyin ? `<p class="text-[11px] text-rose-500 font-semibold">🔊 ${q.questionPinyin}</p>` : ''}
                             ${showControls && this.reviewShowMeaning && q.questionVi ? `<p class="text-[11px] opacity-80">🇻🇳 ${q.questionVi}</p>` : ''}
@@ -944,7 +943,7 @@ QUY TẮC QUAN TRỌNG:
                                 </div>
                             </div>
                             ${showControls ? `
-                                <button type="button" onclick="event.stopPropagation(); window.CZHskApp.speakSingleZh('${(opt.zh || '').replace(/'/g, "\\'")}')" class="text-rose-500 hover:scale-110 cursor-pointer shrink-0 px-1">
+                                <button type="button" onclick="event.stopPropagation(); window.CZHskApp.speakSingleZh('${(opt.zh || '').replace(/'/g, "\'")}')" class="text-rose-500 hover:scale-110 cursor-pointer shrink-0 px-1">
                                     <i class="fa-solid fa-volume-high text-xs"></i>
                                 </button>
                             ` : ''}
@@ -996,7 +995,7 @@ QUY TẮC QUAN TRỌNG:
                                 ${isCorrect ? '✓ Chính xác!' : '✗ Chưa chính xác'}
                             </span>
                             ${isWriting && q.correctSentenceZh ? `
-                                <button type="button" onclick="window.CZHskApp.speakSingleZh('${q.correctSentenceZh.replace(/'/g, "\\'")}')" class="text-rose-600 font-bold hover:underline cursor-pointer flex items-center space-x-1">
+                                <button type="button" onclick="window.CZHskApp.speakSingleZh('${q.correctSentenceZh.replace(/'/g, "\'")}')" class="text-rose-600 font-bold hover:underline cursor-pointer flex items-center space-x-1">
                                     <i class="fa-solid fa-volume-high"></i><span>Nghe câu đúng</span>
                                 </button>
                             ` : ''}
