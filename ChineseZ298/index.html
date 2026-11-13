@@ -13,14 +13,6 @@
             }
         })();
     </script>
-    
-    <!-- LÁ CHẮN PROXY CHỈ BẢO VỆ MÀN HÌNH ĐĂNG NHẬP (KHÔNG BỌC CARD-ENGINE NỮA) -->
-    <script>
-        window.CZAppCore = window.CZAppCore || {
-            handleLogin: function(){}, togglePassVisibility: function(){}, openRegisterModal: function(){}, closeRegisterModal: function(){}, handleRegister: function(){}, openForgotModal: function(){}, closeForgotModal: function(){}, handleForgotSubmit: function(){}, setTab: function(){}, toggleSupportChat: function(){}, handleChatSubmit: function(){}, openApiSetupModal: function(){}, closeApiSetupModal: function(){}, saveApiKeyFromPopup: function(){}, skipApiKeySetup: function(){}, toggleThemeMenu: function(){}, applyTheme: function(){}, onRegJobChanged: function(){}, init: function(){}
-        };
-    </script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -169,7 +161,7 @@
 </head>
 <body class="flex flex-col">
     <!-- CHATBOX LIÊN HỆ ADMIN -->
-    <div id="floating-chat-btn" onclick="window.CZAppCore && window.CZAppCore.toggleSupportChat(event)" class="fixed bottom-20 right-3 sm:bottom-6 sm:right-6 w-11 h-11 sm:w-12 sm:h-12 bg-rose-600 text-white rounded-full flex items-center justify-center shadow-2xl cursor-pointer hover:scale-110 transition z-50">
+    <div id="floating-chat-btn" class="fixed bottom-20 right-3 sm:bottom-6 sm:right-6 w-11 h-11 sm:w-12 sm:h-12 bg-rose-600 text-white rounded-full flex items-center justify-center shadow-2xl cursor-pointer hover:scale-110 transition z-50">
         <i class="fa-solid fa-headset text-base sm:text-lg"></i>
         <span id="chat-new-badge" class="hidden absolute -top-1.5 -right-1 px-1.5 py-0.5 rounded-full bg-amber-400 text-slate-900 font-black text-[9px] shadow-md animate-bounce border border-white">Mới</span>
     </div>
@@ -180,15 +172,15 @@
                 <i class="fa-solid fa-headset text-sm"></i>
                 <span id="support-chat-header-title" class="font-black text-xs sm:text-sm truncate">Liên hệ admin</span>
             </div>
-            <button onclick="window.CZAppCore && window.CZAppCore.closeSupportChat()" class="text-white hover:opacity-75 cursor-pointer ml-2"><i class="fa-solid fa-xmark text-base"></i></button>
+            <button id="btn-close-support" class="text-white hover:opacity-75 cursor-pointer ml-2"><i class="fa-solid fa-xmark text-base"></i></button>
         </div>
         <div id="chat-msg-list" class="flex-1 p-3 overflow-y-auto text-xs flex flex-col space-y-2.5" style="background-color: var(--input-bg);"></div>
         
         <div id="chat-end-confirm-box" class="hidden p-2.5 bg-amber-500/15 border-t border-amber-500/30 text-left shrink-0 space-y-1.5">
             <p class="text-xs font-bold text-amber-600">❓ Chúng ta kết thúc vấn đề nhé?</p>
             <div class="flex gap-2">
-                <button onclick="window.CZAppCore && window.CZAppCore.confirmEndChat(true)" class="flex-1 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs cursor-pointer">Đồng ý</button>
-                <button onclick="window.CZAppCore && window.CZAppCore.confirmEndChat(false)" class="flex-1 py-1 bg-slate-400 hover:bg-slate-500 text-white font-bold rounded-xl text-xs cursor-pointer">Tiếp tục</button>
+                <button id="btn-chat-agree" class="flex-1 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs cursor-pointer">Đồng ý</button>
+                <button id="btn-chat-continue" class="flex-1 py-1 bg-slate-400 hover:bg-slate-500 text-white font-bold rounded-xl text-xs cursor-pointer">Tiếp tục</button>
             </div>
         </div>
 
@@ -236,39 +228,39 @@
             </div>
             <div class="flex items-center space-x-1.5">
                 <div class="relative">
-                    <button onclick="window.CZAppCore && window.CZAppCore.toggleThemeMenu()" class="theme-card px-2 py-1 rounded-lg text-[11px] font-bold flex items-center space-x-1 cursor-pointer"><i class="fa-solid fa-palette text-rose-500"></i><span id="theme-lbl" class="hidden sm:inline">Lavender</span><i class="fa-solid fa-chevron-down text-[8px] opacity-70"></i></button>
-                    <div id="theme-menu" class="hidden absolute right-0 mt-1 w-44 rounded-xl bg-white border shadow-xl py-1 z-50 text-slate-800 text-xs"><button onclick="window.CZAppCore && window.CZAppCore.applyTheme('lavender','Lavender')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🌸 Lavender (Tím)</button><button onclick="window.CZAppCore && window.CZAppCore.applyTheme('nordic','Nordic')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🌊 Nordic (Xanh biển)</button><button onclick="window.CZAppCore && window.CZAppCore.applyTheme('sage','Sage Tea')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🍃 Sage (Xanh lá)</button><button onclick="window.CZAppCore && window.CZAppCore.applyTheme('warm','Warm Milk')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🥛 Warm (Sáng kem)</button><button onclick="window.CZAppCore && window.CZAppCore.applyTheme('midnight','Midnight')" class="w-full text-left px-3 py-1.5 font-bold hover:bg-slate-100">🌙 Midnight (Đêm)</button></div>
+                    <button id="btn-theme-menu" class="theme-card px-2 py-1 rounded-lg text-[11px] font-bold flex items-center space-x-1 cursor-pointer"><i class="fa-solid fa-palette text-rose-500"></i><span id="theme-lbl" class="hidden sm:inline">Lavender</span><i class="fa-solid fa-chevron-down text-[8px] opacity-70"></i></button>
+                    <div id="theme-menu" class="hidden absolute right-0 mt-1 w-44 rounded-xl bg-white border shadow-xl py-1 z-50 text-slate-800 text-xs"></div>
                 </div>
                 <span id="user-role-badge" class="text-[10px] px-2 py-0.5 rounded-lg bg-rose-500/10 text-rose-600 font-bold hidden sm:inline"></span>
-                <button onclick="window.CZAppCore && window.CZAppCore.handleLogout()" class="px-2 py-1 rounded-lg border border-slate-500/20 text-[11px] font-bold hover:bg-rose-600 hover:text-white transition cursor-pointer"><i class="fa-solid fa-right-from-bracket"></i></button>
+                <button id="btn-logout" class="px-2 py-1 rounded-lg border border-slate-500/20 text-[11px] font-bold hover:bg-rose-600 hover:text-white transition cursor-pointer"><i class="fa-solid fa-right-from-bracket"></i></button>
             </div>
         </header>
         <div class="flex-1 flex flex-col md:flex-row p-2 gap-2 min-h-0 overflow-hidden">
             <aside class="side-bar shrink-0 theme-card rounded-2xl p-1 sm:p-1.5 flex md:flex-col justify-between shadow-xs z-20 relative">
                 <div class="flex md:flex-col gap-1 w-full items-stretch">
-                    <button onclick="window.CZAppCore && window.CZAppCore.setTab('home')" id="tbtn-home" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold btn-3d flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <button id="tbtn-home" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold btn-3d flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
                         <i class="fa-solid fa-house text-xs sm:text-sm md:w-4 text-center"></i>
                         <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Trang chủ</span>
                     </button>
-                    <button onclick="window.CZAppCore && window.CZAppCore.setTab('profile')" id="tbtn-profile" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <button id="tbtn-profile" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
                         <i class="fa-solid fa-id-card text-xs sm:text-sm md:w-4 text-center"></i>
-                        <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Thông tin tài khoản</span>
+                        <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Tài khoản</span>
                     </button>
-                    <button onclick="window.CZAppCore && window.CZAppCore.setTab('create')" id="tbtn-create" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <button id="tbtn-create" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
                         <i class="fa-solid fa-file-circle-plus text-xs sm:text-sm md:w-4 text-center"></i>
                         <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Tạo bài</span>
                     </button>
-                    <button onclick="window.CZAppCore && window.CZAppCore.setTab('room')" id="tbtn-room" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <button id="tbtn-room" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
                         <i class="fa-solid fa-graduation-cap text-xs sm:text-sm md:w-4 text-center"></i>
                         <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Phòng học</span>
                     </button>
-                    <button onclick="window.CZAppCore && window.CZAppCore.setTab('chat')" id="tbtn-chat" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <button id="tbtn-chat" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
                         <i class="fa-solid fa-comments text-xs sm:text-sm md:w-4 text-center"></i>
                         <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Chat Dịch</span>
                     </button>
-                    <button onclick="window.CZAppCore && window.CZAppCore.setTab('admin')" id="admin-box" class="hidden flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-xs flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-1.5 cursor-pointer text-center md:text-left relative transition">
+                    <button id="admin-box" class="hidden flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-xs flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-1.5 cursor-pointer text-center md:text-left relative transition">
                         <i class="fa-solid fa-users-gear text-xs sm:text-sm md:w-4 text-center"></i>
-                        <span class="text-[10px] sm:text-xs truncate w-full block md:inline"><span class="md:hidden">Quản trị</span><span class="hidden md:inline">Quản lý tài khoản</span></span>
+                        <span class="text-[10px] sm:text-xs truncate w-full block md:inline"><span class="md:hidden">Quản trị</span><span class="hidden md:inline">Quản lý</span></span>
                         <span id="admin-sidebar-badge" class="hidden absolute top-1 right-1 w-2.5 h-2.5 bg-rose-600 rounded-full animate-pulse border border-white"></span>
                     </button>
                 </div>
@@ -281,7 +273,7 @@
         </div>
     </div>
 
-    <!-- 3. POPUP CÀI ĐẶT GEMINI API KEY -->
+    <!-- CÁC POPUP HỖ TRỢ -->
     <div id="api-setup-modal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[100] hidden flex items-center justify-center p-3">
         <div class="theme-card rounded-3xl p-5 max-w-md w-full space-y-3.5 text-left shadow-2xl border border-rose-500/30">
             <div class="flex justify-between items-center border-b pb-2">
@@ -289,7 +281,7 @@
                     <div class="w-7 h-7 bg-rose-600 rounded-lg flex items-center justify-center font-bold text-white text-xs shrink-0">中</div>
                     <h3 class="font-black text-sm text-rose-600">Cài đặt Gemini API Key cá nhân</h3>
                 </div>
-                <button onclick="window.CZAppCore && window.CZAppCore.closeApiSetupModal()" class="text-xs opacity-60 hover:opacity-100 cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button id="btn-close-api-modal" class="text-xs opacity-60 hover:opacity-100 cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             
             <p class="text-[11px] opacity-80 leading-relaxed font-semibold">
@@ -301,7 +293,7 @@
                 <p>1. Bấm nút <b>"Mở Google AI Studio"</b> và đăng nhập bằng tài khoản Gmail của bạn.</p>
                 <p>2. Bấm vào nút màu xanh <b>"Create API key"</b>.</p>
                 <p>3. Chọn <i>"Create project"</i> hoặc để mặc định <i>"Default Gemini Project"</i> rồi bấm <b>"Create key"</b>.</p>
-                <p>4. Bấm <b>"Copy"</b> chuỗi mã API Key (bắt đầu bằng <code>AIzaSy...</code> hoặc <code>AQ...</code>) và dán vào ô bên dưới.</p>
+                <p>4. Bấm <b>"Copy"</b> chuỗi mã API Key và dán vào ô bên dưới.</p>
             </div>
 
             <div id="api-status-box" class="p-2.5 rounded-xl border border-slate-500/10 flex items-center justify-between">
@@ -316,151 +308,15 @@
 
             <div class="flex justify-between items-center pt-1 border-t border-slate-500/10">
                 <a href="https://aistudio.google.com/app/apikey" target="_blank" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition flex items-center space-x-1.5 shadow">
-                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> <span>Mở Google AI Studio</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> <span>Google AI Studio</span>
                 </a>
                 <div class="space-x-1.5 flex">
-                    <button onclick="window.CZAppCore && window.CZAppCore.skipApiKeySetup()" class="px-3 py-1.5 theme-card border rounded-xl text-xs font-bold opacity-75 hover:opacity-100 cursor-pointer">Dùng Offline</button>
-                    <button onclick="window.CZAppCore && window.CZAppCore.saveApiKeyFromPopup()" class="px-4 py-1.5 btn-3d text-xs font-bold rounded-xl cursor-pointer shadow">Lưu Key</button>
+                    <button id="btn-skip-api-setup" class="px-3 py-1.5 theme-card border rounded-xl text-xs font-bold opacity-75 hover:opacity-100 cursor-pointer">Dùng Offline</button>
+                    <button id="btn-save-api-key" class="px-4 py-1.5 btn-3d text-xs font-bold rounded-xl cursor-pointer shadow">Lưu Key</button>
                 </div>
             </div>
-
             <div class="text-[10.5px] font-bold text-red-600 leading-tight text-center">
-                ⚠️ Lưu ý bảo mật: API này chỉ được lưu trên trình duyệt của bạn, ứng dụng ChineseZ298 không lưu bất kỳ thông tin riêng tư nào của bạn.
-            </div>
-        </div>
-    </div>
-
-    <!-- POPUP ĐỔI MẬT KHẨU TỪ PROFILE -->
-    <div id="change-pass-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-[105] hidden flex items-center justify-center p-3">
-        <div class="theme-card rounded-3xl p-5 max-w-sm w-full space-y-3 text-left shadow-2xl border">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-bold text-sm text-rose-600"><i class="fa-solid fa-key mr-1.5"></i>Đổi mật khẩu</h3>
-                <button onclick="document.getElementById('change-pass-modal').classList.add('hidden')" class="text-xs opacity-60"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="space-y-2 text-xs">
-                <div>
-                    <label class="block font-bold opacity-80 mb-0.5">Mật khẩu hiện tại</label>
-                    <div class="relative"><input type="password" id="cp-current" class="w-full custom-input rounded-xl px-3 py-1.5"><button type="button" onclick="window.CZAppCore && window.CZAppCore.togglePassVisibility('cp-current','cp-eye1')" class="absolute inset-y-0 right-0 pr-3 flex items-center opacity-60"><i id="cp-eye1" class="fa-solid fa-eye"></i></button></div>
-                </div>
-                <div>
-                    <label class="block font-bold opacity-80 mb-0.5">Mật khẩu mới</label>
-                    <div class="relative"><input type="password" id="cp-new" class="w-full custom-input rounded-xl px-3 py-1.5"><button type="button" onclick="window.CZAppCore && window.CZAppCore.togglePassVisibility('cp-new','cp-eye2')" class="absolute inset-y-0 right-0 pr-3 flex items-center opacity-60"><i id="cp-eye2" class="fa-solid fa-eye"></i></button></div>
-                </div>
-                <div>
-                    <label class="block font-bold opacity-80 mb-0.5">Xác nhận mật khẩu mới</label>
-                    <div class="relative"><input type="password" id="cp-confirm" class="w-full custom-input rounded-xl px-3 py-1.5"><button type="button" onclick="window.CZAppCore && window.CZAppCore.togglePassVisibility('cp-confirm','cp-eye3')" class="absolute inset-y-0 right-0 pr-3 flex items-center opacity-60"><i id="cp-eye3" class="fa-solid fa-eye"></i></button></div>
-                </div>
-                <div class="pt-2 flex gap-2">
-                    <button onclick="document.getElementById('change-pass-modal').classList.add('hidden')" class="flex-1 py-2 bg-slate-200 text-slate-700 font-bold rounded-xl cursor-pointer">Hủy</button>
-                    <button onclick="window.CZAppCore && window.CZAppCore.submitChangePassword()" class="flex-1 py-2 btn-3d font-bold rounded-xl cursor-pointer">Lưu</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- POPUP SỬA THÔNG TIN THÀNH VIÊN DÀNH CHO ADMIN -->
-    <div id="edit-user-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-[115] hidden flex items-center justify-center p-3">
-        <div class="theme-card rounded-3xl p-5 max-w-sm w-full space-y-3 text-left shadow-2xl border max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-bold text-sm text-rose-600"><i class="fa-solid fa-user-pen mr-1.5"></i>Thông tin thành viên</h3>
-                <button onclick="document.getElementById('edit-user-modal').classList.add('hidden')" class="text-xs opacity-60"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="space-y-2 text-xs">
-                <input type="hidden" id="eu-original-username">
-                <div><label class="block font-bold opacity-80 mb-0.5">ID đăng ký</label><input type="text" id="eu-id" class="w-full custom-input rounded-xl px-3 py-1.5 font-mono"></div>
-                <div><label class="block font-bold opacity-80 mb-0.5">Tên đăng nhập</label><input type="text" id="eu-username" class="w-full custom-input rounded-xl px-3 py-1.5 font-mono"></div>
-                <div>
-                    <label class="block font-bold opacity-80 mb-0.5">Mật khẩu</label>
-                    <input type="text" id="eu-password" class="w-full custom-input rounded-xl px-3 py-1.5 font-mono">
-                </div>
-                <div><label class="block font-bold opacity-80 mb-0.5">Họ và tên</label><input type="text" id="eu-fullname" class="w-full custom-input rounded-xl px-3 py-1.5"></div>
-                <div>
-                    <label class="block font-bold opacity-80 mb-0.5">Nghề nghiệp</label>
-                    <select id="eu-job" class="w-full custom-input rounded-xl px-3 py-1.5 font-medium">
-                        <option value="HS VTS">HS VTS</option>
-                        <option value="Học sinh">Học sinh</option>
-                        <option value="Sinh viên">Sinh viên</option>
-                        <option value="Giáo viên">Giáo viên</option>
-                        <option value="NVVP">NVVP</option>
-                        <option value="Khác">Khác</option>
-                    </select>
-                </div>
-                <div><label class="block font-bold opacity-80 mb-0.5">Lớp / Trường</label><input type="text" id="eu-class" class="w-full custom-input rounded-xl px-3 py-1.5"></div>
-                <div><label class="block font-bold opacity-80 mb-0.5">4 số cuối SĐT</label><input type="text" id="eu-phone" maxlength="4" class="w-full custom-input rounded-xl px-3 py-1.5 font-mono"></div>
-                <div class="pt-2 flex gap-2">
-                    <button onclick="document.getElementById('edit-user-modal').classList.add('hidden')" class="flex-1 py-2 bg-slate-200 text-slate-700 font-bold rounded-xl cursor-pointer">Hủy</button>
-                    <button onclick="window.CZAppCore && window.CZAppCore.saveEditedUser()" class="flex-1 py-2 btn-3d font-bold rounded-xl cursor-pointer">Lưu</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- POPUP XEM DANH SÁCH BÀI HỌC CỦA NGƯỜI DÙNG TẠI TAB QUẢN TRỊ -->
-    <div id="user-lessons-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-[115] hidden flex items-center justify-center p-3">
-        <div class="theme-card bg-white rounded-3xl p-5 max-w-md w-full max-h-[85vh] flex flex-col justify-between text-left shadow-2xl border border-rose-500/20">
-            <div class="flex justify-between items-center border-b pb-2.5 shrink-0">
-                <h3 class="font-black text-sm text-slate-800" id="user-lessons-modal-title">Danh sách bài học</h3>
-                <button onclick="document.getElementById('user-lessons-modal').classList.add('hidden')" class="text-xs opacity-60"><i class="fa-solid fa-xmark text-base"></i></button>
-            </div>
-            <div id="user-lessons-modal-list" class="flex-1 overflow-y-auto min-h-0 space-y-2 py-2 pr-1"></div>
-            <div class="pt-3 border-t flex justify-end shrink-0">
-                <button onclick="document.getElementById('user-lessons-modal').classList.add('hidden')" class="px-4 py-1.5 bg-slate-200 font-bold text-xs rounded-xl cursor-pointer">Đóng</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- POPUP XEM TRƯỚC BÀI HỌC -->
-    <div id="preview-lesson-modal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[120] hidden flex items-center justify-center p-2 sm:p-4">
-        <div class="theme-card rounded-3xl p-4 max-w-lg w-full h-[90vh] flex flex-col justify-between text-left shadow-2xl border relative">
-            <div class="flex justify-between items-center border-b pb-2 shrink-0">
-                <div class="truncate mr-2">
-                    <span class="text-[10px] font-bold text-rose-600 uppercase">Xem trước bài học</span>
-                    <h3 id="preview-lesson-title" class="text-sm font-black truncate"></h3>
-                </div>
-                <button onclick="document.getElementById('preview-lesson-modal').classList.add('hidden')" class="px-3 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded-xl cursor-pointer">Đóng</button>
-            </div>
-            <div id="preview-lesson-stage" class="flex-1 min-h-0 flex flex-col justify-center py-2"></div>
-        </div>
-    </div>
-
-    <!-- MODAL QUẢN LÝ / XÓA BÀI HỌC CỦA BẠN -->
-    <div id="manage-lessons-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-[110] hidden flex items-center justify-center p-3">
-        <div class="theme-card bg-white rounded-3xl p-5 max-w-md w-full max-h-[85vh] flex flex-col justify-between text-left shadow-2xl border border-rose-500/20">
-            <div class="flex justify-between items-center border-b pb-2.5 shrink-0">
-                <div class="flex items-center space-x-2">
-                    <span class="w-7 h-7 rounded-lg bg-rose-500 text-white font-bold flex items-center justify-center text-xs shadow-xs"><i class="fa-solid fa-trash-can"></i></span>
-                    <h3 class="font-black text-sm text-slate-800 dark:text-slate-100">Quản lý & Xóa bài học của bạn</h3>
-                </div>
-                <button onclick="window.CZAppCore && window.CZAppCore.closeManageLessonsModal()" class="text-xs opacity-60 hover:opacity-100 cursor-pointer"><i class="fa-solid fa-xmark text-base"></i></button>
-            </div>
-            <div class="py-2.5 px-3 bg-slate-500/10 rounded-2xl my-2 flex justify-between items-center text-xs shrink-0">
-                <label class="flex items-center space-x-2 cursor-pointer font-bold">
-                    <input type="checkbox" id="manage-check-all-lessons" onchange="window.CZAppCore && window.CZAppCore.toggleSelectAllUserLessons(this.checked)" class="w-4 h-4 rounded text-rose-600 cursor-pointer">
-                    <span>Chọn tất cả</span>
-                </label>
-                <button onclick="window.CZAppCore && window.CZAppCore.deleteSelectedUserLessons()" class="px-3 py-1 bg-rose-600 hover:bg-rose-700 text-white font-bold text-[11px] rounded-xl flex items-center space-x-1 cursor-pointer">
-                    <i class="fa-solid fa-trash-can text-[10px]"></i><span>Xóa đã chọn</span>
-                </button>
-            </div>
-            <div id="manage-lessons-list-box" class="flex-1 overflow-y-auto min-h-0 space-y-1.5 pr-1"></div>
-            <div class="pt-3 border-t mt-2 flex justify-end shrink-0">
-                <button onclick="window.CZAppCore && window.CZAppCore.closeManageLessonsModal()" class="px-4 py-1.5 bg-slate-200 hover:bg-slate-300 font-bold text-xs rounded-xl cursor-pointer transition text-slate-700">Đóng</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- POPUP XÁC NHẬN SAU KHI TẠO BÀI -->
-    <div id="create-decision-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-        <div class="theme-card rounded-3xl p-6 max-w-sm w-full space-y-4 text-center shadow-2xl border border-rose-500/30">
-            <div class="w-14 h-14 bg-rose-500/10 text-rose-600 rounded-2xl flex items-center justify-center mx-auto text-2xl font-bold border border-rose-500/20 shadow-xs">✨</div>
-            <div>
-                <h3 class="text-lg font-black text-rose-600">Bạn muốn thế nào ?</h3>
-                <p id="decision-lesson-name" class="text-xs opacity-80 mt-1 font-semibold truncate"></p>
-                <p class="text-[11px] opacity-60 mt-0.5">Bài học đã được đồng bộ lên Cloud Firebase!</p>
-            </div>
-            <div class="grid grid-cols-2 gap-3 pt-2">
-                <button onclick="window.CZAppCore && window.CZAppCore.decisionCreateMore()" class="py-2.5 px-3 theme-card border hover:border-rose-500 text-xs font-bold rounded-2xl shadow-xs transition cursor-pointer"><i class="fa-solid fa-plus mr-1 text-rose-500"></i> Tạo tiếp</button>
-                <button onclick="window.CZAppCore && window.CZAppCore.decisionGoStudy()" class="py-2.5 px-3 btn-3d text-xs font-bold rounded-2xl cursor-pointer"><i class="fa-solid fa-graduation-cap mr-1"></i> Vào học</button>
+                ⚠️ Lưu ý bảo mật: API này chỉ được lưu trên trình duyệt của bạn, hệ thống không lưu lại.
             </div>
         </div>
     </div>
@@ -478,7 +334,7 @@
                 <div>
                     <label class="block font-bold opacity-80 mb-0.5">Nghề nghiệp</label>
                     <div class="flex gap-1.5">
-                        <select id="reg-job-select" onchange="window.CZAppCore && window.CZAppCore.onRegJobChanged(this.value)" class="flex-1 custom-input rounded-xl px-3 py-1.5 font-medium focus:outline-none">
+                        <select id="reg-job-select" class="flex-1 custom-input rounded-xl px-3 py-1.5 font-medium focus:outline-none text-slate-400 opacity-60">
                             <option value="" disabled selected>Chọn nghề</option>
                             <option value="HS VTS">HS VTS</option>
                             <option value="Học sinh">Học sinh</option>
@@ -495,7 +351,7 @@
 
                 <div>
                     <label class="block font-bold opacity-80 mb-0.5">Tên đăng nhập</label>
-                    <input type="text" id="reg-username" placeholder="Tên đăng nhập không có khoảng trắng" class="w-full custom-input rounded-xl px-3 py-1.5 placeholder:text-slate-400 placeholder:opacity-60">
+                    <input type="text" id="reg-username" placeholder="Tên đăng nhập không khoảng trắng" class="w-full custom-input rounded-xl px-3 py-1.5 placeholder:text-slate-400 placeholder:opacity-60">
                 </div>
                 
                 <div>
@@ -520,6 +376,7 @@
         </div>
     </div>
 
+    <!-- QUÊN MẬT KHẨU -->
     <div id="forgot-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3">
         <div class="theme-card rounded-3xl p-5 max-w-sm w-full space-y-3 text-left shadow-2xl max-h-[92vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-2"><h3 class="font-bold text-sm text-amber-600">Khôi phục mật khẩu</h3><button id="btn-forgot-cancel" class="text-xs opacity-60"><i class="fa-solid fa-xmark"></i></button></div>
@@ -532,87 +389,36 @@
         </div>
     </div>
 
-    <!-- POPUP THÔNG TIN TÀI LIỆU BÀI HỌC -->
-    <div id="doc-info-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-[125] hidden flex items-center justify-center p-3">
-        <div class="theme-card rounded-3xl p-5 max-w-sm w-full space-y-3.5 text-left shadow-2xl border border-rose-500/20">
-            <div class="flex justify-between items-center border-b pb-2">
-                <div class="flex items-center space-x-2">
-                    <span class="w-7 h-7 rounded-lg bg-rose-500/10 text-rose-600 font-bold flex items-center justify-center text-xs"><i class="fa-regular fa-file-lines text-sm"></i></span>
-                    <h3 class="font-black text-sm text-slate-800 dark:text-slate-100">Thông tin tài liệu bài học</h3>
-                </div>
-                <button onclick="document.getElementById('doc-info-modal').classList.add('hidden')" class="text-xs opacity-60 hover:opacity-100 cursor-pointer"><i class="fa-solid fa-xmark text-base"></i></button>
-            </div>
-            <div class="space-y-2 text-xs">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase opacity-60">Tên tệp gốc:</label>
-                    <p id="doc-info-filename" class="font-mono font-bold text-rose-600 text-sm truncate bg-slate-500/5 p-2 rounded-xl mt-0.5"></p>
-                </div>
-                <div>
-                    <span class="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-600 font-bold text-[10.5px] border border-emerald-500/20 inline-block">
-                        ✓ Trích xuất tự động bởi Trợ lý AI
-                    </span>
-                </div>
-                <div class="p-3 bg-amber-500/10 rounded-2xl border border-amber-500/20 text-slate-700 dark:text-slate-300 text-[11px] leading-relaxed">
-                    💡 Bài học này được AI phân tích từ file/ảnh của bạn tải lên. Để tiết kiệm bộ nhớ, file/ảnh tài liệu gốc không được lưu trữ trên máy chủ.
-                </div>
-            </div>
-            <div class="pt-2 flex gap-2 border-t border-slate-500/10">
-                <button onclick="document.getElementById('doc-info-modal').classList.add('hidden')" class="flex-1 py-2 bg-slate-200 text-slate-700 font-bold rounded-xl text-xs cursor-pointer">Đóng</button>
-                <button id="doc-info-btn-study" class="flex-1 py-2 btn-3d font-bold rounded-xl text-xs cursor-pointer shadow">Vào học ngay</button>
-            </div>
-        </div>
-    </div>
+    <!-- CÁC POPUP KHÁC TRONG HỆ THỐNG SẼ ĐƯỢC LOAD ĐỘNG TỪ JAVASCRIPT -->
+    <div id="change-pass-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-[105] hidden flex items-center justify-center p-3"></div>
+    <div id="edit-user-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-[115] hidden flex items-center justify-center p-3"></div>
+    <div id="user-lessons-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-[115] hidden flex items-center justify-center p-3"></div>
+    <div id="preview-lesson-modal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[120] hidden flex items-center justify-center p-2 sm:p-4"></div>
+    <div id="manage-lessons-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-[110] hidden flex items-center justify-center p-3"></div>
+    <div id="create-decision-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4"></div>
+    <div id="doc-info-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-[125] hidden flex items-center justify-center p-3"></div>
+    <div id="login-history-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-[125] hidden flex items-center justify-center p-3"></div>
 
-    <!-- POPUP LỊCH SỬ TRUY CẬP (ĐĂNG NHẬP) CỦA THÀNH VIÊN -->
-    <div id="login-history-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-[125] hidden flex items-center justify-center p-3">
-        <div class="theme-card rounded-3xl p-5 max-w-sm w-full space-y-3.5 text-left shadow-2xl border max-h-[85vh] flex flex-col justify-between">
-            <div class="flex justify-between items-center border-b pb-2 shrink-0">
-                <div class="flex items-center space-x-2">
-                    <span class="w-7 h-7 rounded-lg bg-blue-500/10 text-blue-600 font-bold flex items-center justify-center text-xs"><i class="fa-solid fa-clock-rotate-left text-sm"></i></span>
-                    <h3 id="login-history-title" class="font-black text-sm text-slate-800 dark:text-slate-100">Lịch sử truy cập</h3>
-                </div>
-                <button onclick="document.getElementById('login-history-modal').classList.add('hidden')" class="text-xs opacity-60 hover:opacity-100 cursor-pointer"><i class="fa-solid fa-xmark text-base"></i></button>
-            </div>
-            <div class="space-y-2 shrink-0 bg-blue-50/70 dark:bg-blue-900/20 p-3 rounded-2xl border border-blue-200 dark:border-blue-800/40">
-                <p class="text-[10px] font-bold uppercase text-blue-600">Lần truy cập gần nhất:</p>
-                <p id="login-history-latest" class="text-xs font-black text-slate-800 dark:text-slate-100 font-mono"></p>
-            </div>
-            <div class="flex-1 min-h-0 overflow-y-auto space-y-1.5 pr-1">
-                <label class="block text-[10px] font-bold uppercase opacity-60 mb-1">Chi tiết các lần đăng nhập:</label>
-                <div id="login-history-list" class="space-y-1"></div>
-            </div>
-            <div class="pt-2 border-t border-slate-500/10 shrink-0 flex justify-end">
-                <button onclick="document.getElementById('login-history-modal').classList.add('hidden')" class="px-4 py-1.5 bg-slate-200 text-slate-700 font-bold rounded-xl text-xs cursor-pointer">Đóng</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- LIÊN KẾT TRỰC TIẾP MODULE JAVASCRIPT KÈM TIMESTAMP CHỐNG CACHE TRUYỆT ĐỐI -->
+    <!-- DỌN DẸP SERVICE WORKER CŨ & NẠP ĐỒNG BỘ JS TRỰC TIẾP -->
     <script>
-        // TỰ ĐỘNG XÓA BỎ BẢN SERVICE WORKER CŨ NẾU CÒN SỐNG TRÊN TRÌNH DUYỆT CỦA USER
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                for (var reg of registrations) {
-                    reg.unregister();
-                }
+            navigator.serviceWorker.getRegistrations().then(function(regs) {
+                for (var reg of regs) reg.unregister();
             }).catch(function(e){});
         }
-    </script>
-    <script>
-        // TỐI ƯU 100%: Nạp JS đồng bộ (Blocking) & Tự động chống Cache (Không cần đổi số thủ công)
+        
+        // Nạp JS đồng bộ (Blocking) & Tự động chống Cache
         var sysVersion = Date.now();
         document.write('<script src="./card-engine.js?v=' + sysVersion + '"><\/script>');
         document.write('<script src="./app-core.js?v=' + sysVersion + '"><\/script>');
     </script>
     <script>
-        // Khởi động ứng dụng ngay khi DOM sẵn sàng
         document.addEventListener('DOMContentLoaded', () => {
             if (window.CZAppCore && typeof window.CZAppCore.init === 'function') {
                 CZAppCore.init();
             }
         });
-
-        // CÁC THIẾT LẬP BỔ TRỢ GIAO DIỆN
+        
         document.addEventListener('contextmenu', e => e.preventDefault());
         function setAppHeight() { document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`); }
         window.addEventListener('resize', setAppHeight); 
@@ -622,18 +428,6 @@
             const m = document.getElementById('theme-menu'); 
             if (m && !e.target.closest('.relative')) m.classList.add('hidden'); 
         });
-
-        // BẢO HIỂM HÀM TOÀN CỤC CHO NÚT BẤM INLINE
-        window.speakZh = (t) => window.CZCardEngine && window.CZCardEngine.speakZh(t);
-        window.handleLogin = () => window.CZAppCore && window.CZAppCore.handleLogin();
-        window.handleLogout = () => window.CZAppCore && window.CZAppCore.handleLogout();
-        window.setTab = (t) => window.CZAppCore && window.CZAppCore.setTab(t);
-        window.openApiSetupModal = (f) => window.CZAppCore && window.CZAppCore.openApiSetupModal(f);
-        window.closeApiSetupModal = () => window.CZAppCore && window.CZAppCore.closeApiSetupModal();
-        window.saveApiKeyFromPopup = () => window.CZAppCore && window.CZAppCore.saveApiKeyFromPopup();
-        window.skipApiKeySetup = () => window.CZAppCore && window.CZAppCore.skipApiKeySetup();
-        window.toggleThemeMenu = () => window.CZAppCore && window.CZAppCore.toggleThemeMenu();
-        window.applyTheme = (k, l) => window.CZAppCore && window.CZAppCore.applyTheme(k, l);
     </script>
 </body>
 </html>
