@@ -13,13 +13,14 @@
             }
         })();
     </script>
-    <!-- LÁ CHẮN PROXY CHỐNG LỖI LIỆT NÚT DO MẠNG CHẬM HOẶC LỖI JS -->
+    
+    <!-- LÁ CHẮN PROXY CHỈ BẢO VỆ MÀN HÌNH ĐĂNG NHẬP (KHÔNG BỌC CARD-ENGINE NỮA) -->
     <script>
         window.CZAppCore = window.CZAppCore || {
             handleLogin: function(){}, togglePassVisibility: function(){}, openRegisterModal: function(){}, closeRegisterModal: function(){}, handleRegister: function(){}, openForgotModal: function(){}, closeForgotModal: function(){}, handleForgotSubmit: function(){}, setTab: function(){}, toggleSupportChat: function(){}, handleChatSubmit: function(){}, openApiSetupModal: function(){}, closeApiSetupModal: function(){}, saveApiKeyFromPopup: function(){}, skipApiKeySetup: function(){}, toggleThemeMenu: function(){}, applyTheme: function(){}, onRegJobChanged: function(){}, init: function(){}
         };
-        window.CZCardEngine = window.CZCardEngine || { speakZh: function(){}, switchModeBtn: function(){}, switchSubVocab: function(){}, flipCardBox: function(){}, prevVocab: function(){}, nextVocab: function(){}, initMemoryStore: function(){}, checkMemoryAnswerNow: function(){}, initMatchingGameData: function(){}, onGameSelectHanzi: function(){}, onGameSelectPinyin: function(){}, startClozeAtLevel: function(){}, pickClozeWord: function(){}, unpickClozeWord: function(){}, checkClozeAnswerNow: function(){}, prevClozeQuestion: function(){}, nextClozeQuestion: function(){}, pickListeningSentence: function(){}, openGrammarPractice: function(){}, closeGrammarPractice: function(){}, toggleGrammarPinyin: function(){}, toggleGrammarVi: function(){}, setGrammarUserChoice: function(){}, checkGrammarPracticeAnswers: function(){}, refreshDialogueWithAI: function(){}, togglePinyin: function(){}, toggleVi: function(){}, openLessonStudy: function(){} };
     </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
