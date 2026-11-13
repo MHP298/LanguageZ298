@@ -80,7 +80,6 @@
     </style>
 </head>
 <body class="flex flex-col">
-    <!-- HEADER ĐỒNG BỘ CHINESEZ298 + HUY HIỆU HSK EXAM ĐỎ RUBY -->
     <header class="app-header h-12 theme-card border-b px-2.5 sm:px-3 flex justify-between items-center shadow-xs shrink-0 z-30">
         <div class="flex items-center space-x-1.5 sm:space-x-2 min-w-0">
             <div class="w-7 h-7 bg-rose-600 rounded-lg flex items-center justify-center font-bold text-white text-xs shadow-xs shrink-0">中</div>
@@ -89,7 +88,6 @@
                 <img src="./logo.png" onerror="this.onerror=null; this.src='logo.png';" alt="MRZ298" class="w-3.5 h-3.5 rounded-full object-contain ant-flipped-right">
                 <span class="tracking-wider hidden xs:inline">MRZ298</span>
             </div>
-            <!-- HUY HIỆU HSK EXAM MÀU ĐỎ RUBY CHUẨN KỲ THI HSK -->
             <span class="badge-hsk-ruby px-2 py-0.5 rounded-lg text-[9px] sm:text-[10px] font-black uppercase shrink-0 flex items-center space-x-1">
                 <i class="fa-solid fa-award text-[9px] text-amber-300"></i>
                 <span>HSK EXAM</span>
@@ -112,11 +110,14 @@
         </div>
     </header>
 
-    <!-- LAYOUT 2 PHẦN: SIDEBAR + MAIN VIEWPORT (RESPONSIVE DESKTOP & MOBILE DỌC) -->
     <div class="flex-1 flex flex-col md:flex-row p-2 gap-2 min-h-0 overflow-hidden">
         <aside class="side-bar shrink-0 theme-card rounded-2xl p-1 sm:p-1.5 flex md:flex-col justify-between shadow-xs z-20 relative md:w-48">
             <div class="flex md:flex-col gap-1 w-full items-stretch">
-                <button id="hsk-nav-setup" onclick="window.CZHskApp.switchTab('setup')" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2.5 rounded-xl font-bold btn-3d flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                <button id="hsk-nav-home" onclick="window.CZHskApp.switchTab('home')" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2.5 rounded-xl font-bold btn-3d flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <i class="fa-solid fa-house text-xs sm:text-sm md:w-4 text-center"></i>
+                    <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Trang chủ</span>
+                </button>
+                <button id="hsk-nav-setup" onclick="window.CZHskApp.switchTab('setup')" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2.5 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
                     <i class="fa-solid fa-wand-magic-sparkles text-xs sm:text-sm md:w-4 text-center"></i>
                     <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Tạo đề HSK</span>
                 </button>
@@ -127,10 +128,6 @@
                 <button id="hsk-nav-history" onclick="window.CZHskApp.switchTab('history')" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2.5 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
                     <i class="fa-solid fa-clock-rotate-left text-xs sm:text-sm md:w-4 text-center"></i>
                     <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Lịch sử thi</span>
-                </button>
-                <button onclick="window.location.href='./index.html'" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2.5 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
-                    <i class="fa-solid fa-house text-xs sm:text-sm md:w-4 text-center text-rose-500"></i>
-                    <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Trang chính</span>
                 </button>
             </div>
             <div class="mt-auto pt-2 border-t border-slate-500/10 hidden md:flex flex-col space-y-2">
@@ -151,7 +148,7 @@
         <main id="hsk-main-viewport" class="flex-1 theme-card rounded-2xl p-2.5 sm:p-4 flex flex-col min-h-0 overflow-hidden shadow-xs relative"></main>
     </div>
 
-    <!-- MODAL CHỌN BÀI HỌC TỪ DANH SÁCH (CÓ THỂ TÍCH NHIỀU BÀI) -->
+    <!-- MODAL CHỌN BÀI HỌC -->
     <div id="hsk-lesson-picker-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3">
         <div class="theme-card rounded-3xl p-4 sm:p-5 max-w-md w-full max-h-[85vh] flex flex-col justify-between text-left shadow-2xl border border-rose-500/20">
             <div class="flex justify-between items-center border-b pb-2.5 shrink-0">
@@ -177,22 +174,6 @@
         </div>
     </div>
 
-    <!-- MODAL CÀI ĐẶT API KEY NẾU CHƯA CÓ -->
-    <div id="hsk-api-modal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[100] hidden flex items-center justify-center p-3">
-        <div class="theme-card rounded-3xl p-5 max-w-md w-full space-y-3.5 text-left shadow-2xl border border-rose-500/30">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-black text-sm text-rose-600"><i class="fa-solid fa-key mr-1.5"></i>Cài đặt Gemini API Key</h3>
-                <button onclick="document.getElementById('hsk-api-modal').classList.add('hidden')" class="text-xs opacity-60 cursor-pointer"><i class="fa-solid fa-xmark text-base"></i></button>
-            </div>
-            <p class="text-xs opacity-80 leading-relaxed">Để AI biên soạn đề thi HSK từ tài liệu/bài học, vui lòng nhập Gemini API Key cá nhân của bạn (được đồng bộ chung với trang chính):</p>
-            <input type="password" id="hsk-popup-api-key" placeholder="Dán API Key (AIzaSy...) vào đây" class="w-full custom-input rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-rose-500">
-            <div class="flex justify-between items-center pt-1">
-                <a href="https://aistudio.google.com/app/apikey" target="_blank" class="px-3 py-1.5 bg-blue-600 text-white font-bold text-xs rounded-xl">Lấy Key miễn phí</a>
-                <button onclick="window.CZHskApp.saveApiKey()" class="px-4 py-1.5 btn-3d text-xs font-bold rounded-xl cursor-pointer">Lưu Key</button>
-            </div>
-        </div>
-    </div>
-
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -214,4 +195,3 @@
     </script>
 </body>
 </html>
-
