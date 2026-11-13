@@ -130,6 +130,13 @@ const CZHskApp = window.CZHskApp = {
         if (menu) menu.classList.add('hidden');
     },
 
+    handleLogout() {
+        if (this.timerInterval) clearInterval(this.timerInterval);
+        this.currentAuth = null;
+        sessionStorage.removeItem('chinesez_session_user');
+        window.location.replace('./index.html');
+    },
+
     getGreeting() {
         const h = new Date().getHours();
         if (h >= 5 && h < 11) return { text: "Chúc bạn có một buổi ôn tập thi HSK thật hiệu quả. CHINESEZ298 luôn đồng hành cùng bạn!", icon: "☀️" };
