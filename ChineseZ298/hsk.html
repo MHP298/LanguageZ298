@@ -22,6 +22,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="HSK cùng AI">
+    <link rel="icon" type="image/png" href="./logo.png">
     <link rel="apple-touch-icon" href="./logo.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -80,20 +81,20 @@
     </style>
 </head>
 <body class="flex flex-col">
-    <header class="app-header h-12 theme-card border-b px-2.5 sm:px-3 flex justify-between items-center shadow-xs shrink-0 z-30">
-        <div class="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+    <header class="app-header h-12 theme-card border-b px-2 sm:px-3 flex justify-between items-center shadow-xs shrink-0 z-30">
+        <div class="flex items-center space-x-1.5 sm:space-x-2 min-w-0">
             <div class="w-7 h-7 bg-rose-600 rounded-lg flex items-center justify-center font-bold text-white text-xs shadow-xs shrink-0">中</div>
-            <h2 class="app-title text-base sm:text-lg title-3d-ruby leading-normal py-0.5 tracking-wider shrink-0">CHINESEZ298</h2>
-            <div class="flex items-center space-x-1 px-1.5 py-0.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-[9px] font-black text-rose-600 shrink-0">
+            <h2 class="app-title text-sm sm:text-lg title-3d-ruby leading-normal py-0.5 tracking-wider shrink-0">CHINESEZ298</h2>
+            <div class="hidden sm:flex items-center space-x-1 px-1.5 py-0.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-[9px] font-black text-rose-600 shrink-0">
                 <img src="./logo.png" onerror="this.onerror=null; this.src='logo.png';" alt="MRZ298" class="w-3.5 h-3.5 rounded-full object-contain ant-flipped-right">
                 <span class="tracking-wider">MRZ298</span>
             </div>
-            <span class="badge-hsk-ruby px-2 py-0.5 rounded-lg text-[9px] sm:text-[10px] font-black uppercase shrink-0 flex items-center space-x-1">
+            <span class="badge-hsk-ruby px-1.5 sm:px-2 py-0.5 rounded-lg text-[8.5px] sm:text-[10px] font-black uppercase shrink-0 flex items-center space-x-1">
                 <i class="fa-solid fa-award text-[9px] text-amber-300"></i>
                 <span>HSK EXAM</span>
             </span>
         </div>
-        <div class="flex items-center space-x-1.5 shrink-0">
+        <div class="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
             <div class="relative">
                 <button id="btn-hsk-theme-menu" class="theme-card px-2 py-1 rounded-lg text-[11px] font-bold flex items-center space-x-1 cursor-pointer">
                     <i class="fa-solid fa-palette text-rose-500"></i>
@@ -103,9 +104,9 @@
                 <div id="hsk-theme-menu" class="hidden absolute right-0 mt-1 w-44 rounded-xl bg-white border shadow-xl py-1 z-50 text-slate-800 text-xs"></div>
             </div>
             <span id="hsk-user-badge" class="text-[10px] px-2 py-0.5 rounded-lg bg-rose-500/10 text-rose-600 font-bold hidden md:inline"></span>
-            <a href="./index.html" class="px-2.5 py-1 rounded-lg btn-theme-sec text-[11px] font-bold flex items-center space-x-1 cursor-pointer shadow-xs" title="Quay lại giao diện chính ChineseZ298">
+            <a href="./index.html" class="hidden md:flex px-2.5 py-1 rounded-lg btn-theme-sec text-[11px] font-bold items-center space-x-1 cursor-pointer shadow-xs" title="Quay lại giao diện chính ChineseZ298">
                 <i class="fa-solid fa-arrow-left text-[10px]"></i>
-                <span class="hidden sm:inline">Về trang chính</span>
+                <span>Về trang chính</span>
             </a>
             <button id="btn-hsk-logout" onclick="window.CZHskApp.handleLogout()" class="px-2 py-1 rounded-lg border border-slate-500/20 text-[11px] font-bold hover:bg-rose-600 hover:text-white transition cursor-pointer" title="Đăng xuất khỏi ứng dụng">
                 <i class="fa-solid fa-right-from-bracket"></i>
@@ -132,6 +133,10 @@
                     <i class="fa-solid fa-clock-rotate-left text-xs sm:text-sm md:w-4 text-center"></i>
                     <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Lịch sử thi</span>
                 </button>
+                <a href="./index.html" id="hsk-nav-main-portal" class="md:hidden flex-1 min-w-0 py-1.5 px-1 sm:px-2 rounded-xl font-bold opacity-85 hover:opacity-100 flex flex-col items-center justify-center space-y-0.5 cursor-pointer text-center transition" title="Quay lại giao diện chính ChineseZ298">
+                    <i class="fa-solid fa-arrow-left text-xs sm:text-sm text-rose-600"></i>
+                    <span class="text-[10px] sm:text-xs truncate w-full block">Trang chính</span>
+                </a>
             </div>
             <div class="mt-auto pt-2 border-t border-slate-500/10 hidden md:flex flex-col space-y-2">
                 <div class="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-left">
