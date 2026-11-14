@@ -32,6 +32,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="ChineseZ298">
+    <link rel="icon" type="image/png" href="./logo.png">
     <link rel="apple-touch-icon" href="./logo.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -243,35 +244,40 @@
             </div>
         </header>
         <div class="flex-1 flex flex-col md:flex-row p-2 gap-2 min-h-0 overflow-hidden">
-            <aside class="side-bar shrink-0 theme-card rounded-2xl p-1 sm:p-1.5 flex md:flex-col justify-between shadow-xs z-20 relative">
-                <div class="flex md:flex-col gap-1 w-full items-stretch">
-                    <button id="tbtn-home" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold btn-3d flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+            <aside id="app-sidebar" class="side-bar shrink-0 theme-card rounded-2xl p-1 sm:p-1.5 flex md:flex-col justify-between shadow-xs z-30 relative">
+                <div class="grid grid-cols-4 md:flex md:flex-col gap-1 w-full items-stretch">
+                    <button type="button" id="btn-mobile-more-nav" class="md:hidden order-1 py-1.5 px-1 rounded-xl font-bold opacity-85 hover:opacity-100 flex flex-col items-center justify-center space-y-0.5 cursor-pointer text-center relative transition">
+                        <i id="mobile-more-icon" class="fa-solid fa-table-cells-large text-xs sm:text-sm text-rose-600"></i>
+                        <span class="text-[10px] sm:text-xs truncate w-full block">Menu</span>
+                        <span id="mobile-more-badge" class="hidden absolute top-1 right-2 w-2.5 h-2.5 bg-rose-600 rounded-full animate-pulse border border-white"></span>
+                    </button>
+                    <button id="tbtn-home" class="mobile-nav-secondary hidden md:flex order-5 md:order-1 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold btn-3d flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
                         <i class="fa-solid fa-house text-xs sm:text-sm md:w-4 text-center"></i>
                         <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Trang chủ</span>
                     </button>
-                    <button id="tbtn-profile" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <button id="tbtn-profile" class="mobile-nav-secondary hidden md:flex order-6 md:order-2 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
                         <i class="fa-solid fa-id-card text-xs sm:text-sm md:w-4 text-center"></i>
                         <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Tài khoản</span>
                     </button>
-                    <button id="tbtn-create" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <button id="tbtn-create" class="order-2 md:order-3 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
                         <i class="fa-solid fa-file-circle-plus text-xs sm:text-sm md:w-4 text-center"></i>
                         <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Tạo bài</span>
                     </button>
-                    <button id="tbtn-room" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <button id="tbtn-room" class="mobile-nav-secondary hidden md:flex order-7 md:order-4 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
                         <i class="fa-solid fa-graduation-cap text-xs sm:text-sm md:w-4 text-center"></i>
                         <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Phòng học</span>
                     </button>
-                    <a href="./hsk.html" id="tbtn-hsk" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-85 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <a href="./hsk.html" id="tbtn-hsk" class="order-3 md:order-5 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-85 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
                         <i class="fa-solid fa-award text-xs sm:text-sm md:w-4 text-center text-rose-600"></i>
                         <span class="text-[10px] sm:text-xs truncate w-full block md:inline">HSK cùng AI</span>
                     </a>
-                    <button id="tbtn-chat" class="flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
+                    <button id="tbtn-chat" class="order-4 md:order-6 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold opacity-75 hover:opacity-100 flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-2 cursor-pointer text-center md:text-left transition">
                         <i class="fa-solid fa-comments text-xs sm:text-sm md:w-4 text-center"></i>
                         <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Chat Dịch</span>
                     </button>
-                    <button id="admin-box" class="hidden flex-1 min-w-0 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-xs flex flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-1.5 cursor-pointer text-center md:text-left relative transition">
+                    <button id="admin-box" class="hidden order-8 md:order-7 md:w-full py-1.5 px-1 sm:px-2 md:px-3 md:py-2 rounded-xl font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-xs flex-col md:flex-row items-center justify-center md:justify-start space-y-0.5 md:space-y-0 md:space-x-1.5 cursor-pointer text-center md:text-left relative transition">
                         <i class="fa-solid fa-users-gear text-xs sm:text-sm md:w-4 text-center"></i>
-                        <span class="text-[10px] sm:text-xs truncate w-full block md:inline"><span class="md:hidden">Quản trị</span><span class="hidden md:inline">Quản lý</span></span>
+                        <span class="text-[10px] sm:text-xs truncate w-full block md:inline">Quản lý</span>
                         <span id="admin-sidebar-badge" class="hidden absolute top-1 right-1 w-2.5 h-2.5 bg-rose-600 rounded-full animate-pulse border border-white"></span>
                     </button>
                 </div>
